@@ -1,8 +1,9 @@
+import vue from "rollup-plugin-vue";
 import buble from "rollup-plugin-buble";
 
 export default {
   input: "src/index.js",
-  plugins: [buble()],
+  plugins: [vue(), buble()],
   output: [
     {
       name: "vue-trend-chart",
