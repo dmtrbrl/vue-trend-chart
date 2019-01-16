@@ -1,1 +1,1 @@
-# vue-trend-chart
+# Vue Trend Chart
