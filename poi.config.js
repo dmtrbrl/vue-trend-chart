@@ -1,7 +1,7 @@
 module.exports = {
-  entry: "./demo/app.js",
+  entry: "./docs/app.js",
   output: {
-    dir: "./demo-dist"
+    dir: "./docs-dist"
   },
   configureWebpack(config) {
     config.resolve.alias["vue-trend-chart"] = "../src";

@@ -1,6 +1,6 @@
 {
   "name": "vue-trend-chart",
-  "productionName": "Vue Trend Chart",
+  "productName": "Vue Trend Chart",
   "version": "0.0.1",
   "description": "Trend charts for Vue.js",
   "main": "dist/vue-trend-chart.common.js",
@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "dev": "poi --serve",
-    "demo:build": "poi --prod",
-    "deploy": "npm run demo:build && gh-pages -d demo-dist",
+    "docs:build": "poi --prod",
+    "deploy": "npm run docs:build && gh-pages -d docs-dist",
     "build": "rollup -c --environment BUILD && uglifyjs dist/vue-trend-chart.js > dist/vue-trend-chart.min.js"
   },
   "repository": {
