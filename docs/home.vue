@@ -3,7 +3,14 @@
     <h1 class="demo-heading heading">Vue Trend Chart</h1>
     <div class="demo-subheading">Simple and elegant trend charts for Vue.js</div>
     <div class="demo-content">
-      <trend-chart></trend-chart>
+      <trend-chart
+        :autoDraw="true"
+        :data="[0,3,30,5,8,2,10]"
+        :max="20"
+        :smooth="true"
+        stroke="#aaa"
+        stroke-dasharray="1"
+      >Hello Slot</trend-chart>
     </div>
   </section>
 </template>
@@ -46,6 +53,10 @@ body {
 }
 .demo-content {
   padding-top: 30px;
+}
+.demo-content svg {
+  width: 100%;
+  height: auto;
 }
 </style>
 
