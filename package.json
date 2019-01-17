@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/dmtrbrl/vue-trend-chart/issues"
   },
-  "homepage": "https://github.com/dmtrbrl/vue-trend-chart#readme",
+  "homepage": "https://dmtrbrl.github.io/vue-trend-chart/",
   "peerDependencies": {
     "vue": "^2.5.22"
   },
