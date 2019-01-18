@@ -17,15 +17,6 @@ import { genPoints, genPath } from "../helpers/path";
 export default {
   name: "TrendChart",
   props: {
-    autoDraw: Boolean,
-    autoDrawDuration: {
-      default: 2000,
-      type: Number
-    },
-    autoDrawEasing: {
-      default: "ease",
-      type: String
-    },
     data: {
       required: true,
       type: Array
@@ -77,33 +68,6 @@ export default {
     },
     d() {
       return genPath(this.points, this.smooth ? this.radius : 0);
-    }
-  },
-  watch: {
-    data: {
-      immediate: true,
-      handler(val) {
-        this.$nextTick(() => {
-          if (this.$isServer || !this.$refs.path || !this.autoDraw) {
-            return;
-          }
-
-          const path = this.$refs.path;
-          const length = path.getTotalLength();
-
-          path.style.transition = "none";
-          path.style.strokeDasharray = length + " " + length;
-          path.style.strokeDashoffset = Math.abs(
-            length - (this.lastLength || 0)
-          );
-          path.getBoundingClientRect();
-          path.style.transition = `stroke-dashoffset ${
-            this.autoDrawDuration
-          }ms ${this.autoDrawEasing}`;
-          path.style.strokeDashoffset = 0;
-          this.lastLength = length;
-        });
-      }
     }
   }
 };

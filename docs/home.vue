@@ -4,13 +4,12 @@
     <div class="demo-subheading">Simple and elegant trend charts for Vue.js</div>
     <div class="demo-content">
       <trend-chart
-        :autoDraw="true"
         :data="[0,3,30,5,8,2,10]"
         :max="20"
         :smooth="true"
         stroke="#aaa"
-        stroke-dasharray="1"
-      >Hello Slot</trend-chart>
+        stroke-dasharray="0.7"
+      ></trend-chart>
     </div>
   </section>
 </template>

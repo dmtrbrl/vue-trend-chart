@@ -84,15 +84,6 @@ function genPath(points, radius) {
 var script = {
   name: "TrendChart",
   props: {
-    autoDraw: Boolean,
-    autoDrawDuration: {
-      default: 2000,
-      type: Number
-    },
-    autoDrawEasing: {
-      default: "ease",
-      type: String
-    },
     data: {
       required: true,
       type: Array
@@ -144,33 +135,6 @@ var script = {
     },
     d: function d() {
       return genPath(this.points, this.smooth ? this.radius : 0);
-    }
-  },
-  watch: {
-    data: {
-      immediate: true,
-      handler: function handler(val) {
-        var this$1 = this;
-
-        this.$nextTick(function () {
-          if (this$1.$isServer || !this$1.$refs.path || !this$1.autoDraw) {
-            return;
-          }
-
-          var path = this$1.$refs.path;
-          var length = path.getTotalLength();
-
-          path.style.transition = "none";
-          path.style.strokeDasharray = length + " " + length;
-          path.style.strokeDashoffset = Math.abs(
-            length - (this$1.lastLength || 0)
-          );
-          path.getBoundingClientRect();
-          path.style.transition = "stroke-dashoffset " + (this$1.autoDrawDuration) + "ms " + (this$1.autoDrawEasing);
-          path.style.strokeDashoffset = 0;
-          this$1.lastLength = length;
-        });
-      }
     }
   }
 };
