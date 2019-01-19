@@ -1,12 +1,18 @@
 <template>
   <svg :viewBox="`0 0 ${width} ${height}`" xmlns="http://www.w3.org/2000/svg">
-    <trend-chart-curve v-for="(dataset, i) in datasets" :key="i" v-bind="dataset"></trend-chart-curve>
+    <trend-chart-curve
+      v-for="(dataset, i) in datasets"
+      :key="i"
+      :max="params.maxValue"
+      :min="params.minValue"
+      :maxAmount="params.maxAmount"
+      v-bind="dataset"
+    ></trend-chart-curve>
   </svg>
 </template>
 
 <script>
 import TrendChartCurve from "./trend-chart-curve.vue";
-import { log } from "util";
 
 export default {
   name: "TrendChart",
@@ -36,21 +42,26 @@ export default {
     }
   },
   computed: {
-    maxDataValue() {
+    params() {
       let maxValue = -Infinity;
-      this.datasets.forEach(dataset => {
-        let max = Math.max(...dataset.data);
-        if (max > maxValue) maxValue = max;
-      });
-      return maxValue;
-    },
-    minDataValue() {
       let minValue = Infinity;
+      let maxAmount = 0;
       this.datasets.forEach(dataset => {
-        let min = Math.min(...dataset.data);
+        let dataArr = dataset.data.map(item =>
+          typeof item === "number" ? item : item.value
+        );
+
+        let max = Math.max(...dataArr);
+        if (max > maxValue) maxValue = max;
+
+        let min = Math.min(...dataArr);
         if (min < minValue) minValue = min;
+
+        if (dataArr.length > maxAmount) maxAmount = dataArr.length;
       });
-      return minValue;
+      if (this.max !== undefined && this.max > maxValue) maxValue = this.max;
+      if (this.min !== undefined && this.min < minValue) minValue = this.min;
+      return { maxValue, minValue, maxAmount };
     }
   }
 };

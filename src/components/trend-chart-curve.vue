@@ -1,11 +1,12 @@
 <template>
   <g>
-    <path v-if="d" :d="d" fill="none" :stroke="stroke" :stroke-dasharray="strokeDasharray"></path>
+    <path v-if="d" :d="d" fill="none" :stroke="stroke" :stroke-width="strokeWidth"></path>
   </g>
 </template>
 
 <script>
-import { genPoints, genPath } from "../helpers/path";
+import genPoints from "../helpers/genPoints";
+import genPath from "../helpers/genPath";
 
 export default {
   name: "trend-chart-curve",
@@ -14,28 +15,32 @@ export default {
       required: true,
       type: Array
     },
-    radius: {
-      default: 15,
-      type: Number
+    smooth: {
+      default: false,
+      type: Boolean
     },
-    smooth: Boolean,
     stroke: {
       default: "black",
       type: String
     },
-    strokeDasharray: {
-      type: String
+    strokeWidth: {
+      default: 1,
+      type: Number
+    },
+    max: {
+      required: true,
+      type: Number
+    },
+    min: {
+      required: true,
+      type: Number
+    },
+    maxAmount: {
+      required: true,
+      type: Number
     }
   },
   computed: {
-    max() {
-      const { max, maxDataValue } = this.$parent;
-      return max || maxDataValue || -Infinity;
-    },
-    min() {
-      const { min, minDataValue } = this.$parent;
-      return min || minDataValue || Infinity;
-    },
     boundary() {
       const { width, height, padding } = this.$parent;
       return {
@@ -46,10 +51,16 @@ export default {
       };
     },
     points() {
-      return genPoints(this.data, this.boundary, this.max, this.min);
+      return genPoints(
+        this.data,
+        this.boundary,
+        this.max,
+        this.min,
+        this.maxAmount
+      );
     },
     d() {
-      return genPath(this.points, this.smooth ? this.radius : 0);
+      return genPath(this.points, this.smooth);
     }
   }
 };
