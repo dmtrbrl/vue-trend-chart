@@ -1,7 +1,7 @@
 {
   "name": "vue-trend-chart",
   "productName": "Vue Trend Chart",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Trend charts for Vue.js",
   "main": "dist/vue-trend-chart.common.js",
   "module": "dist/vue-trend-chart.esm.js",
