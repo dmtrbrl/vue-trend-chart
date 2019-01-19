@@ -1,7 +1,8 @@
 import Home from "./home.vue";
 import Vue from "vue";
 
+Vue.config.productionTip = false;
+
 new Vue({
-  el: "#app",
-  ...Home
-});
+  render: h => h(Home)
+}).$mount("#app");
