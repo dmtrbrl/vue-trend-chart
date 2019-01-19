@@ -1,44 +1,19 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('util')) :
-  typeof define === 'function' && define.amd ? define(['util'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global['vue-trend-chart'] = factory());
 }(this, function () { 'use strict';
 
-  function int(value) {
-    return parseInt(value, 10);
-  }
-
-  function checkCollinear(p0, p1, p2) {
-    return (
-      int(p0.x + p2.x) === int(2 * p1.x) && int(p0.y + p2.y) === int(2 * p1.y)
-    );
-  }
-
-  function getDistance(p1, p2) {
-    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-  }
-
-  function moveTo(to, from, radius) {
-    var vector = { x: to.x - from.x, y: to.y - from.y };
-    var length = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-    var unitVector = { x: vector.x / length, y: vector.y / length };
-
-    return {
-      x: from.x + unitVector.x * radius,
-      y: from.y + unitVector.y * radius
-    };
-  }
-
-  function genPoints(arr, ref, max, min) {
+  function genPoints (arr, ref, max, min, maxAmount) {
     var minX = ref.minX;
     var minY = ref.minY;
     var maxX = ref.maxX;
     var maxY = ref.maxY;
 
     arr = arr.map(function (item) { return (typeof item === "number" ? item : item.value); });
-    var minValue = Math.min.apply(Math, arr.concat( [min] )) - 0.001;
-    var gridX = (maxX - minX) / (arr.length - 1);
-    var gridY = (maxY - minY) / (Math.max.apply(Math, arr.concat( [max] )) + 0.001 - minValue);
+    var minValue = min - 0.001;
+    var gridX = (maxX - minX) / (maxAmount - 1);
+    var gridY = (maxY - minY) / (max + 0.001 - minValue);
 
     return arr.map(function (value, index) {
       return {
@@ -46,40 +21,31 @@
         y:
           maxY -
           (value - minValue) * gridY +
-          +(index === arr.length - 1) * 0.00001 -
+          +(index === maxAmount - 1) * 0.00001 -
           +(index === 0) * 0.00001
       };
     });
   }
 
-  function genPath(points, radius) {
+  function genPath (points, smooth) {
     var start = points.shift();
 
     return (
-      "M" + (start.x) + " " + (start.y) +
-      points
-        .map(function (point, index) {
-          var next = points[index + 1];
-          var prev = points[index - 1] || start;
-          var isCollinear = next && checkCollinear(next, point, prev);
+      "M " + (start.x) + "," + (start.y) +
+      points.map(function (point, index) {
+        if (!smooth) { return (" L" + (point.x) + "," + (point.y)); }
 
-          if (!next || isCollinear) {
-            return ("L" + (point.x) + " " + (point.y));
-          }
-
-          var threshold = Math.min(
-            getDistance(prev, point),
-            getDistance(next, point)
-          );
-          var isTooCloseForRadius = threshold / 2 < radius;
-          var radiusForPoint = isTooCloseForRadius ? threshold / 2 : radius;
-
-          var before = moveTo(prev, point, radiusForPoint);
-          var after = moveTo(next, point, radiusForPoint);
-
-          return ("L" + (before.x) + " " + (before.y) + "S" + (point.x) + " " + (point.y) + " " + (after.x) + " " + (after.y));
-        })
-        .join("")
+        var next = points[index + 1];
+        var prev = points[index - 1] || start;
+        var distance = (points[0].x - start.x) / 2;
+        if (index == 0) {
+          return (" C " + (prev.x) + "," + (prev.y) + " " + (distance + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
+        } else if (next) {
+          return (" C " + (distance + prev.x) + "," + (prev.y) + " " + (distance + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
+        } else {
+          return (" C " + (distance + prev.x) + "," + (prev.y) + " " + (point.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
+        }
+      })
     );
   }
 
@@ -92,32 +58,32 @@
         required: true,
         type: Array
       },
-      radius: {
-        default: 15,
-        type: Number
+      smooth: {
+        default: false,
+        type: Boolean
       },
-      smooth: Boolean,
       stroke: {
         default: "black",
         type: String
       },
-      strokeDasharray: {
-        type: String
+      strokeWidth: {
+        default: 1,
+        type: Number
+      },
+      max: {
+        required: true,
+        type: Number
+      },
+      min: {
+        required: true,
+        type: Number
+      },
+      maxAmount: {
+        required: true,
+        type: Number
       }
     },
     computed: {
-      max: function max() {
-        var ref = this.$parent;
-        var max = ref.max;
-        var maxDataValue = ref.maxDataValue;
-        return max || maxDataValue || -Infinity;
-      },
-      min: function min() {
-        var ref = this.$parent;
-        var min = ref.min;
-        var minDataValue = ref.minDataValue;
-        return min || minDataValue || Infinity;
-      },
       boundary: function boundary() {
         var ref = this.$parent;
         var width = ref.width;
@@ -131,10 +97,16 @@
         };
       },
       points: function points() {
-        return genPoints(this.data, this.boundary, this.max, this.min);
+        return genPoints(
+          this.data,
+          this.boundary,
+          this.max,
+          this.min,
+          this.maxAmount
+        );
       },
       d: function d() {
-        return genPath(this.points, this.smooth ? this.radius : 0);
+        return genPath(this.points, this.smooth);
       }
     }
   };
@@ -231,7 +203,7 @@
               d: _vm.d,
               fill: "none",
               stroke: _vm.stroke,
-              "stroke-dasharray": _vm.strokeDasharray
+              "stroke-width": _vm.strokeWidth
             }
           })
         : _vm._e()
@@ -295,21 +267,25 @@
       }
     },
     computed: {
-      maxDataValue: function maxDataValue() {
+      params: function params() {
         var maxValue = -Infinity;
-        this.datasets.forEach(function (dataset) {
-          var max = Math.max.apply(Math, dataset.data);
-          if (max > maxValue) { maxValue = max; }
-        });
-        return maxValue;
-      },
-      minDataValue: function minDataValue() {
         var minValue = Infinity;
+        var maxAmount = 0;
         this.datasets.forEach(function (dataset) {
-          var min = Math.min.apply(Math, dataset.data);
+          var dataArr = dataset.data.map(function (item) { return typeof item === "number" ? item : item.value; }
+          );
+
+          var max = Math.max.apply(Math, dataArr);
+          if (max > maxValue) { maxValue = max; }
+
+          var min = Math.min.apply(Math, dataArr);
           if (min < minValue) { minValue = min; }
+
+          if (dataArr.length > maxAmount) { maxAmount = dataArr.length; }
         });
-        return minValue;
+        if (this.max !== undefined && this.max > maxValue) { maxValue = this.max; }
+        if (this.min !== undefined && this.min < minValue) { minValue = this.min; }
+        return { maxValue: maxValue, minValue: minValue, maxAmount: maxAmount };
       }
     }
   };
@@ -335,7 +311,19 @@
       _vm._l(_vm.datasets, function(dataset, i) {
         return _c(
           "trend-chart-curve",
-          _vm._b({ key: i }, "trend-chart-curve", dataset, false)
+          _vm._b(
+            {
+              key: i,
+              attrs: {
+                max: _vm.params.maxValue,
+                min: _vm.params.minValue,
+                maxAmount: _vm.params.maxAmount
+              }
+            },
+            "trend-chart-curve",
+            dataset,
+            false
+          )
         )
       }),
       1
