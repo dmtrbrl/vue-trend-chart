@@ -1,23 +1,18 @@
 <template>
   <svg :viewBox="`0 0 ${width} ${height}`" xmlns="http://www.w3.org/2000/svg">
-    <path
-      v-if="d"
-      :d="d"
-      fill="none"
-      :stroke="stroke"
-      :stroke-dasharray="strokeDashArray"
-      ref="path"
-    ></path>
+    <trend-chart-curve v-for="(dataset, i) in datasets" :key="i" v-bind="dataset"></trend-chart-curve>
   </svg>
 </template>
 
 <script>
-import { genPoints, genPath } from "../helpers/path";
+import TrendChartCurve from "./trend-chart-curve.vue";
+import { log } from "util";
 
 export default {
   name: "TrendChart",
+  components: { TrendChartCurve },
   props: {
-    data: {
+    datasets: {
       required: true,
       type: Array
     },
@@ -30,44 +25,32 @@ export default {
       type: Number
     },
     max: {
-      default: -Infinity,
       type: Number
     },
     min: {
-      default: Infinity,
       type: Number
     },
     padding: {
       default: 10,
       type: Number
-    },
-    radius: {
-      default: 15,
-      type: Number
-    },
-    smooth: Boolean,
-    stroke: {
-      default: "black",
-      type: String
-    },
-    strokeDashArray: {
-      type: String
     }
   },
   computed: {
-    boundary() {
-      return {
-        minX: this.padding,
-        minY: this.padding,
-        maxX: this.width - this.padding,
-        maxY: this.height - this.padding
-      };
+    maxDataValue() {
+      let maxValue = -Infinity;
+      this.datasets.forEach(dataset => {
+        let max = Math.max(...dataset.data);
+        if (max > maxValue) maxValue = max;
+      });
+      return maxValue;
     },
-    points() {
-      return genPoints(this.data, this.boundary, this.max, this.min);
-    },
-    d() {
-      return genPath(this.points, this.smooth ? this.radius : 0);
+    minDataValue() {
+      let minValue = Infinity;
+      this.datasets.forEach(dataset => {
+        let min = Math.min(...dataset.data);
+        if (min < minValue) minValue = min;
+      });
+      return minValue;
     }
   }
 };
