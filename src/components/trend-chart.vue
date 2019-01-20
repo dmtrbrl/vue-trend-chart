@@ -13,6 +13,7 @@
       :maxAmount="params.maxAmount"
       v-bind="dataset"
       stroke-dasharray="none"
+      class="trend-chart-curve"
     ></trend-chart-curve>
   </svg>
 </template>

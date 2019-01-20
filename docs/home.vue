@@ -5,8 +5,8 @@
     <div class="docs-content">
       <trend-chart
         :datasets="datasets"
-        :height="150"
-        :width="400"
+        :height="200"
+        :width="500"
         :min="0"
         :padding="5"
         stroke-dasharray="2"
@@ -24,34 +24,30 @@ export default {
     return {
       datasets: [
         {
-          data: [
-            { value: 150 },
-            { value: 300 },
-            { value: 350 },
-            { value: 100 },
-            { value: 350 },
-            { value: 100 },
-            { value: 15 }
-          ],
+          data: [150, 300, 350, 100, 350, 100, 15],
           smooth: true,
           strokeGradient: ["#a8edea", "#fed6e3"],
-          strokeWidth: 3,
-          fill: true,
-          fillColor: "#fed6e3",
-          fillOpacity: 0.2
+          strokeWidth: 2
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
           strokeGradient: ["#fccb90", "#d57eeb"],
-          strokeGradientDirection: "to right",
           strokeWidth: 2
         },
         {
           data: [70, 100, 400, 180, 100, 300, 500],
           smooth: true,
-          strokeGradient: ["#84fab0", "#8fd3f4"],
-          strokeWidth: 2
+          strokeColor: "#a6c0fe",
+          strokeWidth: 2,
+          fill: true,
+          fillColor: "#fed6e3",
+          fillOpacity: 0.2,
+          showPoints: true,
+          pointsFill: "#ffffff",
+          pointsStrokeWidth: 2,
+          pointsStrokeColor: "#a6c0fe",
+          pointsRadius: 3
         }
       ]
     };

@@ -5,6 +5,7 @@
       :d="paths.fillPath"
       :fill="fillGradient ? `url(#${fillGradientId})` : fillColor"
       :opacity="fillOpacity"
+      class="trend-chart-fill"
     ></path>
     <path
       v-if="stroke && paths && paths.linePath"
@@ -13,7 +14,21 @@
       :stroke="strokeGradient ? `url(#${strokeGradientId})` : strokeColor"
       :stroke-width="strokeWidth"
       :opacity="strokeOpacity"
+      class="trend-chart-stroke"
     ></path>
+    <g class="trend-chart-points" v-if="showPoints">
+      <circle
+        v-for="(point, i) in points"
+        :key="i"
+        class="trend-chart-point"
+        :cx="point.x"
+        :cy="point.y"
+        :r="pointsRadius"
+        :fill="pointsFill"
+        :stroke="pointsStrokeColor"
+        :stroke-width="pointsStrokeWidth"
+      ></circle>
+    </g>
     <defs v-if="strokeGradient || fillGradient">
       <linearGradient
         v-if="strokeGradient"
@@ -99,6 +114,24 @@ export default {
     fillOpacity: {
       default: 1,
       type: Number
+    },
+    showPoints: {
+      default: false,
+      type: Boolean
+    },
+    pointsRadius: {
+      default: 2,
+      type: Number
+    },
+    pointsFill: {
+      default: "black",
+      type: String
+    },
+    pointsStrokeWidth: {
+      type: Number
+    },
+    pointsStrokeColor: {
+      type: String
     },
     max: {
       required: true,
