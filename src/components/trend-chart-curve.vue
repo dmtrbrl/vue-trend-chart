@@ -1,6 +1,22 @@
 <template>
   <g>
-    <path v-if="d" :d="d" fill="none" :stroke="stroke" :stroke-width="strokeWidth"></path>
+    <path
+      v-if="d"
+      :d="d"
+      fill="none"
+      :stroke="strokeGradient ? `url(#${strokeGradientId})` : strokeColor"
+      :stroke-width="strokeWidth"
+    ></path>
+    <defs v-if="strokeGradient">
+      <linearGradient :id="strokeGradientId" v-bind="getGradientDirection(strokeGradientDirection)">
+        <stop
+          v-for="(color, i) in strokeGradient"
+          :key="i"
+          :offset="i / strokeGradient.length"
+          :stop-color="color"
+        ></stop>
+      </linearGradient>
+    </defs>
   </g>
 </template>
 
@@ -19,9 +35,16 @@ export default {
       default: false,
       type: Boolean
     },
-    stroke: {
+    strokeColor: {
       default: "black",
       type: String
+    },
+    strokeGradient: {
+      type: Array
+    },
+    strokeGradientDirection: {
+      type: String,
+      default: "to top"
     },
     strokeWidth: {
       default: 1,
@@ -61,6 +84,27 @@ export default {
     },
     d() {
       return genPath(this.points, this.smooth);
+    },
+    strokeGradientId() {
+      return `vueTrendStrokeGradient${this._uid}`;
+    }
+  },
+  methods: {
+    getGradientDirection(ref) {
+      switch (ref) {
+        case "to left":
+          return { x1: 0, y1: 0, x2: 1, y2: 0 };
+          break;
+        case "to bottom":
+          return { x1: 0, y1: 0, x2: 0, y2: 1 };
+          break;
+        case "to right":
+          return { x1: 1, y1: 0, x2: 0, y2: 0 };
+          break;
+        default:
+          return { x1: 0, y1: 1, x2: 0, y2: 0 };
+          break;
+      }
     }
   }
 };

@@ -18,28 +18,30 @@ export default {
       datasets: [
         {
           data: [
-            { value: -50 },
-            { value: -300 },
-            { value: -30 },
-            { value: 0 },
-            { value: 20 },
-            { value: -200 },
-            { value: -15 }
+            { value: 150 },
+            { value: 300 },
+            { value: 350 },
+            { value: 100 },
+            { value: 350 },
+            { value: 100 },
+            { value: 15 }
           ],
           smooth: true,
-          stroke: "#6a2c70",
+          strokeGradient: ["#a8edea", "#fed6e3"],
+          strokeGradientDirection: "to left",
           strokeWidth: 2
         },
         {
-          data: [100, 30, 200, 150, 20, 420, 500],
+          data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
-          stroke: "#b83b5e",
+          strokeGradient: ["#fccb90", "#d57eeb"],
+          strokeGradientDirection: "to right",
           strokeWidth: 2
         },
         {
-          data: [20, 100, 400, 180, 20, 300, 500],
+          data: [70, 100, 400, 180, 100, 300, 500],
           smooth: true,
-          stroke: "#f08a5d",
+          strokeGradient: ["#84fab0", "#8fd3f4"],
           strokeWidth: 2
         }
       ]
