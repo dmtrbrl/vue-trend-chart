@@ -27,11 +27,15 @@
     });
   }
 
-  function genPath (pnts, smooth) {
+  function genPath (pnts, smooth, ref, strokeWidth) {
+    var maxY = ref.maxY;
+
     var points = [].concat( pnts );
     var start = points.shift();
+    var end = points[points.length - 1];
 
-    return (
+    // Create Line Path
+    var linePath =
       "M " + (start.x) + "," + (start.y) +
       points.map(function (point, index) {
         if (!smooth) { return (" L" + (point.x) + "," + (point.y)); }
@@ -39,9 +43,17 @@
         var prev = points[index - 1] || start;
         var distance = points[0].x - start.x;
         var bezierX = distance / 2;
+
         return (" C " + (bezierX + prev.x) + "," + (prev.y) + " " + (bezierX + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
-      })
-    );
+      });
+
+    // Create Fill Path
+    var fillPath = linePath;
+    if (end.Y !== maxY) { fillPath += " L" + (end.x) + "," + (maxY + strokeWidth / 2); }
+    if (start.Y !== maxY) { fillPath += " L" + (start.x) + "," + (maxY + strokeWidth / 2); }
+    fillPath += " Z";
+
+    return { linePath: linePath, fillPath: fillPath };
   }
 
   //
@@ -57,6 +69,14 @@
         default: false,
         type: Boolean
       },
+      stroke: {
+        default: true,
+        type: Boolean
+      },
+      strokeWidth: {
+        default: 1,
+        type: Number
+      },
       strokeColor: {
         default: "black",
         type: String
@@ -68,7 +88,26 @@
         type: String,
         default: "to top"
       },
-      strokeWidth: {
+      strokeOpacity: {
+        default: 1,
+        type: Number
+      },
+      fill: {
+        default: false,
+        type: Boolean
+      },
+      fillColor: {
+        default: "black",
+        type: String
+      },
+      fillGradient: {
+        type: Array
+      },
+      fillGradientDirection: {
+        type: String,
+        default: "to top"
+      },
+      fillOpacity: {
         default: 1,
         type: Number
       },
@@ -107,11 +146,14 @@
           this.maxAmount
         );
       },
-      d: function d() {
-        return genPath(this.points, this.smooth);
+      paths: function paths() {
+        return genPath(this.points, this.smooth, this.boundary, this.strokeWidth);
       },
       strokeGradientId: function strokeGradientId() {
         return ("vueTrendStrokeGradient" + (this._uid));
+      },
+      fillGradientId: function fillGradientId() {
+        return ("vueTrendFillGradient" + (this._uid));
       }
     },
     methods: {
@@ -220,42 +262,79 @@
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
     return _c("g", [
-      _vm.d
+      _vm.fill && _vm.paths && _vm.paths.fillPath
         ? _c("path", {
             attrs: {
-              d: _vm.d,
-              fill: "none",
-              stroke: _vm.strokeGradient
-                ? "url(#" + _vm.strokeGradientId + ")"
-                : _vm.strokeColor,
-              "stroke-width": _vm.strokeWidth
+              d: _vm.paths.fillPath,
+              fill: _vm.fillGradient
+                ? "url(#" + _vm.fillGradientId + ")"
+                : _vm.fillColor,
+              opacity: _vm.fillOpacity
             }
           })
         : _vm._e(),
       _vm._v(" "),
-      _vm.strokeGradient
+      _vm.stroke && _vm.paths && _vm.paths.linePath
+        ? _c("path", {
+            attrs: {
+              d: _vm.paths.linePath,
+              fill: "none",
+              stroke: _vm.strokeGradient
+                ? "url(#" + _vm.strokeGradientId + ")"
+                : _vm.strokeColor,
+              "stroke-width": _vm.strokeWidth,
+              opacity: _vm.strokeOpacity
+            }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.strokeGradient || _vm.fillGradient
         ? _c(
             "defs",
             [
-              _c(
-                "linearGradient",
-                _vm._b(
-                  { attrs: { id: _vm.strokeGradientId } },
-                  "linearGradient",
-                  _vm.getGradientDirection(_vm.strokeGradientDirection),
-                  false
-                ),
-                _vm._l(_vm.strokeGradient, function(color, i) {
-                  return _c("stop", {
-                    key: i,
-                    attrs: {
-                      offset: i / _vm.strokeGradient.length,
-                      "stop-color": color
-                    }
-                  })
-                }),
-                1
-              )
+              _vm.strokeGradient
+                ? _c(
+                    "linearGradient",
+                    _vm._b(
+                      { attrs: { id: _vm.strokeGradientId } },
+                      "linearGradient",
+                      _vm.getGradientDirection(_vm.strokeGradientDirection),
+                      false
+                    ),
+                    _vm._l(_vm.strokeGradient, function(color, i) {
+                      return _c("stop", {
+                        key: i,
+                        attrs: {
+                          offset: i / _vm.strokeGradient.length,
+                          "stop-color": color
+                        }
+                      })
+                    }),
+                    1
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.fillGradient
+                ? _c(
+                    "linearGradient",
+                    _vm._b(
+                      { attrs: { id: _vm.fillGradientId } },
+                      "linearGradient",
+                      _vm.getGradientDirection(_vm.fillGradientDirection),
+                      false
+                    ),
+                    _vm._l(_vm.fillGradient, function(color, i) {
+                      return _c("stop", {
+                        key: i,
+                        attrs: {
+                          offset: i / _vm.fillGradient.length,
+                          "stop-color": color
+                        }
+                      })
+                    }),
+                    1
+                  )
+                : _vm._e()
             ],
             1
           )
@@ -372,7 +451,8 @@
               attrs: {
                 max: _vm.params.maxValue,
                 min: _vm.params.minValue,
-                maxAmount: _vm.params.maxAmount
+                maxAmount: _vm.params.maxAmount,
+                "stroke-dasharray": "none"
               }
             },
             "trend-chart-curve",
