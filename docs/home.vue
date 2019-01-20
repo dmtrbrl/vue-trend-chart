@@ -3,7 +3,14 @@
     <h1 class="docs-heading heading">Vue Trend Chart</h1>
     <div class="docs-subheading">Simple and elegant trend charts for Vue.js</div>
     <div class="docs-content">
-      <trend-chart :datasets="datasets" :height="150" :width="400"></trend-chart>
+      <trend-chart
+        :datasets="datasets"
+        :height="150"
+        :width="400"
+        :min="0"
+        :padding="5"
+        stroke-dasharray="2"
+      ></trend-chart>
     </div>
   </section>
 </template>
@@ -28,8 +35,10 @@ export default {
           ],
           smooth: true,
           strokeGradient: ["#a8edea", "#fed6e3"],
-          strokeGradientDirection: "to left",
-          strokeWidth: 2
+          strokeWidth: 3,
+          fill: true,
+          fillColor: "#fed6e3",
+          fillOpacity: 0.2
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],

@@ -1,18 +1,41 @@
 <template>
   <g>
     <path
-      v-if="d"
-      :d="d"
+      v-if="fill && paths && paths.fillPath"
+      :d="paths.fillPath"
+      :fill="fillGradient ? `url(#${fillGradientId})` : fillColor"
+      :opacity="fillOpacity"
+    ></path>
+    <path
+      v-if="stroke && paths && paths.linePath"
+      :d="paths.linePath"
       fill="none"
       :stroke="strokeGradient ? `url(#${strokeGradientId})` : strokeColor"
       :stroke-width="strokeWidth"
+      :opacity="strokeOpacity"
     ></path>
-    <defs v-if="strokeGradient">
-      <linearGradient :id="strokeGradientId" v-bind="getGradientDirection(strokeGradientDirection)">
+    <defs v-if="strokeGradient || fillGradient">
+      <linearGradient
+        v-if="strokeGradient"
+        :id="strokeGradientId"
+        v-bind="getGradientDirection(strokeGradientDirection)"
+      >
         <stop
           v-for="(color, i) in strokeGradient"
           :key="i"
           :offset="i / strokeGradient.length"
+          :stop-color="color"
+        ></stop>
+      </linearGradient>
+      <linearGradient
+        v-if="fillGradient"
+        :id="fillGradientId"
+        v-bind="getGradientDirection(fillGradientDirection)"
+      >
+        <stop
+          v-for="(color, i) in fillGradient"
+          :key="i"
+          :offset="i / fillGradient.length"
           :stop-color="color"
         ></stop>
       </linearGradient>
@@ -35,6 +58,14 @@ export default {
       default: false,
       type: Boolean
     },
+    stroke: {
+      default: true,
+      type: Boolean
+    },
+    strokeWidth: {
+      default: 1,
+      type: Number
+    },
     strokeColor: {
       default: "black",
       type: String
@@ -46,7 +77,26 @@ export default {
       type: String,
       default: "to top"
     },
-    strokeWidth: {
+    strokeOpacity: {
+      default: 1,
+      type: Number
+    },
+    fill: {
+      default: false,
+      type: Boolean
+    },
+    fillColor: {
+      default: "black",
+      type: String
+    },
+    fillGradient: {
+      type: Array
+    },
+    fillGradientDirection: {
+      type: String,
+      default: "to top"
+    },
+    fillOpacity: {
       default: 1,
       type: Number
     },
@@ -82,11 +132,14 @@ export default {
         this.maxAmount
       );
     },
-    d() {
-      return genPath(this.points, this.smooth);
+    paths() {
+      return genPath(this.points, this.smooth, this.boundary, this.strokeWidth);
     },
     strokeGradientId() {
       return `vueTrendStrokeGradient${this._uid}`;
+    },
+    fillGradientId() {
+      return `vueTrendFillGradient${this._uid}`;
     }
   },
   methods: {

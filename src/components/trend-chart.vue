@@ -12,6 +12,7 @@
       :min="params.minValue"
       :maxAmount="params.maxAmount"
       v-bind="dataset"
+      stroke-dasharray="none"
     ></trend-chart-curve>
   </svg>
 </template>
