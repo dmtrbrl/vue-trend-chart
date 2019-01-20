@@ -27,7 +27,8 @@
     });
   }
 
-  function genPath (points, smooth) {
+  function genPath (pnts, smooth) {
+    var points = [].concat( pnts );
     var start = points.shift();
 
     return (
@@ -35,16 +36,10 @@
       points.map(function (point, index) {
         if (!smooth) { return (" L" + (point.x) + "," + (point.y)); }
 
-        var next = points[index + 1];
         var prev = points[index - 1] || start;
-        var distance = (points[0].x - start.x) / 2;
-        if (index == 0) {
-          return (" C " + (prev.x) + "," + (prev.y) + " " + (distance + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
-        } else if (next) {
-          return (" C " + (distance + prev.x) + "," + (prev.y) + " " + (distance + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
-        } else {
-          return (" C " + (distance + prev.x) + "," + (prev.y) + " " + (point.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
-        }
+        var distance = points[0].x - start.x;
+        var bezierX = distance / 2;
+        return (" C " + (bezierX + prev.x) + "," + (prev.y) + " " + (bezierX + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
       })
     );
   }
@@ -62,9 +57,16 @@
         default: false,
         type: Boolean
       },
-      stroke: {
+      strokeColor: {
         default: "black",
         type: String
+      },
+      strokeGradient: {
+        type: Array
+      },
+      strokeGradientDirection: {
+        type: String,
+        default: "to top"
       },
       strokeWidth: {
         default: 1,
@@ -107,6 +109,27 @@
       },
       d: function d() {
         return genPath(this.points, this.smooth);
+      },
+      strokeGradientId: function strokeGradientId() {
+        return ("vueTrendStrokeGradient" + (this._uid));
+      }
+    },
+    methods: {
+      getGradientDirection: function getGradientDirection(ref) {
+        switch (ref) {
+          case "to left":
+            return { x1: 0, y1: 0, x2: 1, y2: 0 };
+            break;
+          case "to bottom":
+            return { x1: 0, y1: 0, x2: 0, y2: 1 };
+            break;
+          case "to right":
+            return { x1: 1, y1: 0, x2: 0, y2: 0 };
+            break;
+          default:
+            return { x1: 0, y1: 1, x2: 0, y2: 0 };
+            break;
+        }
       }
     }
   };
@@ -202,10 +225,40 @@
             attrs: {
               d: _vm.d,
               fill: "none",
-              stroke: _vm.stroke,
+              stroke: _vm.strokeGradient
+                ? "url(#" + _vm.strokeGradientId + ")"
+                : _vm.strokeColor,
               "stroke-width": _vm.strokeWidth
             }
           })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.strokeGradient
+        ? _c(
+            "defs",
+            [
+              _c(
+                "linearGradient",
+                _vm._b(
+                  { attrs: { id: _vm.strokeGradientId } },
+                  "linearGradient",
+                  _vm.getGradientDirection(_vm.strokeGradientDirection),
+                  false
+                ),
+                _vm._l(_vm.strokeGradient, function(color, i) {
+                  return _c("stop", {
+                    key: i,
+                    attrs: {
+                      offset: i / _vm.strokeGradient.length,
+                      "stop-color": color
+                    }
+                  })
+                }),
+                1
+              )
+            ],
+            1
+          )
         : _vm._e()
     ])
   };
@@ -262,7 +315,7 @@
         type: Number
       },
       padding: {
-        default: 10,
+        default: 5,
         type: Number
       }
     },
@@ -305,6 +358,8 @@
       {
         attrs: {
           viewBox: "0 0 " + _vm.width + " " + _vm.height,
+          width: _vm.width,
+          height: _vm.height,
           xmlns: "http://www.w3.org/2000/svg"
         }
       },
