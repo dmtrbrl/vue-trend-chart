@@ -1,5 +1,10 @@
 <template>
-  <svg :viewBox="`0 0 ${width} ${height}`" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    :viewBox="`0 0 ${width} ${height}`"
+    :width="width"
+    :height="height"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <trend-chart-curve
       v-for="(dataset, i) in datasets"
       :key="i"
@@ -37,7 +42,7 @@ export default {
       type: Number
     },
     padding: {
-      default: 10,
+      default: 5,
       type: Number
     }
   },
