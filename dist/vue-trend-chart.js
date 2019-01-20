@@ -111,6 +111,24 @@
         default: 1,
         type: Number
       },
+      showPoints: {
+        default: false,
+        type: Boolean
+      },
+      pointsRadius: {
+        default: 2,
+        type: Number
+      },
+      pointsFill: {
+        default: "black",
+        type: String
+      },
+      pointsStrokeWidth: {
+        type: Number
+      },
+      pointsStrokeColor: {
+        type: String
+      },
       max: {
         required: true,
         type: Number
@@ -264,6 +282,7 @@
     return _c("g", [
       _vm.fill && _vm.paths && _vm.paths.fillPath
         ? _c("path", {
+            staticClass: "trend-chart-fill",
             attrs: {
               d: _vm.paths.fillPath,
               fill: _vm.fillGradient
@@ -276,6 +295,7 @@
       _vm._v(" "),
       _vm.stroke && _vm.paths && _vm.paths.linePath
         ? _c("path", {
+            staticClass: "trend-chart-stroke",
             attrs: {
               d: _vm.paths.linePath,
               fill: "none",
@@ -286,6 +306,28 @@
               opacity: _vm.strokeOpacity
             }
           })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showPoints
+        ? _c(
+            "g",
+            { staticClass: "trend-chart-points" },
+            _vm._l(_vm.points, function(point, i) {
+              return _c("circle", {
+                key: i,
+                staticClass: "trend-chart-point",
+                attrs: {
+                  cx: point.x,
+                  cy: point.y,
+                  r: _vm.pointsRadius,
+                  fill: _vm.pointsFill,
+                  stroke: _vm.pointsStrokeColor,
+                  "stroke-width": _vm.pointsStrokeWidth
+                }
+              })
+            }),
+            0
+          )
         : _vm._e(),
       _vm._v(" "),
       _vm.strokeGradient || _vm.fillGradient
@@ -448,6 +490,7 @@
           _vm._b(
             {
               key: i,
+              staticClass: "trend-chart-curve",
               attrs: {
                 max: _vm.params.maxValue,
                 min: _vm.params.minValue,
