@@ -148,12 +148,7 @@ export default {
       );
     },
     paths() {
-      return genPath(
-        this.points,
-        this.smooth,
-        this.$parent.boundary,
-        this.strokeWidth
-      );
+      return genPath(this.points, this.smooth, this.$parent.boundary);
     },
     strokeGradientId() {
       return `vueTrendStrokeGradient${this._uid}`;

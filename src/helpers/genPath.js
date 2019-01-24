@@ -1,4 +1,4 @@
-export default (pnts, smooth, { maxY }, strokeWidth) => {
+export default (pnts, smooth, { maxY }) => {
   const points = [...pnts];
   const start = points.shift();
   const end = points[points.length - 1];
