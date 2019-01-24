@@ -17,6 +17,9 @@
 </template>
 
 <script>
+import validatePadding from "../helpers/validatePadding";
+import getPadding from "../helpers/getPadding";
+
 import TrendChartGrid from "./trend-chart-grid.vue";
 import TrendChartCurve from "./trend-chart-curve.vue";
 
@@ -43,8 +46,11 @@ export default {
       type: Number
     },
     padding: {
-      default: 5,
-      type: Number
+      default: "5",
+      type: String,
+      validator(val) {
+        return validatePadding(val);
+      }
     },
     grid: {
       default: null,
@@ -52,13 +58,19 @@ export default {
     }
   },
   computed: {
+    paddingObject() {
+      return getPadding(this.padding);
+    },
+    gridPaddingObject() {
+      return getPadding(this.grid.padding || "0");
+    },
     boundary() {
-      const { width, height, padding } = this;
+      const { width, height, paddingObject, gridPaddingObject } = this;
       return {
-        minX: padding,
-        minY: padding,
-        maxX: width - padding,
-        maxY: height - padding
+        minX: paddingObject.left + gridPaddingObject.left,
+        minY: paddingObject.top + gridPaddingObject.top,
+        maxX: width - paddingObject.right - gridPaddingObject.right,
+        maxY: height - paddingObject.bottom - gridPaddingObject.bottom
       };
     },
     params() {

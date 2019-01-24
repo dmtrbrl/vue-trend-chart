@@ -19,9 +19,19 @@
   </g>
 </template>
 <script>
+import validatePadding from "../helpers/validatePadding";
+import getPadding from "../helpers/getPadding";
+
 export default {
   name: "trend-chart-grid",
   props: {
+    padding: {
+      default: "0",
+      type: String,
+      validator(val) {
+        return validatePadding(val);
+      }
+    },
     xAxes: {
       default: false,
       type: Boolean
@@ -67,33 +77,50 @@ export default {
     },
     boundary() {
       return this.$parent.boundary;
+    },
+    paddingObject() {
+      return this.$parent.gridPaddingObject;
     }
   },
   methods: {
     setXLineParams(n) {
-      const step =
-        (this.boundary.maxX - this.boundary.minX) / (this.xLines - 1);
-      const x = this.boundary.minX + step * (n - 1);
+      const {
+        boundary,
+        xLines,
+        paddingObject,
+        xAxesStrokeColor,
+        xAxesStrokeWidth,
+        xAxesStrokeDasharray
+      } = this;
+      const step = (boundary.maxX - boundary.minX) / (xLines - 1);
+      const x = boundary.minX + step * (n - 1);
       const x1 = x;
       const x2 = x;
-      const y1 = this.boundary.minY;
-      const y2 = this.boundary.maxY;
+      const y1 = boundary.minY - paddingObject.top;
+      const y2 = boundary.maxY + paddingObject.bottom;
       return {
         x1,
         x2,
         y1,
         y2,
-        stroke: this.xAxesStrokeColor,
-        "stroke-width": this.xAxesStrokeWidth,
-        "stroke-dasharray": this.xAxesStrokeDasharray
+        stroke: xAxesStrokeColor,
+        "stroke-width": xAxesStrokeWidth,
+        "stroke-dasharray": xAxesStrokeDasharray
       };
     },
     setYLineParams(n) {
-      const step =
-        (this.boundary.maxY - this.boundary.minY) / (this.yAxesLines - 1);
-      const y = this.boundary.minY + step * (n - 1);
-      const x1 = this.boundary.minX;
-      const x2 = this.boundary.maxX;
+      const {
+        boundary,
+        yAxesLines,
+        paddingObject,
+        yAxesStrokeColor,
+        yAxesStrokeWidth,
+        yAxesStrokeDasharray
+      } = this;
+      const step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
+      const y = boundary.minY + step * (n - 1);
+      const x1 = boundary.minX - paddingObject.left;
+      const x2 = boundary.maxX + paddingObject.right;
       const y1 = y;
       const y2 = y;
       return {
@@ -101,9 +128,9 @@ export default {
         x2,
         y1,
         y2,
-        stroke: this.yAxesStrokeColor,
-        "stroke-width": this.yAxesStrokeWidth,
-        "stroke-dasharray": this.yAxesStrokeDasharray
+        stroke: yAxesStrokeColor,
+        "stroke-width": yAxesStrokeWidth,
+        "stroke-dasharray": yAxesStrokeDasharray
       };
     }
   }
