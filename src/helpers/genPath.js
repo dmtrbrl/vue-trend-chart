@@ -13,9 +13,9 @@ export default (pnts, smooth, { maxY }, strokeWidth) => {
 
       const prev = points[index - 1] || start;
 
-      return ` C ${bezierX + prev.x},${prev.y} 
-                 ${bezierX + prev.x},${point.y} 
-                 ${point.x},${point.y}`;
+      return ` C ${bezierX + prev.x},${prev.y} ${bezierX + prev.x},${point.y} ${
+        point.x
+      },${point.y}`;
     });
 
   // Create Fill Path
