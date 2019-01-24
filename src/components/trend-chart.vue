@@ -8,9 +8,6 @@
     <trend-chart-curve
       v-for="(dataset, i) in datasets"
       :key="i"
-      :max="params.maxValue"
-      :min="params.minValue"
-      :maxAmount="params.maxAmount"
       v-bind="dataset"
       stroke-dasharray="none"
       class="trend-chart-curve"
@@ -49,6 +46,15 @@ export default {
     }
   },
   computed: {
+    boundary() {
+      const { width, height, padding } = this;
+      return {
+        minX: padding,
+        minY: padding,
+        maxX: width - padding,
+        maxY: height - padding
+      };
+    },
     params() {
       let maxValue = -Infinity;
       let minValue = Infinity;

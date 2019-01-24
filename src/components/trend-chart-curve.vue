@@ -132,41 +132,25 @@ export default {
     },
     pointsStrokeColor: {
       type: String
-    },
-    max: {
-      required: true,
-      type: Number
-    },
-    min: {
-      required: true,
-      type: Number
-    },
-    maxAmount: {
-      required: true,
-      type: Number
     }
   },
   computed: {
-    boundary() {
-      const { width, height, padding } = this.$parent;
-      return {
-        minX: padding,
-        minY: padding,
-        maxX: width - padding,
-        maxY: height - padding
-      };
-    },
     points() {
       return genPoints(
         this.data,
-        this.boundary,
-        this.max,
-        this.min,
-        this.maxAmount
+        this.$parent.boundary,
+        this.$parent.params.maxValue,
+        this.$parent.params.minValue,
+        this.$parent.params.maxAmount
       );
     },
     paths() {
-      return genPath(this.points, this.smooth, this.boundary, this.strokeWidth);
+      return genPath(
+        this.points,
+        this.smooth,
+        this.$parent.boundary,
+        this.strokeWidth
+      );
     },
     strokeGradientId() {
       return `vueTrendStrokeGradient${this._uid}`;
