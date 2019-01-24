@@ -1,5 +1,5 @@
 <template>
-  <g class="trend-chart-grid" v-if="xAxes || yAxes">
+  <g v-if="xAxes || yAxes">
     <g class="trend-chart-grid-x" v-if="xAxes && xLines > 0">
       <line
         class="trend-chart-grid-x-axis"
