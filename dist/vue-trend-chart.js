@@ -4,30 +4,48 @@
   (global = global || self, global['vue-trend-chart'] = factory());
 }(this, function () { 'use strict';
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
+  function validatePadding (padding) {
+    var arr = padding
+      .split(" ")
+      .filter(function (item) { return item !== ""; })
+      .map(function (item) { return parseInt(item); });
+    if (arr.length < 1 || arr.length > 4) { return false; }
+    return arr.every(function (item) { return typeof item == "number" && item >= 0; });
+  }
+
+  function getPadding (padding) {
+    var arr = padding
+      .split(" ")
+      .filter(function (item) { return item !== ""; })
+      .map(function (item) { return parseInt(item); });
+    switch (arr.length) {
+      case 4:
+        return { top: arr[0], right: arr[1], bottom: arr[2], left: arr[3] };
+        break;
+      case 3:
+        return { top: arr[0], right: arr[1], bottom: arr[2], left: arr[1] };
+        break;
+      case 2:
+        return { top: arr[0], right: arr[1], bottom: arr[0], left: arr[1] };
+        break;
+      default:
+        return { top: arr[0], right: arr[0], bottom: arr[0], left: arr[0] };
+        break;
+    }
+  }
+
   //
 
   var script = {
-    name: "trend-chart-grid",
+    name: "TrendChartGrid",
     props: {
+      padding: {
+        default: "0",
+        type: String,
+        validator: function validator(value) {
+          return validatePadding(value);
+        }
+      },
       xAxes: {
         default: false,
         type: Boolean
@@ -73,33 +91,48 @@
       },
       boundary: function boundary() {
         return this.$parent.boundary;
+      },
+      paddingObject: function paddingObject() {
+        return this.$parent.gridPaddingObject;
       }
     },
     methods: {
       setXLineParams: function setXLineParams(n) {
-        var step =
-          (this.boundary.maxX - this.boundary.minX) / (this.xLines - 1);
-        var x = this.boundary.minX + step * (n - 1);
+        var ref = this;
+        var boundary = ref.boundary;
+        var xLines = ref.xLines;
+        var paddingObject = ref.paddingObject;
+        var xAxesStrokeColor = ref.xAxesStrokeColor;
+        var xAxesStrokeWidth = ref.xAxesStrokeWidth;
+        var xAxesStrokeDasharray = ref.xAxesStrokeDasharray;
+        var step = (boundary.maxX - boundary.minX) / (xLines - 1);
+        var x = boundary.minX + step * (n - 1);
         var x1 = x;
         var x2 = x;
-        var y1 = this.boundary.minY;
-        var y2 = this.boundary.maxY;
+        var y1 = boundary.minY - paddingObject.top;
+        var y2 = boundary.maxY + paddingObject.bottom;
         return {
           x1: x1,
           x2: x2,
           y1: y1,
           y2: y2,
-          stroke: this.xAxesStrokeColor,
-          "stroke-width": this.xAxesStrokeWidth,
-          "stroke-dasharray": this.xAxesStrokeDasharray
+          stroke: xAxesStrokeColor,
+          "stroke-width": xAxesStrokeWidth,
+          "stroke-dasharray": xAxesStrokeDasharray
         };
       },
       setYLineParams: function setYLineParams(n) {
-        var step =
-          (this.boundary.maxY - this.boundary.minY) / (this.yAxesLines - 1);
-        var y = this.boundary.minY + step * (n - 1);
-        var x1 = this.boundary.minX;
-        var x2 = this.boundary.maxX;
+        var ref = this;
+        var boundary = ref.boundary;
+        var yAxesLines = ref.yAxesLines;
+        var paddingObject = ref.paddingObject;
+        var yAxesStrokeColor = ref.yAxesStrokeColor;
+        var yAxesStrokeWidth = ref.yAxesStrokeWidth;
+        var yAxesStrokeDasharray = ref.yAxesStrokeDasharray;
+        var step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
+        var y = boundary.minY + step * (n - 1);
+        var x1 = boundary.minX - paddingObject.left;
+        var x2 = boundary.maxX + paddingObject.right;
         var y1 = y;
         var y2 = y;
         return {
@@ -107,9 +140,9 @@
           x2: x2,
           y1: y1,
           y2: y2,
-          stroke: this.yAxesStrokeColor,
-          "stroke-width": this.yAxesStrokeWidth,
-          "stroke-dasharray": this.yAxesStrokeDasharray
+          stroke: yAxesStrokeColor,
+          "stroke-width": yAxesStrokeWidth,
+          "stroke-dasharray": yAxesStrokeDasharray
         };
       }
     }
@@ -201,7 +234,7 @@
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
     return _vm.xAxes || _vm.yAxes
-      ? _c("g", { staticClass: "trend-chart-grid" }, [
+      ? _c("g", [
           _vm.xAxes && _vm.xLines > 0
             ? _c(
                 "g",
@@ -270,6 +303,215 @@
       undefined
     );
 
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
+  var script$1 = {
+    name: "TrendChartLabels",
+    props: {
+      xLabels: {
+        type: Array
+      },
+      xLabelsPosition: {
+        default: "bottom",
+        type: String,
+        validator: function validator(value) {
+          return ["top", "bottom"].indexOf(value) !== -1;
+        }
+      },
+      xLabelsOffset: {
+        default: 10,
+        type: Number
+      },
+      yLabelsAmount: {
+        type: Number
+      },
+      yLabelsPosition: {
+        default: "left",
+        type: String,
+        validator: function validator(value) {
+          return ["left", "right"].indexOf(value) !== -1;
+        }
+      },
+      yLabelsOffset: {
+        default: 10,
+        type: Number
+      },
+      yLabelsTextFormatter: {
+        default: function (value) { return value; },
+        type: Function
+      }
+    },
+    computed: {
+      boundary: function boundary() {
+        return this.$parent.boundary;
+      }
+    },
+    methods: {
+      setXLabelsParams: function setXLabelsParams(n) {
+        var ref = this;
+        var boundary = ref.boundary;
+        var xLabels = ref.xLabels;
+        var xLabelsPosition = ref.xLabelsPosition;
+        var xLabelsOffset = ref.xLabelsOffset;
+        var step = (boundary.maxX - boundary.minX) / (xLabels.length - 1);
+        var x = boundary.minX + step * n;
+        var y =
+          xLabelsPosition == "bottom"
+            ? boundary.maxY + xLabelsOffset
+            : boundary.minY - xLabelsOffset;
+        return { x: x, y: y };
+      },
+      setYLabelsParams: function setYLabelsParams(n) {
+        var ref = this;
+        var boundary = ref.boundary;
+        var yLabelsAmount = ref.yLabelsAmount;
+        var yLabelsPosition = ref.yLabelsPosition;
+        var yLabelsOffset = ref.yLabelsOffset;
+        var step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
+        var x =
+          yLabelsPosition == "left"
+            ? boundary.minX - yLabelsOffset
+            : boundary.maxY + yLabelsOffset;
+        var y = boundary.maxY - step * n;
+        return { x: x, y: y };
+      }
+    }
+  };
+
+  /* script */
+  var __vue_script__$1 = script$1;
+  // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
+  script$1.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-labels.vue";
+
+  /* template */
+  var __vue_render__$1 = function() {
+    var _vm = this;
+    var _h = _vm.$createElement;
+    var _c = _vm._self._c || _h;
+    return _vm.xLabels && _vm.xLabels.length
+      ? _c("g", [
+          _vm.xLabels && _vm.xLabels.length
+            ? _c(
+                "g",
+                { staticClass: "trend-chart-labels-x" },
+                _vm._l(_vm.xLabels, function(label, i) {
+                  return _c(
+                    "text",
+                    _vm._b(
+                      {
+                        key: i,
+                        staticClass: "trend-chart-label-x",
+                        attrs: {
+                          "text-anchor": "middle",
+                          "alignment-baseline":
+                            _vm.xLabelsPosition == "bottom"
+                              ? "before-edge"
+                              : "after-edge"
+                        }
+                      },
+                      "text",
+                      _vm.setXLabelsParams(i),
+                      false
+                    ),
+                    [_vm._v(_vm._s(label))]
+                  )
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.yLabelsAmount && _vm.yLabelsAmount > 0
+            ? _c(
+                "g",
+                { staticClass: "trend-chart-labels-y" },
+                _vm._l(_vm.yLabelsAmount, function(n, i) {
+                  return _c(
+                    "text",
+                    _vm._b(
+                      {
+                        key: i,
+                        staticClass: "trend-chart-label-y",
+                        attrs: {
+                          "text-anchor":
+                            _vm.yLabelsPosition == "left" ? "end" : "start",
+                          "alignment-baseline": "middle"
+                        },
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.yLabelsTextFormatter(
+                              _vm.$parent.params.minValue +
+                                ((_vm.$parent.params.maxValue -
+                                  _vm.$parent.params.minValue) /
+                                  (_vm.yLabelsAmount - 1)) *
+                                  (n - 1)
+                            )
+                          )
+                        }
+                      },
+                      "text",
+                      _vm.setYLabelsParams(i),
+                      false
+                    )
+                  )
+                }),
+                0
+              )
+            : _vm._e()
+        ])
+      : _vm._e()
+  };
+  var __vue_staticRenderFns__$1 = [];
+  __vue_render__$1._withStripped = true;
+
+    /* style */
+    var __vue_inject_styles__$1 = undefined;
+    /* scoped */
+    var __vue_scope_id__$1 = undefined;
+    /* module identifier */
+    var __vue_module_identifier__$1 = undefined;
+    /* functional template */
+    var __vue_is_functional_template__$1 = false;
+    /* style inject */
+    
+    /* style inject SSR */
+    
+
+    
+    var TrendChartLabels = normalizeComponent(
+      { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
+      __vue_inject_styles__$1,
+      __vue_script__$1,
+      __vue_scope_id__$1,
+      __vue_is_functional_template__$1,
+      __vue_module_identifier__$1,
+      undefined,
+      undefined
+    );
+
   function genPoints (arr, ref, max, min, maxAmount) {
     var minX = ref.minX;
     var minY = ref.minY;
@@ -293,7 +535,7 @@
     });
   }
 
-  function genPath (pnts, smooth, ref, strokeWidth) {
+  function genPath (pnts, smooth, ref) {
     var maxY = ref.maxY;
 
     var points = [].concat( pnts );
@@ -310,7 +552,7 @@
 
         var prev = points[index - 1] || start;
 
-        return (" C " + (bezierX + prev.x) + "," + (prev.y) + " \n                 " + (bezierX + prev.x) + "," + (point.y) + " \n                 " + (point.x) + "," + (point.y));
+        return (" C " + (bezierX + prev.x) + "," + (prev.y) + " " + (bezierX + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
       });
 
     // Create Fill Path
@@ -324,8 +566,8 @@
 
   //
 
-  var script$1 = {
-    name: "trend-chart-curve",
+  var script$2 = {
+    name: "TrendChartCurve",
     props: {
       data: {
         required: true,
@@ -354,12 +596,17 @@
         type: Array
       },
       strokeGradientDirection: {
+        default: "to top",
         type: String,
-        default: "to top"
+        validator: function validator(value) {
+          return (
+            ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
+          );
+        }
       },
-      strokeOpacity: {
-        default: 1,
-        type: Number
+      strokeDasharray: {
+        default: "none",
+        type: String
       },
       fill: {
         default: false,
@@ -373,8 +620,13 @@
         type: Array
       },
       fillGradientDirection: {
+        default: "to top",
         type: String,
-        default: "to top"
+        validator: function validator(value) {
+          return (
+            ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
+          );
+        }
       },
       fillOpacity: {
         default: 1,
@@ -410,12 +662,7 @@
         );
       },
       paths: function paths() {
-        return genPath(
-          this.points,
-          this.smooth,
-          this.$parent.boundary,
-          this.strokeWidth
-        );
+        return genPath(this.points, this.smooth, this.$parent.boundary);
       },
       strokeGradientId: function strokeGradientId() {
         return ("vueTrendStrokeGradient" + (this._uid));
@@ -445,12 +692,12 @@
   };
 
   /* script */
-  var __vue_script__$1 = script$1;
+  var __vue_script__$2 = script$2;
   // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-  script$1.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-curve.vue";
+  script$2.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-curve.vue";
 
   /* template */
-  var __vue_render__$1 = function() {
+  var __vue_render__$2 = function() {
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
@@ -478,7 +725,7 @@
                 ? "url(#" + _vm.strokeGradientId + ")"
                 : _vm.strokeColor,
               "stroke-width": _vm.strokeWidth,
-              opacity: _vm.strokeOpacity
+              "stroke-dasharray": _vm.strokeDasharray
             }
           })
         : _vm._e(),
@@ -558,17 +805,17 @@
         : _vm._e()
     ])
   };
-  var __vue_staticRenderFns__$1 = [];
-  __vue_render__$1._withStripped = true;
+  var __vue_staticRenderFns__$2 = [];
+  __vue_render__$2._withStripped = true;
 
     /* style */
-    var __vue_inject_styles__$1 = undefined;
+    var __vue_inject_styles__$2 = undefined;
     /* scoped */
-    var __vue_scope_id__$1 = undefined;
+    var __vue_scope_id__$2 = undefined;
     /* module identifier */
-    var __vue_module_identifier__$1 = undefined;
+    var __vue_module_identifier__$2 = undefined;
     /* functional template */
-    var __vue_is_functional_template__$1 = false;
+    var __vue_is_functional_template__$2 = false;
     /* style inject */
     
     /* style inject SSR */
@@ -576,25 +823,33 @@
 
     
     var TrendChartCurve = normalizeComponent(
-      { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
-      __vue_inject_styles__$1,
-      __vue_script__$1,
-      __vue_scope_id__$1,
-      __vue_is_functional_template__$1,
-      __vue_module_identifier__$1,
+      { render: __vue_render__$2, staticRenderFns: __vue_staticRenderFns__$2 },
+      __vue_inject_styles__$2,
+      __vue_script__$2,
+      __vue_scope_id__$2,
+      __vue_is_functional_template__$2,
+      __vue_module_identifier__$2,
       undefined,
       undefined
     );
 
   //
 
-  var script$2 = {
+  var script$3 = {
     name: "TrendChart",
-    components: { TrendChartGrid: TrendChartGrid, TrendChartCurve: TrendChartCurve },
+    components: { TrendChartGrid: TrendChartGrid, TrendChartLabels: TrendChartLabels, TrendChartCurve: TrendChartCurve },
     props: {
       datasets: {
         required: true,
         type: Array
+      },
+      grid: {
+        default: null,
+        type: Object
+      },
+      labels: {
+        default: null,
+        type: Object
       },
       width: {
         default: 300,
@@ -611,25 +866,32 @@
         type: Number
       },
       padding: {
-        default: 5,
-        type: Number
-      },
-      grid: {
-        default: null,
-        type: Object
+        default: "5",
+        type: String,
+        validator: function validator(val) {
+          return validatePadding(val);
+        }
       }
     },
     computed: {
+      paddingObject: function paddingObject() {
+        return getPadding(this.padding);
+      },
+      gridPaddingObject: function gridPaddingObject() {
+        if (!this.grid || !this.grid.padding) { return getPadding("0"); }
+        return getPadding(this.grid.padding);
+      },
       boundary: function boundary() {
         var ref = this;
         var width = ref.width;
         var height = ref.height;
-        var padding = ref.padding;
+        var paddingObject = ref.paddingObject;
+        var gridPaddingObject = ref.gridPaddingObject;
         return {
-          minX: padding,
-          minY: padding,
-          maxX: width - padding,
-          maxY: height - padding
+          minX: paddingObject.left + gridPaddingObject.left,
+          minY: paddingObject.top + gridPaddingObject.top,
+          maxX: width - paddingObject.right - gridPaddingObject.right,
+          maxY: height - paddingObject.bottom - gridPaddingObject.bottom
         };
       },
       params: function params() {
@@ -656,18 +918,19 @@
   };
 
   /* script */
-  var __vue_script__$2 = script$2;
+  var __vue_script__$3 = script$3;
   // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-  script$2.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart.vue";
+  script$3.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart.vue";
 
   /* template */
-  var __vue_render__$2 = function() {
+  var __vue_render__$3 = function() {
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
     return _c(
       "svg",
       {
+        staticClass: "trend-chart",
         attrs: {
           viewBox: "0 0 " + _vm.width + " " + _vm.height,
           width: _vm.width,
@@ -688,15 +951,23 @@
             )
           : _vm._e(),
         _vm._v(" "),
+        _vm.labels
+          ? _c(
+              "trend-chart-labels",
+              _vm._b(
+                { staticClass: "trend-chart-labels" },
+                "trend-chart-labels",
+                _vm.labels,
+                false
+              )
+            )
+          : _vm._e(),
+        _vm._v(" "),
         _vm._l(_vm.datasets, function(dataset, i) {
           return _c(
             "trend-chart-curve",
             _vm._b(
-              {
-                key: i,
-                staticClass: "trend-chart-curve",
-                attrs: { "stroke-dasharray": "none" }
-              },
+              { key: i, staticClass: "trend-chart-curve" },
               "trend-chart-curve",
               dataset,
               false
@@ -707,17 +978,17 @@
       2
     )
   };
-  var __vue_staticRenderFns__$2 = [];
-  __vue_render__$2._withStripped = true;
+  var __vue_staticRenderFns__$3 = [];
+  __vue_render__$3._withStripped = true;
 
     /* style */
-    var __vue_inject_styles__$2 = undefined;
+    var __vue_inject_styles__$3 = undefined;
     /* scoped */
-    var __vue_scope_id__$2 = undefined;
+    var __vue_scope_id__$3 = undefined;
     /* module identifier */
-    var __vue_module_identifier__$2 = undefined;
+    var __vue_module_identifier__$3 = undefined;
     /* functional template */
-    var __vue_is_functional_template__$2 = false;
+    var __vue_is_functional_template__$3 = false;
     /* style inject */
     
     /* style inject SSR */
@@ -725,12 +996,12 @@
 
     
     var TrendChart = normalizeComponent(
-      { render: __vue_render__$2, staticRenderFns: __vue_staticRenderFns__$2 },
-      __vue_inject_styles__$2,
-      __vue_script__$2,
-      __vue_scope_id__$2,
-      __vue_is_functional_template__$2,
-      __vue_module_identifier__$2,
+      { render: __vue_render__$3, staticRenderFns: __vue_staticRenderFns__$3 },
+      __vue_inject_styles__$3,
+      __vue_script__$3,
+      __vue_scope_id__$3,
+      __vue_is_functional_template__$3,
+      __vue_module_identifier__$3,
       undefined,
       undefined
     );
