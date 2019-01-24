@@ -389,7 +389,7 @@ var script$1 = {
       var x =
         yLabelsPosition == "left"
           ? boundary.minX - yLabelsOffset
-          : boundary.maxY + yLabelsOffset;
+          : boundary.maxX + yLabelsOffset;
       var y = boundary.maxY - step * n;
       return { x: x, y: y };
     }
