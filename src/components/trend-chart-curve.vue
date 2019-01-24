@@ -63,7 +63,7 @@ import genPoints from "../helpers/genPoints";
 import genPath from "../helpers/genPath";
 
 export default {
-  name: "trend-chart-curve",
+  name: "TrendChartCurve",
   props: {
     data: {
       required: true,
@@ -92,12 +92,17 @@ export default {
       type: Array
     },
     strokeGradientDirection: {
+      default: "to top",
       type: String,
-      default: "to top"
+      validator(value) {
+        return (
+          ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
+        );
+      }
     },
     strokeDasharray: {
-      type: String,
-      default: "none"
+      default: "none",
+      type: String
     },
     fill: {
       default: false,
@@ -111,8 +116,13 @@ export default {
       type: Array
     },
     fillGradientDirection: {
+      default: "to top",
       type: String,
-      default: "to top"
+      validator(value) {
+        return (
+          ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
+        );
+      }
     },
     fillOpacity: {
       default: 1,
