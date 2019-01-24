@@ -1,5 +1,5 @@
 <template>
-  <g>
+  <g :class="className">
     <path
       v-if="fill && paths && paths.fillPath"
       :d="paths.fillPath"
@@ -68,6 +68,9 @@ export default {
     data: {
       required: true,
       type: Array
+    },
+    className: {
+      type: String
     },
     smooth: {
       default: false,

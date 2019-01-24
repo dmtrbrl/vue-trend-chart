@@ -25,18 +25,21 @@ export default {
       datasets: [
         {
           data: [150, 300, 350, 100, 350, 100, 15],
+          className: "dataChart1",
           smooth: true,
           strokeGradient: ["#a8edea", "#fed6e3"],
           strokeWidth: 2
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
+          className: "dataChart2",
           smooth: true,
           strokeGradient: ["#fccb90", "#d57eeb"],
           strokeWidth: 2
         },
         {
           data: [70, 100, 400, 180, 100, 300, 500],
+          className: "dataChart3",
           smooth: true,
           strokeColor: "#a6c0fe",
           strokeWidth: 2,
