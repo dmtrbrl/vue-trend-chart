@@ -4,192 +4,113 @@
   (global = global || self, global['vue-trend-chart'] = factory());
 }(this, function () { 'use strict';
 
-  function genPoints (arr, ref, max, min, maxAmount) {
-    var minX = ref.minX;
-    var minY = ref.minY;
-    var maxX = ref.maxX;
-    var maxY = ref.maxY;
-
-    arr = arr.map(function (item) { return (typeof item === "number" ? item : item.value); });
-    var minValue = min - 0.001;
-    var gridX = (maxX - minX) / (maxAmount - 1);
-    var gridY = (maxY - minY) / (max + 0.001 - minValue);
-
-    return arr.map(function (value, index) {
-      return {
-        x: index * gridX + minX,
-        y:
-          maxY -
-          (value - minValue) * gridY +
-          +(index === maxAmount - 1) * 0.00001 -
-          +(index === 0) * 0.00001
-      };
-    });
-  }
-
-  function genPath (pnts, smooth, ref, strokeWidth) {
-    var maxY = ref.maxY;
-
-    var points = [].concat( pnts );
-    var start = points.shift();
-    var end = points[points.length - 1];
-
-    // Create Line Path
-    var linePath =
-      "M " + (start.x) + "," + (start.y) +
-      points.map(function (point, index) {
-        if (!smooth) { return (" L" + (point.x) + "," + (point.y)); }
-
-        var prev = points[index - 1] || start;
-        var distance = points[0].x - start.x;
-        var bezierX = distance / 2;
-
-        return (" C " + (bezierX + prev.x) + "," + (prev.y) + " " + (bezierX + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
-      });
-
-    // Create Fill Path
-    var fillPath = linePath;
-    if (end.Y !== maxY) { fillPath += " L" + (end.x) + "," + (maxY + strokeWidth / 2); }
-    if (start.Y !== maxY) { fillPath += " L" + (start.x) + "," + (maxY + strokeWidth / 2); }
-    fillPath += " Z";
-
-    return { linePath: linePath, fillPath: fillPath };
-  }
-
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
   //
 
   var script = {
-    name: "trend-chart-curve",
+    name: "trend-chart-grid",
     props: {
-      data: {
-        required: true,
-        type: Array
-      },
-      smooth: {
+      xAxes: {
         default: false,
         type: Boolean
       },
-      stroke: {
-        default: true,
-        type: Boolean
+      xAxesLines: {
+        type: Number
       },
-      strokeWidth: {
+      xAxesStrokeWidth: {
         default: 1,
         type: Number
       },
-      strokeColor: {
+      xAxesStrokeColor: {
         default: "black",
         type: String
       },
-      strokeGradient: {
-        type: Array
+      xAxesStrokeDasharray: {
+        default: null,
+        type: String
       },
-      strokeGradientDirection: {
-        type: String,
-        default: "to top"
-      },
-      strokeOpacity: {
-        default: 1,
-        type: Number
-      },
-      fill: {
+      yAxes: {
         default: false,
         type: Boolean
       },
-      fillColor: {
-        default: "black",
-        type: String
+      yAxesLines: {
+        type: Number
       },
-      fillGradient: {
-        type: Array
-      },
-      fillGradientDirection: {
-        type: String,
-        default: "to top"
-      },
-      fillOpacity: {
+      yAxesStrokeWidth: {
         default: 1,
         type: Number
       },
-      showPoints: {
-        default: false,
-        type: Boolean
-      },
-      pointsRadius: {
-        default: 2,
-        type: Number
-      },
-      pointsFill: {
+      yAxesStrokeColor: {
         default: "black",
         type: String
       },
-      pointsStrokeWidth: {
-        type: Number
-      },
-      pointsStrokeColor: {
+      yAxesStrokeDasharray: {
+        default: null,
         type: String
-      },
-      max: {
-        required: true,
-        type: Number
-      },
-      min: {
-        required: true,
-        type: Number
-      },
-      maxAmount: {
-        required: true,
-        type: Number
       }
     },
     computed: {
+      xLines: function xLines() {
+        return this.xAxesLines || this.$parent.params.maxAmount;
+      },
       boundary: function boundary() {
-        var ref = this.$parent;
-        var width = ref.width;
-        var height = ref.height;
-        var padding = ref.padding;
-        return {
-          minX: padding,
-          minY: padding,
-          maxX: width - padding,
-          maxY: height - padding
-        };
-      },
-      points: function points() {
-        return genPoints(
-          this.data,
-          this.boundary,
-          this.max,
-          this.min,
-          this.maxAmount
-        );
-      },
-      paths: function paths() {
-        return genPath(this.points, this.smooth, this.boundary, this.strokeWidth);
-      },
-      strokeGradientId: function strokeGradientId() {
-        return ("vueTrendStrokeGradient" + (this._uid));
-      },
-      fillGradientId: function fillGradientId() {
-        return ("vueTrendFillGradient" + (this._uid));
+        return this.$parent.boundary;
       }
     },
     methods: {
-      getGradientDirection: function getGradientDirection(ref) {
-        switch (ref) {
-          case "to left":
-            return { x1: 0, y1: 0, x2: 1, y2: 0 };
-            break;
-          case "to bottom":
-            return { x1: 0, y1: 0, x2: 0, y2: 1 };
-            break;
-          case "to right":
-            return { x1: 1, y1: 0, x2: 0, y2: 0 };
-            break;
-          default:
-            return { x1: 0, y1: 1, x2: 0, y2: 0 };
-            break;
-        }
+      setXLineParams: function setXLineParams(n) {
+        var step =
+          (this.boundary.maxX - this.boundary.minX) / (this.xLines - 1);
+        var x = this.boundary.minX + step * (n - 1);
+        var x1 = x;
+        var x2 = x;
+        var y1 = this.boundary.minY;
+        var y2 = this.boundary.maxY;
+        return {
+          x1: x1,
+          x2: x2,
+          y1: y1,
+          y2: y2,
+          stroke: this.xAxesStrokeColor,
+          "stroke-width": this.xAxesStrokeWidth,
+          "stroke-dasharray": this.xAxesStrokeDasharray
+        };
+      },
+      setYLineParams: function setYLineParams(n) {
+        var step =
+          (this.boundary.maxY - this.boundary.minY) / (this.yAxesLines - 1);
+        var y = this.boundary.minY + step * (n - 1);
+        var x1 = this.boundary.minX;
+        var x2 = this.boundary.maxX;
+        var y1 = y;
+        var y2 = y;
+        return {
+          x1: x1,
+          x2: x2,
+          y1: y1,
+          y2: y2,
+          stroke: this.yAxesStrokeColor,
+          "stroke-width": this.yAxesStrokeWidth,
+          "stroke-dasharray": this.yAxesStrokeDasharray
+        };
       }
     }
   };
@@ -272,14 +193,268 @@
   /* script */
   var __vue_script__ = script;
   // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-  script.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-curve.vue";
+  script.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-grid.vue";
 
   /* template */
   var __vue_render__ = function() {
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
-    return _c("g", [
+    return _vm.xAxes || _vm.yAxes
+      ? _c("g", { staticClass: "trend-chart-grid" }, [
+          _vm.xAxes && _vm.xLines > 0
+            ? _c(
+                "g",
+                { staticClass: "trend-chart-grid-x" },
+                _vm._l(_vm.xLines, function(n, i) {
+                  return _c(
+                    "line",
+                    _vm._b(
+                      { key: i, staticClass: "trend-chart-grid-x-axis" },
+                      "line",
+                      _vm.setXLineParams(n),
+                      false
+                    )
+                  )
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.yAxes && _vm.yAxesLines > 0
+            ? _c(
+                "g",
+                { staticClass: "trend-chart-grid-y" },
+                _vm._l(_vm.yAxesLines, function(n, i) {
+                  return _c(
+                    "line",
+                    _vm._b(
+                      { key: i, staticClass: "trend-chart-grid-y-axis" },
+                      "line",
+                      _vm.setYLineParams(n),
+                      false
+                    )
+                  )
+                }),
+                0
+              )
+            : _vm._e()
+        ])
+      : _vm._e()
+  };
+  var __vue_staticRenderFns__ = [];
+  __vue_render__._withStripped = true;
+
+    /* style */
+    var __vue_inject_styles__ = undefined;
+    /* scoped */
+    var __vue_scope_id__ = undefined;
+    /* module identifier */
+    var __vue_module_identifier__ = undefined;
+    /* functional template */
+    var __vue_is_functional_template__ = false;
+    /* style inject */
+    
+    /* style inject SSR */
+    
+
+    
+    var TrendChartGrid = normalizeComponent(
+      { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
+      __vue_inject_styles__,
+      __vue_script__,
+      __vue_scope_id__,
+      __vue_is_functional_template__,
+      __vue_module_identifier__,
+      undefined,
+      undefined
+    );
+
+  function genPoints (arr, ref, max, min, maxAmount) {
+    var minX = ref.minX;
+    var minY = ref.minY;
+    var maxX = ref.maxX;
+    var maxY = ref.maxY;
+
+    arr = arr.map(function (item) { return (typeof item === "number" ? item : item.value); });
+    var minValue = min - 0.001;
+    var gridX = (maxX - minX) / (maxAmount - 1);
+    var gridY = (maxY - minY) / (max + 0.001 - minValue);
+
+    return arr.map(function (value, index) {
+      return {
+        x: index * gridX + minX,
+        y:
+          maxY -
+          (value - minValue) * gridY +
+          +(index === maxAmount - 1) * 0.00001 -
+          +(index === 0) * 0.00001
+      };
+    });
+  }
+
+  function genPath (pnts, smooth, ref, strokeWidth) {
+    var maxY = ref.maxY;
+
+    var points = [].concat( pnts );
+    var start = points.shift();
+    var end = points[points.length - 1];
+    var distance = points[0].x - start.x;
+    var bezierX = distance / 2;
+
+    // Create Line Path
+    var linePath =
+      "M " + (start.x) + "," + (start.y) +
+      points.map(function (point, index) {
+        if (!smooth) { return (" L" + (point.x) + "," + (point.y)); }
+
+        var prev = points[index - 1] || start;
+
+        return (" C " + (bezierX + prev.x) + "," + (prev.y) + " \n                 " + (bezierX + prev.x) + "," + (point.y) + " \n                 " + (point.x) + "," + (point.y));
+      });
+
+    // Create Fill Path
+    var fillPath = linePath;
+    if (end.Y !== maxY) { fillPath += " L" + (end.x) + "," + maxY; }
+    if (start.Y !== maxY) { fillPath += " L" + (start.x) + "," + maxY; }
+    fillPath += " Z";
+
+    return { linePath: linePath, fillPath: fillPath };
+  }
+
+  //
+
+  var script$1 = {
+    name: "trend-chart-curve",
+    props: {
+      data: {
+        required: true,
+        type: Array
+      },
+      className: {
+        type: String
+      },
+      smooth: {
+        default: false,
+        type: Boolean
+      },
+      stroke: {
+        default: true,
+        type: Boolean
+      },
+      strokeWidth: {
+        default: 1,
+        type: Number
+      },
+      strokeColor: {
+        default: "black",
+        type: String
+      },
+      strokeGradient: {
+        type: Array
+      },
+      strokeGradientDirection: {
+        type: String,
+        default: "to top"
+      },
+      strokeOpacity: {
+        default: 1,
+        type: Number
+      },
+      fill: {
+        default: false,
+        type: Boolean
+      },
+      fillColor: {
+        default: "black",
+        type: String
+      },
+      fillGradient: {
+        type: Array
+      },
+      fillGradientDirection: {
+        type: String,
+        default: "to top"
+      },
+      fillOpacity: {
+        default: 1,
+        type: Number
+      },
+      showPoints: {
+        default: false,
+        type: Boolean
+      },
+      pointsRadius: {
+        default: 2,
+        type: Number
+      },
+      pointsFill: {
+        default: "black",
+        type: String
+      },
+      pointsStrokeWidth: {
+        type: Number
+      },
+      pointsStrokeColor: {
+        type: String
+      }
+    },
+    computed: {
+      points: function points() {
+        return genPoints(
+          this.data,
+          this.$parent.boundary,
+          this.$parent.params.maxValue,
+          this.$parent.params.minValue,
+          this.$parent.params.maxAmount
+        );
+      },
+      paths: function paths() {
+        return genPath(
+          this.points,
+          this.smooth,
+          this.$parent.boundary,
+          this.strokeWidth
+        );
+      },
+      strokeGradientId: function strokeGradientId() {
+        return ("vueTrendStrokeGradient" + (this._uid));
+      },
+      fillGradientId: function fillGradientId() {
+        return ("vueTrendFillGradient" + (this._uid));
+      }
+    },
+    methods: {
+      getGradientDirection: function getGradientDirection(ref) {
+        switch (ref) {
+          case "to left":
+            return { x1: 0, y1: 0, x2: 1, y2: 0 };
+            break;
+          case "to bottom":
+            return { x1: 0, y1: 0, x2: 0, y2: 1 };
+            break;
+          case "to right":
+            return { x1: 1, y1: 0, x2: 0, y2: 0 };
+            break;
+          default:
+            return { x1: 0, y1: 1, x2: 0, y2: 0 };
+            break;
+        }
+      }
+    }
+  };
+
+  /* script */
+  var __vue_script__$1 = script$1;
+  // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
+  script$1.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-curve.vue";
+
+  /* template */
+  var __vue_render__$1 = function() {
+    var _vm = this;
+    var _h = _vm.$createElement;
+    var _c = _vm._self._c || _h;
+    return _c("g", { class: _vm.className }, [
       _vm.fill && _vm.paths && _vm.paths.fillPath
         ? _c("path", {
             staticClass: "trend-chart-fill",
@@ -383,17 +558,17 @@
         : _vm._e()
     ])
   };
-  var __vue_staticRenderFns__ = [];
-  __vue_render__._withStripped = true;
+  var __vue_staticRenderFns__$1 = [];
+  __vue_render__$1._withStripped = true;
 
     /* style */
-    var __vue_inject_styles__ = undefined;
+    var __vue_inject_styles__$1 = undefined;
     /* scoped */
-    var __vue_scope_id__ = undefined;
+    var __vue_scope_id__$1 = undefined;
     /* module identifier */
-    var __vue_module_identifier__ = undefined;
+    var __vue_module_identifier__$1 = undefined;
     /* functional template */
-    var __vue_is_functional_template__ = false;
+    var __vue_is_functional_template__$1 = false;
     /* style inject */
     
     /* style inject SSR */
@@ -401,21 +576,21 @@
 
     
     var TrendChartCurve = normalizeComponent(
-      { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-      __vue_inject_styles__,
-      __vue_script__,
-      __vue_scope_id__,
-      __vue_is_functional_template__,
-      __vue_module_identifier__,
+      { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
+      __vue_inject_styles__$1,
+      __vue_script__$1,
+      __vue_scope_id__$1,
+      __vue_is_functional_template__$1,
+      __vue_module_identifier__$1,
       undefined,
       undefined
     );
 
   //
 
-  var script$1 = {
+  var script$2 = {
     name: "TrendChart",
-    components: { TrendChartCurve: TrendChartCurve },
+    components: { TrendChartGrid: TrendChartGrid, TrendChartCurve: TrendChartCurve },
     props: {
       datasets: {
         required: true,
@@ -438,9 +613,25 @@
       padding: {
         default: 5,
         type: Number
+      },
+      grid: {
+        default: null,
+        type: Object
       }
     },
     computed: {
+      boundary: function boundary() {
+        var ref = this;
+        var width = ref.width;
+        var height = ref.height;
+        var padding = ref.padding;
+        return {
+          minX: padding,
+          minY: padding,
+          maxX: width - padding,
+          maxY: height - padding
+        };
+      },
       params: function params() {
         var maxValue = -Infinity;
         var minValue = Infinity;
@@ -465,12 +656,12 @@
   };
 
   /* script */
-  var __vue_script__$1 = script$1;
+  var __vue_script__$2 = script$2;
   // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-  script$1.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart.vue";
+  script$2.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart.vue";
 
   /* template */
-  var __vue_render__$1 = function() {
+  var __vue_render__$2 = function() {
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
@@ -484,40 +675,49 @@
           xmlns: "http://www.w3.org/2000/svg"
         }
       },
-      _vm._l(_vm.datasets, function(dataset, i) {
-        return _c(
-          "trend-chart-curve",
-          _vm._b(
-            {
-              key: i,
-              staticClass: "trend-chart-curve",
-              attrs: {
-                max: _vm.params.maxValue,
-                min: _vm.params.minValue,
-                maxAmount: _vm.params.maxAmount,
-                "stroke-dasharray": "none"
-              }
-            },
+      [
+        _vm.grid
+          ? _c(
+              "trend-chart-grid",
+              _vm._b(
+                { staticClass: "trend-chart-grid" },
+                "trend-chart-grid",
+                _vm.grid,
+                false
+              )
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm._l(_vm.datasets, function(dataset, i) {
+          return _c(
             "trend-chart-curve",
-            dataset,
-            false
+            _vm._b(
+              {
+                key: i,
+                staticClass: "trend-chart-curve",
+                attrs: { "stroke-dasharray": "none" }
+              },
+              "trend-chart-curve",
+              dataset,
+              false
+            )
           )
-        )
-      }),
-      1
+        })
+      ],
+      2
     )
   };
-  var __vue_staticRenderFns__$1 = [];
-  __vue_render__$1._withStripped = true;
+  var __vue_staticRenderFns__$2 = [];
+  __vue_render__$2._withStripped = true;
 
     /* style */
-    var __vue_inject_styles__$1 = undefined;
+    var __vue_inject_styles__$2 = undefined;
     /* scoped */
-    var __vue_scope_id__$1 = undefined;
+    var __vue_scope_id__$2 = undefined;
     /* module identifier */
-    var __vue_module_identifier__$1 = undefined;
+    var __vue_module_identifier__$2 = undefined;
     /* functional template */
-    var __vue_is_functional_template__$1 = false;
+    var __vue_is_functional_template__$2 = false;
     /* style inject */
     
     /* style inject SSR */
@@ -525,12 +725,12 @@
 
     
     var TrendChart = normalizeComponent(
-      { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
-      __vue_inject_styles__$1,
-      __vue_script__$1,
-      __vue_scope_id__$1,
-      __vue_is_functional_template__$1,
-      __vue_module_identifier__$1,
+      { render: __vue_render__$2, staticRenderFns: __vue_staticRenderFns__$2 },
+      __vue_inject_styles__$2,
+      __vue_script__$2,
+      __vue_scope_id__$2,
+      __vue_is_functional_template__$2,
+      __vue_module_identifier__$2,
       undefined,
       undefined
     );
