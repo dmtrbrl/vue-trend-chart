@@ -24,7 +24,6 @@ import getPadding from "../helpers/getPadding";
 import TrendChartGrid from "./trend-chart-grid.vue";
 import TrendChartLabels from "./trend-chart-labels.vue";
 import TrendChartCurve from "./trend-chart-curve.vue";
-import { log } from "util";
 
 export default {
   name: "TrendChart",
