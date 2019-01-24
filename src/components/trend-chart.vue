@@ -7,6 +7,7 @@
     class="trend-chart"
   >
     <trend-chart-grid class="trend-chart-grid" v-if="grid" v-bind="grid"></trend-chart-grid>
+    <trend-chart-labels class="trend-chart-labels" v-if="labels" v-bind="labels"></trend-chart-labels>
     <trend-chart-curve
       v-for="(dataset, i) in datasets"
       :key="i"
@@ -21,15 +22,25 @@ import validatePadding from "../helpers/validatePadding";
 import getPadding from "../helpers/getPadding";
 
 import TrendChartGrid from "./trend-chart-grid.vue";
+import TrendChartLabels from "./trend-chart-labels.vue";
 import TrendChartCurve from "./trend-chart-curve.vue";
+import { log } from "util";
 
 export default {
   name: "TrendChart",
-  components: { TrendChartGrid, TrendChartCurve },
+  components: { TrendChartGrid, TrendChartLabels, TrendChartCurve },
   props: {
     datasets: {
       required: true,
       type: Array
+    },
+    grid: {
+      default: null,
+      type: Object
+    },
+    labels: {
+      default: null,
+      type: Object
     },
     width: {
       default: 300,
@@ -51,10 +62,6 @@ export default {
       validator(val) {
         return validatePadding(val);
       }
-    },
-    grid: {
-      default: null,
-      type: Object
     }
   },
   computed: {

@@ -6,11 +6,12 @@
       <trend-chart
         :datasets="datasets"
         :grid="grid"
+        :labels="labels"
         :height="200"
         :width="500"
         :min="0"
         :max="600"
-        padding="5"
+        padding="5 10 20 25"
       ></trend-chart>
     </div>
   </section>
@@ -26,7 +27,7 @@ export default {
       datasets: [
         {
           data: [70, 100, 400, 180, 100, 300, 500],
-          className: "dataChart3",
+          className: "dataChart1",
           smooth: true,
           strokeColor: "#a6c0fe",
           strokeWidth: 2,
@@ -36,7 +37,7 @@ export default {
         },
         {
           data: [150, 300, 350, 100, 350, 100, 15],
-          className: "dataChart1",
+          className: "dataChart2",
           smooth: true,
           strokeGradient: ["#a8edea", "#fed6e3"],
           strokeWidth: 2,
@@ -44,19 +45,25 @@ export default {
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
-          className: "dataChart2",
+          className: "dataChart3",
           smooth: true,
           strokeGradient: ["#fccb90", "#d57eeb"],
           strokeWidth: 2
         }
       ],
       grid: {
-        padding: "0 0 10 10",
         xAxes: true,
         xAxesStrokeColor: "#eee",
         yAxes: true,
-        yAxesLines: 13,
-        yAxesStrokeColor: "#eee"
+        yAxesLines: 7,
+        yAxesStrokeColor: "#eee",
+        padding: "0 0 5 5"
+      },
+      labels: {
+        xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        xLabelsPosition: "bottom",
+        yLabelsAmount: 3,
+        yLabelsTextFormatter: val => Math.round(val * 10) / 10
       }
     };
   }
@@ -100,6 +107,7 @@ body {
   max-width: 100%;
   height: auto;
   margin: 0 auto;
+  font-size: 12px;
 }
 </style>
 

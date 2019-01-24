@@ -22,13 +22,13 @@
 import validatePadding from "../helpers/validatePadding";
 
 export default {
-  name: "trend-chart-grid",
+  name: "TrendChartGrid",
   props: {
     padding: {
       default: "0",
       type: String,
-      validator(val) {
-        return validatePadding(val);
+      validator(value) {
+        return validatePadding(value);
       }
     },
     xAxes: {
