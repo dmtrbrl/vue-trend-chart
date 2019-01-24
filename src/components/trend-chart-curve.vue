@@ -14,7 +14,6 @@
       :stroke="strokeGradient ? `url(#${strokeGradientId})` : strokeColor"
       :stroke-width="strokeWidth"
       :stroke-dasharray="strokeDasharray"
-      :opacity="strokeOpacity"
       class="trend-chart-stroke"
     ></path>
     <g class="trend-chart-points" v-if="showPoints">
@@ -99,10 +98,6 @@ export default {
     strokeDasharray: {
       type: String,
       default: "none"
-    },
-    strokeOpacity: {
-      default: 1,
-      type: Number
     },
     fill: {
       default: false,
