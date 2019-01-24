@@ -82,7 +82,7 @@ export default {
       const x =
         yLabelsPosition == "left"
           ? boundary.minX - yLabelsOffset
-          : boundary.maxY + yLabelsOffset;
+          : boundary.maxX + yLabelsOffset;
       const y = boundary.maxY - step * n;
       return { x, y };
     }

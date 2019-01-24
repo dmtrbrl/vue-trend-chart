@@ -11,7 +11,7 @@
         :width="500"
         :min="0"
         :max="600"
-        padding="5 10 20 25"
+        padding="5 25 20 10"
       ></trend-chart>
     </div>
   </section>
@@ -57,12 +57,12 @@ export default {
         yAxes: true,
         yAxesLines: 7,
         yAxesStrokeColor: "#eee",
-        padding: "0 0 5 5"
+        padding: "0 5 5 0"
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        xLabelsPosition: "bottom",
         yLabelsAmount: 3,
+        yLabelsPosition: "right",
         yLabelsTextFormatter: val => Math.round(val * 10) / 10
       }
     };
