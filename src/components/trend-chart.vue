@@ -4,13 +4,13 @@
     :width="width"
     :height="height"
     xmlns="http://www.w3.org/2000/svg"
+    class="trend-chart"
   >
     <trend-chart-grid class="trend-chart-grid" v-if="grid" v-bind="grid"></trend-chart-grid>
     <trend-chart-curve
       v-for="(dataset, i) in datasets"
       :key="i"
       v-bind="dataset"
-      stroke-dasharray="none"
       class="trend-chart-curve"
     ></trend-chart-curve>
   </svg>
