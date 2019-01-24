@@ -62,7 +62,8 @@ export default {
       return getPadding(this.padding);
     },
     gridPaddingObject() {
-      return getPadding(this.grid.padding || "0");
+      if (!this.grid || !this.grid.padding) return getPadding("0");
+      return getPadding(this.grid.padding);
     },
     boundary() {
       const { width, height, paddingObject, gridPaddingObject } = this;

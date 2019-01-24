@@ -20,7 +20,6 @@
 </template>
 <script>
 import validatePadding from "../helpers/validatePadding";
-import getPadding from "../helpers/getPadding";
 
 export default {
   name: "trend-chart-grid",
