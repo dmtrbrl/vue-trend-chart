@@ -20,8 +20,8 @@ export default (pnts, smooth, { maxY }, strokeWidth) => {
 
   // Create Fill Path
   let fillPath = linePath;
-  if (end.Y !== maxY) fillPath += ` L${end.x},${maxY + strokeWidth / 2}`;
-  if (start.Y !== maxY) fillPath += ` L${start.x},${maxY + strokeWidth / 2}`;
+  if (end.Y !== maxY) fillPath += ` L${end.x},${maxY}`;
+  if (start.Y !== maxY) fillPath += ` L${start.x},${maxY}`;
   fillPath += " Z";
 
   return { linePath, fillPath };
