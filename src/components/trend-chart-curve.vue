@@ -13,6 +13,7 @@
       fill="none"
       :stroke="strokeGradient ? `url(#${strokeGradientId})` : strokeColor"
       :stroke-width="strokeWidth"
+      :stroke-dasharray="strokeDasharray"
       :opacity="strokeOpacity"
       class="trend-chart-stroke"
     ></path>
@@ -94,6 +95,10 @@ export default {
     strokeGradientDirection: {
       type: String,
       default: "to top"
+    },
+    strokeDasharray: {
+      type: String,
+      default: "none"
     },
     strokeOpacity: {
       default: 1,
