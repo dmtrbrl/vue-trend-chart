@@ -5,6 +5,7 @@
     :height="height"
     xmlns="http://www.w3.org/2000/svg"
   >
+    <trend-chart-grid class="trend-chart-grid" v-if="grid" v-bind="grid"></trend-chart-grid>
     <trend-chart-curve
       v-for="(dataset, i) in datasets"
       :key="i"
@@ -16,11 +17,12 @@
 </template>
 
 <script>
+import TrendChartGrid from "./trend-chart-grid.vue";
 import TrendChartCurve from "./trend-chart-curve.vue";
 
 export default {
   name: "TrendChart",
-  components: { TrendChartCurve },
+  components: { TrendChartGrid, TrendChartCurve },
   props: {
     datasets: {
       required: true,
@@ -43,6 +45,10 @@ export default {
     padding: {
       default: 5,
       type: Number
+    },
+    grid: {
+      default: null,
+      type: Object
     }
   },
   computed: {

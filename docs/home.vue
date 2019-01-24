@@ -5,11 +5,12 @@
     <div class="docs-content">
       <trend-chart
         :datasets="datasets"
+        :grid="grid"
         :height="200"
         :width="500"
         :min="0"
+        :max="600"
         :padding="5"
-        stroke-dasharray="2"
       ></trend-chart>
     </div>
   </section>
@@ -52,7 +53,15 @@ export default {
           pointsStrokeColor: "#a6c0fe",
           pointsRadius: 3
         }
-      ]
+      ],
+      grid: {
+        xAxes: true,
+        xAxesLines: 13,
+        xAxesStrokeColor: "#f8f8f8",
+        yAxes: true,
+        yAxesLines: 13,
+        yAxesStrokeColor: "#f8f8f8"
+      }
     };
   }
 };
