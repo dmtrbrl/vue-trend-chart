@@ -1,24 +1,3 @@
-<template>
-  <g v-if="xAxes || yAxes">
-    <g class="trend-chart-grid-x" v-if="xAxes && xLines > 0">
-      <line
-        class="trend-chart-grid-x-axis"
-        v-for="(n, i) in xLines"
-        :key="i"
-        v-bind="setXLineParams(n)"
-      ></line>
-    </g>
-    <g class="trend-chart-grid-y" v-if="yAxes && yAxesLines > 0">
-      <line
-        class="trend-chart-grid-y-axis"
-        v-for="(n, i) in yAxesLines"
-        :key="i"
-        v-bind="setYLineParams(n)"
-      ></line>
-    </g>
-  </g>
-</template>
-<script>
 import validatePadding from "../helpers/validatePadding";
 
 export default {
@@ -132,7 +111,60 @@ export default {
         "stroke-dasharray": yAxesStrokeDasharray
       };
     }
+  },
+  render(h) {
+    if (!this.xAxes || !this.yAxes) return;
+
+    const children = [];
+
+    // x axes
+    if (this.xAxes && this.xLines > 0) {
+      const lines = [];
+      for (let i = 1; i <= this.xLines; i++) {
+        lines.push(
+          h("line", {
+            class: "trend-chart-grid-x-axis",
+            attrs: {
+              ...this.setXLineParams(i)
+            }
+          })
+        );
+      }
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-grid-x"
+          },
+          lines
+        )
+      );
+    }
+    // y axes
+    if (this.yAxes && this.yAxesLines > 0) {
+      const lines = [];
+      for (let i = 0; i <= this.yAxesLines; i++) {
+        lines.push(
+          h("line", {
+            class: "trend-chart-grid-y-axis",
+            attrs: {
+              ...this.setYLineParams(i)
+            }
+          })
+        );
+      }
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-grid-y"
+          },
+          lines
+        )
+      );
+    }
+
+    // Render component
+    return h("g", children);
   }
 };
-</script>
-

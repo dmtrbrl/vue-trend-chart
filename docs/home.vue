@@ -23,7 +23,8 @@ export default {
           strokeWidth: 2,
           fill: true,
           fillColor: "#a6c0fe",
-          fillOpacity: 0.1
+          fillOpacity: 0.1,
+          showPoints: true
         },
         {
           data: [150, 300, 350, 100, 350, 100, 15],

@@ -1,30 +1,9 @@
-<template>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="100%"
-    height="100%"
-    class="trend-chart"
-    ref="chart"
-  >
-    <trend-chart-grid class="trend-chart-grid" v-if="grid" v-bind="grid"></trend-chart-grid>
-    <trend-chart-labels class="trend-chart-labels" v-if="labels" v-bind="labels" ref="chart-labels"></trend-chart-labels>
-    <trend-chart-curve
-      v-for="(dataset, i) in datasets"
-      :key="i"
-      v-bind="dataset"
-      class="trend-chart-curve"
-    ></trend-chart-curve>
-  </svg>
-</template>
-
-<script>
 import validatePadding from "../helpers/validatePadding";
 import getPadding from "../helpers/getPadding";
 
-import TrendChartGrid from "./trend-chart-grid.vue";
-import TrendChartLabels from "./trend-chart-labels.vue";
-import TrendChartCurve from "./trend-chart-curve.vue";
-import { setTimeout } from "timers";
+import TrendChartGrid from "./trend-chart-grid";
+import TrendChartLabels from "./trend-chart-labels";
+import TrendChartCurve from "./trend-chart-curve";
 
 export default {
   name: "TrendChart",
@@ -137,9 +116,7 @@ export default {
           chartLabels.yLabelsAmount > 0)
       ) {
         const chartParams = chart.getBoundingClientRect();
-        console.log(chartParams.width, chartParams.height);
         const chartLabelsParams = chartLabels.$el.getBoundingClientRect();
-        console.log(chartLabelsParams.width, chartLabelsParams.height);
 
         const top =
           chartParams.top - chartLabelsParams.top + this.paddingObject.top;
@@ -153,7 +130,6 @@ export default {
           this.paddingObject.bottom;
         const left =
           this.paddingObject.left - chartLabelsParams.left + chartParams.left;
-        console.log(top, right, bottom, left);
 
         this.labelsOverflowObject = {
           top: top > 0 ? top : 0,
@@ -181,6 +157,54 @@ export default {
   },
   destroyed() {
     window.removeEventListener("resize", this.onWindowResize);
+  },
+  render(h) {
+    const children = [];
+
+    // Grid
+    if (this.grid) {
+      children.push(
+        h(TrendChartGrid, {
+          class: "trend-chart-grid",
+          attrs: { ...this.grid }
+        })
+      );
+    }
+
+    // Labels
+    if (this.labels) {
+      children.push(
+        h(TrendChartLabels, {
+          class: "trend-chart-labels",
+          ref: "chart-labels",
+          attrs: { ...this.labels }
+        })
+      );
+    }
+
+    // Curves
+    this.datasets.map(dataset => {
+      children.push(
+        h(TrendChartCurve, {
+          class: "trend-chart-curve",
+          attrs: { ...dataset }
+        })
+      );
+    });
+
+    // Render component
+    return h(
+      "svg",
+      {
+        class: "trend-chart",
+        ref: "chart",
+        attrs: {
+          xmlns: "http://www.w3.org/2000/svg",
+          width: "100%",
+          height: "100%"
+        }
+      },
+      children
+    );
   }
 };
-</script>

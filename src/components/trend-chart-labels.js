@@ -1,29 +1,3 @@
-<template>
-  <g v-if="(xLabels && xLabels.length) || (yLabelsAmount && yLabelsAmount > 0)">
-    <g class="trend-chart-labels-x" v-if="xLabels && xLabels.length">
-      <text
-        class="trend-chart-label-x"
-        v-for="(label, i) in xLabels"
-        :key="i"
-        v-bind="setXLabelsParams(i)"
-        text-anchor="middle"
-        :dominant-baseline="xLabelsPosition == 'bottom' ? 'text-before-edge' : 'text-after-edge'"
-      >{{label}}</text>
-    </g>
-    <g class="trend-chart-labels-y" v-if="yLabelsAmount && yLabelsAmount > 0">
-      <text
-        class="trend-chart-label-y"
-        v-for="(n, i) in yLabelsAmount"
-        :key="i"
-        v-bind="setYLabelsParams(i)"
-        :text-anchor="yLabelsPosition == 'left' ? 'end' : 'start'"
-        dominant-baseline="middle"
-        v-text="yLabelsTextFormatter($parent.params.minValue + (($parent.params.maxValue - $parent.params.minValue)/(yLabelsAmount - 1)*(n - 1)))"
-      ></text>
-    </g>
-  </g>
-</template>
-<script>
 export default {
   name: "TrendChartLabels",
   props: {
@@ -101,7 +75,80 @@ export default {
       const y = boundary.maxY - step * n;
       return { x, y };
     }
+  },
+  render(h) {
+    if (
+      !(this.xLabels && this.xLabels.length) ||
+      !(this.yLabelsAmount && this.yLabelsAmount > 0)
+    )
+      return;
+
+    const children = [];
+
+    // x labels
+    if (this.xLabels && this.xLabels.length) {
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-labels-x"
+          },
+          this.xLabels.map((label, i) => {
+            return h(
+              "text",
+              {
+                class: "trend-chart-label-x",
+                attrs: {
+                  ...this.setXLabelsParams(i),
+                  "text-anchor": "middle",
+                  "dominant-baseline":
+                    this.xLabelsPosition == "bottom"
+                      ? "text-before-edge"
+                      : "text-after-edge"
+                }
+              },
+              label
+            );
+          })
+        )
+      );
+    }
+
+    // y labels
+    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+      const labels = [];
+      for (let i = 0; i < this.yLabelsAmount; i++) {
+        labels.push(
+          h(
+            "text",
+            {
+              class: "trend-chart-label-y",
+              attrs: {
+                ...this.setYLabelsParams(i),
+                "text-anchor": this.yLabelsPosition == "left" ? "end" : "start"
+              }
+            },
+            this.yLabelsTextFormatter(
+              this.$parent.params.minValue +
+                ((this.$parent.params.maxValue - this.$parent.params.minValue) /
+                  (this.yLabelsAmount - 1)) *
+                  i
+            )
+          )
+        );
+      }
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-labels-y"
+          },
+          labels
+        )
+      );
+    }
+
+    // Render component
+    return h("g", children);
   }
 };
-</script>
-

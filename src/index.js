@@ -1,4 +1,4 @@
-import TrendChart from "./components/trend-chart.vue";
+import TrendChart from "./components/trend-chart";
 
 TrendChart.install = function(Vue) {
   Vue.component(TrendChart.name, TrendChart);
