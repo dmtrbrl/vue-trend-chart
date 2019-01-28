@@ -19,71 +19,13 @@ export default {
       default: true,
       type: Boolean
     },
-    strokeWidth: {
-      default: 1,
-      type: Number
-    },
-    strokeColor: {
-      default: "black",
-      type: String
-    },
-    strokeGradient: {
-      type: Array
-    },
-    strokeGradientDirection: {
-      default: "to top",
-      type: String,
-      validator(value) {
-        return (
-          ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
-        );
-      }
-    },
-    strokeDasharray: {
-      default: "none",
-      type: String
-    },
     fill: {
       default: false,
       type: Boolean
     },
-    fillColor: {
-      default: "black",
-      type: String
-    },
-    fillGradient: {
-      type: Array
-    },
-    fillGradientDirection: {
-      default: "to top",
-      type: String,
-      validator(value) {
-        return (
-          ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
-        );
-      }
-    },
-    fillOpacity: {
-      default: 1,
-      type: Number
-    },
     showPoints: {
       default: false,
       type: Boolean
-    },
-    pointsRadius: {
-      default: 2,
-      type: Number
-    },
-    pointsFill: {
-      default: "black",
-      type: String
-    },
-    pointsStrokeWidth: {
-      type: Number
-    },
-    pointsStrokeColor: {
-      type: String
     }
   },
   computed: {
@@ -98,30 +40,6 @@ export default {
     },
     paths() {
       return genPath(this.points, this.smooth, this.$parent.boundary);
-    },
-    strokeGradientId() {
-      return `vtsg${this._uid}`;
-    },
-    fillGradientId() {
-      return `vtfg${this._uid}`;
-    }
-  },
-  methods: {
-    getGradientDirection(ref) {
-      switch (ref) {
-        case "to left":
-          return { x1: 0, y1: 0, x2: 1, y2: 0 };
-          break;
-        case "to bottom":
-          return { x1: 0, y1: 0, x2: 0, y2: 1 };
-          break;
-        case "to right":
-          return { x1: 1, y1: 0, x2: 0, y2: 0 };
-          break;
-        default:
-          return { x1: 0, y1: 1, x2: 0, y2: 0 };
-          break;
-      }
     }
   },
   render(h) {
@@ -133,10 +51,7 @@ export default {
           class: "trend-chart-fill",
           attrs: {
             d: this.paths.fillPath,
-            fill: this.fillGradient
-              ? `url(#${this.fillGradientId})`
-              : this.fillColor,
-            opacity: this.fillOpacity
+            fill: "rgba(0,0,0,0.15)"
           }
         })
       );
@@ -149,11 +64,7 @@ export default {
           attrs: {
             d: this.paths.linePath,
             fill: "none",
-            stroke: this.strokeGradient
-              ? `url(#${this.strokeGradientId})`
-              : this.strokeColor,
-            "stroke-width": this.strokeWidth,
-            "stroke-dasharray": this.strokeDasharray
+            stroke: "#000000"
           }
         })
       );
@@ -172,65 +83,12 @@ export default {
               attrs: {
                 cx: point.x,
                 cy: point.y,
-                r: this.pointsRadius,
-                fill: this.pointsFill,
-                stroke: this.pointsStrokeColor,
-                "stroke-width": this.pointsStrokeWidth
+                r: 3
               }
             })
           )
         )
       );
-    }
-    // Gradients
-    if (this.strokeGradient || this.fillGradient) {
-      const gradients = [];
-      // Stroke Gradient
-      if (this.strokeGradient) {
-        gradients.push(
-          h(
-            "linearGradient",
-            {
-              attrs: {
-                id: this.strokeGradientId,
-                ...this.getGradientDirection(this.strokeGradientDirection)
-              }
-            },
-            this.strokeGradient.map((color, i) => {
-              return h("stop", {
-                attrs: {
-                  offset: i / this.strokeGradient.length,
-                  "stop-color": color
-                }
-              });
-            })
-          )
-        );
-      }
-      // Fill Gradient
-      if (this.fillGradient) {
-        gradients.push(
-          h(
-            "linearGradient",
-            {
-              attrs: {
-                id: this.fillGradientId,
-                ...this.getGradientDirection(this.fillGradientDirection)
-              }
-            },
-            this.fillGradient.map((color, i) => {
-              return h("stop", {
-                attrs: {
-                  offset: i / this.fillGradient.length,
-                  "stop-color": color
-                }
-              });
-            })
-          )
-        );
-      }
-
-      children.push(h("defs", gradients));
     }
 
     // Render component

@@ -10,36 +10,12 @@ export default {
     xAxesLines: {
       type: Number
     },
-    xAxesStrokeWidth: {
-      default: 1,
-      type: Number
-    },
-    xAxesStrokeColor: {
-      default: "black",
-      type: String
-    },
-    xAxesStrokeDasharray: {
-      default: null,
-      type: String
-    },
     yAxes: {
       default: false,
       type: Boolean
     },
     yAxesLines: {
       type: Number
-    },
-    yAxesStrokeWidth: {
-      default: 1,
-      type: Number
-    },
-    yAxesStrokeColor: {
-      default: "black",
-      type: String
-    },
-    yAxesStrokeDasharray: {
-      default: null,
-      type: String
     },
     padding: {
       default: "0",
@@ -62,14 +38,7 @@ export default {
   },
   methods: {
     setXLineParams(n) {
-      const {
-        boundary,
-        xLines,
-        gridPaddingObject,
-        xAxesStrokeColor,
-        xAxesStrokeWidth,
-        xAxesStrokeDasharray
-      } = this;
+      const { boundary, xLines, gridPaddingObject } = this;
       const step = (boundary.maxX - boundary.minX) / (xLines - 1);
       const x = boundary.minX + step * (n - 1);
       const x1 = x;
@@ -81,20 +50,11 @@ export default {
         x2,
         y1,
         y2,
-        stroke: xAxesStrokeColor,
-        "stroke-width": xAxesStrokeWidth,
-        "stroke-dasharray": xAxesStrokeDasharray
+        stroke: "rgba(0,0,0,0.1)"
       };
     },
     setYLineParams(n) {
-      const {
-        boundary,
-        yAxesLines,
-        gridPaddingObject,
-        yAxesStrokeColor,
-        yAxesStrokeWidth,
-        yAxesStrokeDasharray
-      } = this;
+      const { boundary, yAxesLines, gridPaddingObject } = this;
       const step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
       const y = boundary.minY + step * (n - 1);
       const x1 = boundary.minX - gridPaddingObject.left;
@@ -106,9 +66,7 @@ export default {
         x2,
         y1,
         y2,
-        stroke: yAxesStrokeColor,
-        "stroke-width": yAxesStrokeWidth,
-        "stroke-dasharray": yAxesStrokeDasharray
+        stroke: "rgba(0,0,0,0.1)"
       };
     }
   },
@@ -143,7 +101,7 @@ export default {
     // y axes
     if (this.yAxes && this.yAxesLines > 0) {
       const lines = [];
-      for (let i = 0; i <= this.yAxesLines; i++) {
+      for (let i = 1; i <= this.yAxesLines; i++) {
         lines.push(
           h("line", {
             class: "trend-chart-grid-y-axis",

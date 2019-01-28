@@ -125,7 +125,8 @@ export default {
               class: "trend-chart-label-y",
               attrs: {
                 ...this.setYLabelsParams(i),
-                "text-anchor": this.yLabelsPosition == "left" ? "end" : "start"
+                "text-anchor": this.yLabelsPosition == "left" ? "end" : "start",
+                "dominant-baseline": "middle"
               }
             },
             this.yLabelsTextFormatter(

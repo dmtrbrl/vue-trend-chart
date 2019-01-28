@@ -19,33 +19,22 @@ export default {
         {
           data: [70, 100, 400, 180, 100, 300, 500],
           smooth: true,
-          strokeColor: "#a6c0fe",
-          strokeWidth: 2,
-          fill: true,
-          fillColor: "#a6c0fe",
-          fillOpacity: 0.1,
           showPoints: true
         },
         {
           data: [150, 300, 350, 100, 350, 100, 15],
-          smooth: true,
-          strokeGradient: ["#a8edea", "#fed6e3"],
-          strokeWidth: 2,
-          strokeDasharray: "5"
+          smooth: true
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
-          strokeGradient: ["#fccb90", "#d57eeb"],
-          strokeWidth: 2
+          fill: true
         }
       ],
       grid: {
         xAxes: true,
-        xAxesStrokeColor: "#eee",
         yAxes: true,
         yAxesLines: 7,
-        yAxesStrokeColor: "#eee",
         padding: "0 0 5 5"
       },
       labels: {
@@ -100,6 +89,13 @@ body {
   margin: 0 auto;
   font-size: 12px;
 }
+
+/* Trend chart styling */
+/* .trend-chart-grid-x-axis,
+.trend-chart-grid-y-axis {
+  stroke: #eeeeee;
+  stroke-dasharray: 2;
+} */
 </style>
 
 
