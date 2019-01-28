@@ -24,13 +24,6 @@ import validatePadding from "../helpers/validatePadding";
 export default {
   name: "TrendChartGrid",
   props: {
-    padding: {
-      default: "0",
-      type: String,
-      validator(value) {
-        return validatePadding(value);
-      }
-    },
     xAxes: {
       default: false,
       type: Boolean
@@ -68,6 +61,13 @@ export default {
     yAxesStrokeDasharray: {
       default: null,
       type: String
+    },
+    padding: {
+      default: "0",
+      type: String,
+      validator(value) {
+        return validatePadding(value);
+      }
     }
   },
   computed: {

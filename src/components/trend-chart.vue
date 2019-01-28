@@ -1,9 +1,8 @@
 <template>
   <svg
-    :viewBox="`0 0 ${width} ${height}`"
-    :width="width"
-    :height="height"
     xmlns="http://www.w3.org/2000/svg"
+    width="100%"
+    height="100%"
     class="trend-chart"
     ref="chart"
   >
@@ -43,14 +42,6 @@ export default {
       default: null,
       type: Object
     },
-    width: {
-      default: 300,
-      type: Number
-    },
-    height: {
-      default: 75,
-      type: Number
-    },
     max: {
       type: Number
     },
@@ -67,6 +58,8 @@ export default {
   },
   data() {
     return {
+      width: null,
+      height: null,
       labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 }
     };
   },
@@ -130,6 +123,11 @@ export default {
     }
   },
   methods: {
+    setSize() {
+      const params = this.$refs["chart"].getBoundingClientRect();
+      this.width = params.width;
+      this.height = params.height;
+    },
     fitLabels() {
       const chart = this.$refs["chart"];
       const chartLabels = this.$refs["chart-labels"];
@@ -139,26 +137,24 @@ export default {
           chartLabels.yLabelsAmount > 0)
       ) {
         const chartParams = chart.getBoundingClientRect();
+        console.log(chartParams.width, chartParams.height);
         const chartLabelsParams = chartLabels.$el.getBoundingClientRect();
-        const xScaleK = this.width / chartParams.width;
-        const yScaleK = this.height / chartParams.height;
+        console.log(chartLabelsParams.width, chartLabelsParams.height);
 
         const top =
-          chartParams.top * yScaleK -
-          chartLabelsParams.top * yScaleK +
-          this.paddingObject.top;
+          chartParams.top - chartLabelsParams.top + this.paddingObject.top;
         const right =
-          chartLabelsParams.right * xScaleK -
-          chartParams.right * xScaleK +
+          chartLabelsParams.right -
+          chartParams.right +
           this.paddingObject.right;
         const bottom =
-          chartLabelsParams.bottom * yScaleK -
-          chartParams.bottom * yScaleK +
+          chartLabelsParams.bottom -
+          chartParams.bottom +
           this.paddingObject.bottom;
         const left =
-          this.paddingObject.left -
-          chartLabelsParams.left * xScaleK +
-          chartParams.left * xScaleK;
+          this.paddingObject.left - chartLabelsParams.left + chartParams.left;
+        console.log(top, right, bottom, left);
+
         this.labelsOverflowObject = {
           top: top > 0 ? top : 0,
           right: right > 0 ? right : 0,
@@ -168,10 +164,23 @@ export default {
       } else {
         this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
       }
+    },
+    init() {
+      this.setSize();
+      this.$nextTick(() => {
+        this.fitLabels();
+      });
+    },
+    onWindowResize() {
+      this.setSize();
     }
   },
   mounted() {
-    this.fitLabels();
+    this.init();
+    window.addEventListener("resize", this.onWindowResize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.onWindowResize);
   }
 };
 </script>

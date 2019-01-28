@@ -3,15 +3,7 @@
     <h1 class="docs-heading heading">Vue Trend Chart</h1>
     <div class="docs-subheading">Simple and elegant trend charts for Vue.js</div>
     <div class="docs-content">
-      <trend-chart
-        :datasets="datasets"
-        :grid="grid"
-        :labels="labels"
-        :height="200"
-        :width="500"
-        :min="0"
-        padding="0"
-      ></trend-chart>
+      <trend-chart :datasets="datasets" :grid="grid" :labels="labels" :min="0"></trend-chart>
     </div>
   </section>
 </template>
@@ -57,7 +49,8 @@ export default {
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        yLabelsAmount: 7,
+        xLabelsOffset: 10,
+        yLabelsAmount: 3,
         yLabelsOffset: 7,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }
@@ -102,6 +95,7 @@ body {
   display: block;
   max-width: 100%;
   height: auto;
+  min-height: 250px;
   margin: 0 auto;
   font-size: 12px;
 }
