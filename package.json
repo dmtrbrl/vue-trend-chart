@@ -34,7 +34,7 @@
   "peerDependencies": {
     "vue": "^2.5.22"
   },
-  "dependencies": {
+  "devDependencies": {
     "gh-pages": "^2.0.1",
     "poi": "^12.4.4",
     "rollup": "^1.1.0",
