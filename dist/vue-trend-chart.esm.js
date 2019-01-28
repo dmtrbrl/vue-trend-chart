@@ -1,5 +1,3 @@
-import 'timers';
-
 function validatePadding (padding) {
   var arr = padding
     .split(" ")
@@ -30,9 +28,7 @@ function getPadding (padding) {
   }
 }
 
-//
-
-var script = {
+var TrendChartGrid = {
   name: "TrendChartGrid",
   props: {
     xAxes: {
@@ -141,191 +137,61 @@ var script = {
         "stroke-dasharray": yAxesStrokeDasharray
       };
     }
+  },
+  render: function render(h) {
+    if (!this.xAxes || !this.yAxes) { return; }
+
+    var children = [];
+
+    // x axes
+    if (this.xAxes && this.xLines > 0) {
+      var lines = [];
+      for (var i = 1; i <= this.xLines; i++) {
+        lines.push(
+          h("line", {
+            class: "trend-chart-grid-x-axis",
+            attrs: Object.assign({}, this.setXLineParams(i))
+          })
+        );
+      }
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-grid-x"
+          },
+          lines
+        )
+      );
+    }
+    // y axes
+    if (this.yAxes && this.yAxesLines > 0) {
+      var lines$1 = [];
+      for (var i$1 = 0; i$1 <= this.yAxesLines; i$1++) {
+        lines$1.push(
+          h("line", {
+            class: "trend-chart-grid-y-axis",
+            attrs: Object.assign({}, this.setYLineParams(i$1))
+          })
+        );
+      }
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-grid-y"
+          },
+          lines$1
+        )
+      );
+    }
+
+    // Render component
+    return h("g", children);
   }
 };
 
-function normalizeComponent(compiledTemplate, injectStyle, defaultExport, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, isShadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
-    if (typeof isShadowMode === 'function') {
-        createInjectorSSR = createInjector;
-        createInjector = isShadowMode;
-        isShadowMode = false;
-    }
-    // Vue.extend constructor export interop
-    var options = typeof defaultExport === 'function' ? defaultExport.options : defaultExport;
-    // render functions
-    if (compiledTemplate && compiledTemplate.render) {
-        options.render = compiledTemplate.render;
-        options.staticRenderFns = compiledTemplate.staticRenderFns;
-        options._compiled = true;
-        // functional template
-        if (isFunctionalTemplate) {
-            options.functional = true;
-        }
-    }
-    // scopedId
-    if (scopeId) {
-        options._scopeId = scopeId;
-    }
-    var hook;
-    if (moduleIdentifier) {
-        // server build
-        hook = function (context) {
-            // 2.3 injection
-            context =
-                context || // cached call
-                    (this.$vnode && this.$vnode.ssrContext) || // stateful
-                    (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext); // functional
-            // 2.2 with runInNewContext: true
-            if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-                context = __VUE_SSR_CONTEXT__;
-            }
-            // inject component styles
-            if (injectStyle) {
-                injectStyle.call(this, createInjectorSSR(context));
-            }
-            // register component module identifier for async chunk inference
-            if (context && context._registeredComponents) {
-                context._registeredComponents.add(moduleIdentifier);
-            }
-        };
-        // used by ssr in case component is cached and beforeCreate
-        // never gets called
-        options._ssrRegister = hook;
-    }
-    else if (injectStyle) {
-        hook = isShadowMode
-            ? function () {
-                injectStyle.call(this, createInjectorShadow(this.$root.$options.shadowRoot));
-            }
-            : function (context) {
-                injectStyle.call(this, createInjector(context));
-            };
-    }
-    if (hook) {
-        if (options.functional) {
-            // register for functional component in vue file
-            var originalRender = options.render;
-            options.render = function renderWithStyleInjection(h, context) {
-                hook.call(context);
-                return originalRender(h, context);
-            };
-        }
-        else {
-            // inject component registration as beforeCreate hook
-            var existing = options.beforeCreate;
-            options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
-        }
-    }
-    return defaultExport;
-}
-
-/* script */
-var __vue_script__ = script;
-// For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-script.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-grid.vue";
-
-/* template */
-var __vue_render__ = function() {
-  var _vm = this;
-  var _h = _vm.$createElement;
-  var _c = _vm._self._c || _h;
-  return _vm.xAxes || _vm.yAxes
-    ? _c("g", [
-        _vm.xAxes && _vm.xLines > 0
-          ? _c(
-              "g",
-              { staticClass: "trend-chart-grid-x" },
-              _vm._l(_vm.xLines, function(n, i) {
-                return _c(
-                  "line",
-                  _vm._b(
-                    { key: i, staticClass: "trend-chart-grid-x-axis" },
-                    "line",
-                    _vm.setXLineParams(n),
-                    false
-                  )
-                )
-              }),
-              0
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.yAxes && _vm.yAxesLines > 0
-          ? _c(
-              "g",
-              { staticClass: "trend-chart-grid-y" },
-              _vm._l(_vm.yAxesLines, function(n, i) {
-                return _c(
-                  "line",
-                  _vm._b(
-                    { key: i, staticClass: "trend-chart-grid-y-axis" },
-                    "line",
-                    _vm.setYLineParams(n),
-                    false
-                  )
-                )
-              }),
-              0
-            )
-          : _vm._e()
-      ])
-    : _vm._e()
-};
-var __vue_staticRenderFns__ = [];
-__vue_render__._withStripped = true;
-
-  /* style */
-  var __vue_inject_styles__ = undefined;
-  /* scoped */
-  var __vue_scope_id__ = undefined;
-  /* module identifier */
-  var __vue_module_identifier__ = undefined;
-  /* functional template */
-  var __vue_is_functional_template__ = false;
-  /* style inject */
-  
-  /* style inject SSR */
-  
-
-  
-  var TrendChartGrid = normalizeComponent(
-    { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-    __vue_inject_styles__,
-    __vue_script__,
-    __vue_scope_id__,
-    __vue_is_functional_template__,
-    __vue_module_identifier__,
-    undefined,
-    undefined
-  );
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-var script$1 = {
+var TrendChartLabels = {
   name: "TrendChartLabels",
   props: {
     xLabels: {
@@ -400,119 +266,81 @@ var script$1 = {
       var y = boundary.maxY - step * n;
       return { x: x, y: y };
     }
+  },
+  render: function render(h) {
+    var this$1 = this;
+
+    if (
+      !(this.xLabels && this.xLabels.length) ||
+      !(this.yLabelsAmount && this.yLabelsAmount > 0)
+    )
+      { return; }
+
+    var children = [];
+
+    // x labels
+    if (this.xLabels && this.xLabels.length) {
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-labels-x"
+          },
+          this.xLabels.map(function (label, i) {
+            return h(
+              "text",
+              {
+                class: "trend-chart-label-x",
+                attrs: Object.assign({}, this$1.setXLabelsParams(i),
+                  {"text-anchor": "middle",
+                  "dominant-baseline":
+                    this$1.xLabelsPosition == "bottom"
+                      ? "text-before-edge"
+                      : "text-after-edge"})
+              },
+              label
+            );
+          })
+        )
+      );
+    }
+
+    // y labels
+    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+      var labels = [];
+      for (var i = 0; i < this.yLabelsAmount; i++) {
+        labels.push(
+          h(
+            "text",
+            {
+              class: "trend-chart-label-y",
+              attrs: Object.assign({}, this.setYLabelsParams(i),
+                {"text-anchor": this.yLabelsPosition == "left" ? "end" : "start"})
+            },
+            this.yLabelsTextFormatter(
+              this.$parent.params.minValue +
+                ((this.$parent.params.maxValue - this.$parent.params.minValue) /
+                  (this.yLabelsAmount - 1)) *
+                  i
+            )
+          )
+        );
+      }
+      children.push(
+        h(
+          "g",
+          {
+            class: "trend-chart-labels-y"
+          },
+          labels
+        )
+      );
+    }
+
+    // Render component
+    return h("g", children);
   }
 };
-
-/* script */
-var __vue_script__$1 = script$1;
-// For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-script$1.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-labels.vue";
-
-/* template */
-var __vue_render__$1 = function() {
-  var _vm = this;
-  var _h = _vm.$createElement;
-  var _c = _vm._self._c || _h;
-  return (_vm.xLabels && _vm.xLabels.length) ||
-    (_vm.yLabelsAmount && _vm.yLabelsAmount > 0)
-    ? _c("g", [
-        _vm.xLabels && _vm.xLabels.length
-          ? _c(
-              "g",
-              { staticClass: "trend-chart-labels-x" },
-              _vm._l(_vm.xLabels, function(label, i) {
-                return _c(
-                  "text",
-                  _vm._b(
-                    {
-                      key: i,
-                      staticClass: "trend-chart-label-x",
-                      attrs: {
-                        "text-anchor": "middle",
-                        "dominant-baseline":
-                          _vm.xLabelsPosition == "bottom"
-                            ? "text-before-edge"
-                            : "text-after-edge"
-                      }
-                    },
-                    "text",
-                    _vm.setXLabelsParams(i),
-                    false
-                  ),
-                  [_vm._v(_vm._s(label))]
-                )
-              }),
-              0
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.yLabelsAmount && _vm.yLabelsAmount > 0
-          ? _c(
-              "g",
-              { staticClass: "trend-chart-labels-y" },
-              _vm._l(_vm.yLabelsAmount, function(n, i) {
-                return _c(
-                  "text",
-                  _vm._b(
-                    {
-                      key: i,
-                      staticClass: "trend-chart-label-y",
-                      attrs: {
-                        "text-anchor":
-                          _vm.yLabelsPosition == "left" ? "end" : "start",
-                        "dominant-baseline": "middle"
-                      },
-                      domProps: {
-                        textContent: _vm._s(
-                          _vm.yLabelsTextFormatter(
-                            _vm.$parent.params.minValue +
-                              ((_vm.$parent.params.maxValue -
-                                _vm.$parent.params.minValue) /
-                                (_vm.yLabelsAmount - 1)) *
-                                (n - 1)
-                          )
-                        )
-                      }
-                    },
-                    "text",
-                    _vm.setYLabelsParams(i),
-                    false
-                  )
-                )
-              }),
-              0
-            )
-          : _vm._e()
-      ])
-    : _vm._e()
-};
-var __vue_staticRenderFns__$1 = [];
-__vue_render__$1._withStripped = true;
-
-  /* style */
-  var __vue_inject_styles__$1 = undefined;
-  /* scoped */
-  var __vue_scope_id__$1 = undefined;
-  /* module identifier */
-  var __vue_module_identifier__$1 = undefined;
-  /* functional template */
-  var __vue_is_functional_template__$1 = false;
-  /* style inject */
-  
-  /* style inject SSR */
-  
-
-  
-  var TrendChartLabels = normalizeComponent(
-    { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
-    __vue_inject_styles__$1,
-    __vue_script__$1,
-    __vue_scope_id__$1,
-    __vue_is_functional_template__$1,
-    __vue_module_identifier__$1,
-    undefined,
-    undefined
-  );
 
 function genPoints (arr, ref, max, min, maxAmount) {
   var minX = ref.minX;
@@ -565,9 +393,7 @@ function genPath (pnts, smooth, ref) {
   return { linePath: linePath, fillPath: fillPath };
 }
 
-//
-
-var script$2 = {
+var TrendChartCurve = {
   name: "TrendChartCurve",
   props: {
     data: {
@@ -666,10 +492,10 @@ var script$2 = {
       return genPath(this.points, this.smooth, this.$parent.boundary);
     },
     strokeGradientId: function strokeGradientId() {
-      return ("vueTrendStrokeGradient" + (this._uid));
+      return ("vtsg" + (this._uid));
     },
     fillGradientId: function fillGradientId() {
-      return ("vueTrendFillGradient" + (this._uid));
+      return ("vtfg" + (this._uid));
     }
   },
   methods: {
@@ -689,154 +515,125 @@ var script$2 = {
           break;
       }
     }
-  }
-};
+  },
+  render: function render(h) {
+    var this$1 = this;
 
-/* script */
-var __vue_script__$2 = script$2;
-// For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-script$2.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart-curve.vue";
-
-/* template */
-var __vue_render__$2 = function() {
-  var _vm = this;
-  var _h = _vm.$createElement;
-  var _c = _vm._self._c || _h;
-  return _c("g", { class: _vm.className }, [
-    _vm.fill && _vm.paths && _vm.paths.fillPath
-      ? _c("path", {
-          staticClass: "trend-chart-fill",
+    var children = [];
+    // Fill path
+    if (this.fill && this.paths && this.paths.fillPath) {
+      children.push(
+        h("path", {
+          class: "trend-chart-fill",
           attrs: {
-            d: _vm.paths.fillPath,
-            fill: _vm.fillGradient
-              ? "url(#" + _vm.fillGradientId + ")"
-              : _vm.fillColor,
-            opacity: _vm.fillOpacity
+            d: this.paths.fillPath,
+            fill: this.fillGradient
+              ? ("url(#" + (this.fillGradientId) + ")")
+              : this.fillColor,
+            opacity: this.fillOpacity
           }
         })
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.stroke && _vm.paths && _vm.paths.linePath
-      ? _c("path", {
-          staticClass: "trend-chart-stroke",
+      );
+    }
+    // Stroke path
+    if (this.stroke && this.paths && this.paths.linePath) {
+      children.push(
+        h("path", {
+          class: "trend-chart-fill",
           attrs: {
-            d: _vm.paths.linePath,
+            d: this.paths.linePath,
             fill: "none",
-            stroke: _vm.strokeGradient
-              ? "url(#" + _vm.strokeGradientId + ")"
-              : _vm.strokeColor,
-            "stroke-width": _vm.strokeWidth,
-            "stroke-dasharray": _vm.strokeDasharray
+            stroke: this.strokeGradient
+              ? ("url(#" + (this.strokeGradientId) + ")")
+              : this.strokeColor,
+            "stroke-width": this.strokeWidth,
+            "stroke-dasharray": this.strokeDasharray
           }
         })
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.showPoints
-      ? _c(
+      );
+    }
+    // Points
+    if (this.showPoints) {
+      children.push(
+        h(
           "g",
-          { staticClass: "trend-chart-points" },
-          _vm._l(_vm.points, function(point, i) {
-            return _c("circle", {
-              key: i,
-              staticClass: "trend-chart-point",
+          {
+            class: "trend-chart-points"
+          },
+          this.points.map(function (point) { return h("circle", {
+              class: "trend-chart-point",
               attrs: {
                 cx: point.x,
                 cy: point.y,
-                r: _vm.pointsRadius,
-                fill: _vm.pointsFill,
-                stroke: _vm.pointsStrokeColor,
-                "stroke-width": _vm.pointsStrokeWidth
+                r: this$1.pointsRadius,
+                fill: this$1.pointsFill,
+                stroke: this$1.pointsStrokeColor,
+                "stroke-width": this$1.pointsStrokeWidth
               }
+            }); }
+          )
+        )
+      );
+    }
+    // Gradients
+    if (this.strokeGradient || this.fillGradient) {
+      var gradients = [];
+      // Stroke Gradient
+      if (this.strokeGradient) {
+        gradients.push(
+          h(
+            "linearGradient",
+            {
+              attrs: Object.assign({}, {id: this.strokeGradientId},
+                this.getGradientDirection(this.strokeGradientDirection))
+            },
+            this.strokeGradient.map(function (color, i) {
+              return h("stop", {
+                attrs: {
+                  offset: i / this$1.strokeGradient.length,
+                  "stop-color": color
+                }
+              });
             })
-          }),
-          0
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.strokeGradient || _vm.fillGradient
-      ? _c(
-          "defs",
-          [
-            _vm.strokeGradient
-              ? _c(
-                  "linearGradient",
-                  _vm._b(
-                    { attrs: { id: _vm.strokeGradientId } },
-                    "linearGradient",
-                    _vm.getGradientDirection(_vm.strokeGradientDirection),
-                    false
-                  ),
-                  _vm._l(_vm.strokeGradient, function(color, i) {
-                    return _c("stop", {
-                      key: i,
-                      attrs: {
-                        offset: i / _vm.strokeGradient.length,
-                        "stop-color": color
-                      }
-                    })
-                  }),
-                  1
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.fillGradient
-              ? _c(
-                  "linearGradient",
-                  _vm._b(
-                    { attrs: { id: _vm.fillGradientId } },
-                    "linearGradient",
-                    _vm.getGradientDirection(_vm.fillGradientDirection),
-                    false
-                  ),
-                  _vm._l(_vm.fillGradient, function(color, i) {
-                    return _c("stop", {
-                      key: i,
-                      attrs: {
-                        offset: i / _vm.fillGradient.length,
-                        "stop-color": color
-                      }
-                    })
-                  }),
-                  1
-                )
-              : _vm._e()
-          ],
-          1
-        )
-      : _vm._e()
-  ])
+          )
+        );
+      }
+      // Fill Gradient
+      if (this.fillGradient) {
+        gradients.push(
+          h(
+            "linearGradient",
+            {
+              attrs: Object.assign({}, {id: this.fillGradientId},
+                this.getGradientDirection(this.fillGradientDirection))
+            },
+            this.fillGradient.map(function (color, i) {
+              return h("stop", {
+                attrs: {
+                  offset: i / this$1.fillGradient.length,
+                  "stop-color": color
+                }
+              });
+            })
+          )
+        );
+      }
+
+      children.push(h("defs", gradients));
+    }
+
+    // Render component
+    return h(
+      "g",
+      {
+        class: this.className
+      },
+      children
+    );
+  }
 };
-var __vue_staticRenderFns__$2 = [];
-__vue_render__$2._withStripped = true;
 
-  /* style */
-  var __vue_inject_styles__$2 = undefined;
-  /* scoped */
-  var __vue_scope_id__$2 = undefined;
-  /* module identifier */
-  var __vue_module_identifier__$2 = undefined;
-  /* functional template */
-  var __vue_is_functional_template__$2 = false;
-  /* style inject */
-  
-  /* style inject SSR */
-  
-
-  
-  var TrendChartCurve = normalizeComponent(
-    { render: __vue_render__$2, staticRenderFns: __vue_staticRenderFns__$2 },
-    __vue_inject_styles__$2,
-    __vue_script__$2,
-    __vue_scope_id__$2,
-    __vue_is_functional_template__$2,
-    __vue_module_identifier__$2,
-    undefined,
-    undefined
-  );
-
-//
-
-var script$3 = {
+var TrendChart = {
   name: "TrendChart",
   components: { TrendChartGrid: TrendChartGrid, TrendChartLabels: TrendChartLabels, TrendChartCurve: TrendChartCurve },
   props: {
@@ -945,9 +742,7 @@ var script$3 = {
           chartLabels.yLabelsAmount > 0)
       ) {
         var chartParams = chart.getBoundingClientRect();
-        console.log(chartParams.width, chartParams.height);
         var chartLabelsParams = chartLabels.$el.getBoundingClientRect();
-        console.log(chartLabelsParams.width, chartLabelsParams.height);
 
         var top =
           chartParams.top - chartLabelsParams.top + this.paddingObject.top;
@@ -961,7 +756,6 @@ var script$3 = {
           this.paddingObject.bottom;
         var left =
           this.paddingObject.left - chartLabelsParams.left + chartParams.left;
-        console.log(top, right, bottom, left);
 
         this.labelsOverflowObject = {
           top: top > 0 ? top : 0,
@@ -991,97 +785,57 @@ var script$3 = {
   },
   destroyed: function destroyed() {
     window.removeEventListener("resize", this.onWindowResize);
+  },
+  render: function render(h) {
+    var children = [];
+
+    // Grid
+    if (this.grid) {
+      children.push(
+        h(TrendChartGrid, {
+          class: "trend-chart-grid",
+          attrs: Object.assign({}, this.grid)
+        })
+      );
+    }
+
+    // Labels
+    if (this.labels) {
+      children.push(
+        h(TrendChartLabels, {
+          class: "trend-chart-labels",
+          ref: "chart-labels",
+          attrs: Object.assign({}, this.labels)
+        })
+      );
+    }
+
+    // Curves
+    this.datasets.map(function (dataset) {
+      children.push(
+        h(TrendChartCurve, {
+          class: "trend-chart-curve",
+          attrs: Object.assign({}, dataset)
+        })
+      );
+    });
+
+    // Render component
+    return h(
+      "svg",
+      {
+        class: "trend-chart",
+        ref: "chart",
+        attrs: {
+          xmlns: "http://www.w3.org/2000/svg",
+          width: "100%",
+          height: "100%"
+        }
+      },
+      children
+    );
   }
 };
-
-/* script */
-var __vue_script__$3 = script$3;
-// For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-script$3.__file = "/Users/dmytrobarylo/Desktop/vue-trend-chart/src/components/trend-chart.vue";
-
-/* template */
-var __vue_render__$3 = function() {
-  var _vm = this;
-  var _h = _vm.$createElement;
-  var _c = _vm._self._c || _h;
-  return _c(
-    "svg",
-    {
-      ref: "chart",
-      staticClass: "trend-chart",
-      attrs: {
-        xmlns: "http://www.w3.org/2000/svg",
-        width: "100%",
-        height: "100%"
-      }
-    },
-    [
-      _vm.grid
-        ? _c(
-            "trend-chart-grid",
-            _vm._b(
-              { staticClass: "trend-chart-grid" },
-              "trend-chart-grid",
-              _vm.grid,
-              false
-            )
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.labels
-        ? _c(
-            "trend-chart-labels",
-            _vm._b(
-              { ref: "chart-labels", staticClass: "trend-chart-labels" },
-              "trend-chart-labels",
-              _vm.labels,
-              false
-            )
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _vm._l(_vm.datasets, function(dataset, i) {
-        return _c(
-          "trend-chart-curve",
-          _vm._b(
-            { key: i, staticClass: "trend-chart-curve" },
-            "trend-chart-curve",
-            dataset,
-            false
-          )
-        )
-      })
-    ],
-    2
-  )
-};
-var __vue_staticRenderFns__$3 = [];
-__vue_render__$3._withStripped = true;
-
-  /* style */
-  var __vue_inject_styles__$3 = undefined;
-  /* scoped */
-  var __vue_scope_id__$3 = undefined;
-  /* module identifier */
-  var __vue_module_identifier__$3 = undefined;
-  /* functional template */
-  var __vue_is_functional_template__$3 = false;
-  /* style inject */
-  
-  /* style inject SSR */
-  
-
-  
-  var TrendChart = normalizeComponent(
-    { render: __vue_render__$3, staticRenderFns: __vue_staticRenderFns__$3 },
-    __vue_inject_styles__$3,
-    __vue_script__$3,
-    __vue_scope_id__$3,
-    __vue_is_functional_template__$3,
-    __vue_module_identifier__$3,
-    undefined,
-    undefined
-  );
 
 TrendChart.install = function(Vue) {
   Vue.component(TrendChart.name, TrendChart);
