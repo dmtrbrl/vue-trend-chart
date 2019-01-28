@@ -92,7 +92,7 @@
       boundary: function boundary() {
         return this.$parent.boundary;
       },
-      paddingObject: function paddingObject() {
+      gridPaddingObject: function gridPaddingObject() {
         return this.$parent.gridPaddingObject;
       }
     },
@@ -101,7 +101,7 @@
         var ref = this;
         var boundary = ref.boundary;
         var xLines = ref.xLines;
-        var paddingObject = ref.paddingObject;
+        var gridPaddingObject = ref.gridPaddingObject;
         var xAxesStrokeColor = ref.xAxesStrokeColor;
         var xAxesStrokeWidth = ref.xAxesStrokeWidth;
         var xAxesStrokeDasharray = ref.xAxesStrokeDasharray;
@@ -109,8 +109,8 @@
         var x = boundary.minX + step * (n - 1);
         var x1 = x;
         var x2 = x;
-        var y1 = boundary.minY - paddingObject.top;
-        var y2 = boundary.maxY + paddingObject.bottom;
+        var y1 = boundary.minY - gridPaddingObject.top;
+        var y2 = boundary.maxY + gridPaddingObject.bottom;
         return {
           x1: x1,
           x2: x2,
@@ -125,14 +125,14 @@
         var ref = this;
         var boundary = ref.boundary;
         var yAxesLines = ref.yAxesLines;
-        var paddingObject = ref.paddingObject;
+        var gridPaddingObject = ref.gridPaddingObject;
         var yAxesStrokeColor = ref.yAxesStrokeColor;
         var yAxesStrokeWidth = ref.yAxesStrokeWidth;
         var yAxesStrokeDasharray = ref.yAxesStrokeDasharray;
         var step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
         var y = boundary.minY + step * (n - 1);
-        var x1 = boundary.minX - paddingObject.left;
-        var x2 = boundary.maxX + paddingObject.right;
+        var x1 = boundary.minX - gridPaddingObject.left;
+        var x2 = boundary.maxX + gridPaddingObject.right;
         var y1 = y;
         var y2 = y;
         return {
@@ -368,12 +368,16 @@
     computed: {
       boundary: function boundary() {
         return this.$parent.boundary;
+      },
+      gridPaddingObject: function gridPaddingObject() {
+        return this.$parent.gridPaddingObject;
       }
     },
     methods: {
       setXLabelsParams: function setXLabelsParams(n) {
         var ref = this;
         var boundary = ref.boundary;
+        var gridPaddingObject = ref.gridPaddingObject;
         var xLabels = ref.xLabels;
         var xLabelsPosition = ref.xLabelsPosition;
         var xLabelsOffset = ref.xLabelsOffset;
@@ -381,21 +385,22 @@
         var x = boundary.minX + step * n;
         var y =
           xLabelsPosition == "bottom"
-            ? boundary.maxY + xLabelsOffset
-            : boundary.minY - xLabelsOffset;
+            ? boundary.maxY + gridPaddingObject.bottom + xLabelsOffset
+            : boundary.minY - gridPaddingObject.top - xLabelsOffset;
         return { x: x, y: y };
       },
       setYLabelsParams: function setYLabelsParams(n) {
         var ref = this;
         var boundary = ref.boundary;
+        var gridPaddingObject = ref.gridPaddingObject;
         var yLabelsAmount = ref.yLabelsAmount;
         var yLabelsPosition = ref.yLabelsPosition;
         var yLabelsOffset = ref.yLabelsOffset;
         var step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
         var x =
           yLabelsPosition == "left"
-            ? boundary.minX - yLabelsOffset
-            : boundary.maxX + yLabelsOffset;
+            ? boundary.minX - gridPaddingObject.left - yLabelsOffset
+            : boundary.maxX + gridPaddingObject.right + yLabelsOffset;
         var y = boundary.maxY - step * n;
         return { x: x, y: y };
       }
@@ -428,10 +433,10 @@
                         staticClass: "trend-chart-label-x",
                         attrs: {
                           "text-anchor": "middle",
-                          "alignment-baseline":
+                          "dominant-baseline":
                             _vm.xLabelsPosition == "bottom"
-                              ? "before-edge"
-                              : "after-edge"
+                              ? "text-before-edge"
+                              : "text-after-edge"
                         }
                       },
                       "text",
@@ -459,7 +464,7 @@
                         attrs: {
                           "text-anchor":
                             _vm.yLabelsPosition == "left" ? "end" : "start",
-                          "alignment-baseline": "middle"
+                          "dominant-baseline": "middle"
                         },
                         domProps: {
                           textContent: _vm._s(
@@ -873,10 +878,12 @@
         }
       }
     },
+    data: function data() {
+      return {
+        labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 }
+      };
+    },
     computed: {
-      chartLabels: function chartLabels() {
-        return this.$refs["chart-labels"];
-      },
       paddingObject: function paddingObject() {
         if (!this.padding) { return getPadding("0"); }
         return getPadding(this.padding);
@@ -891,11 +898,24 @@
         var height = ref.height;
         var paddingObject = ref.paddingObject;
         var gridPaddingObject = ref.gridPaddingObject;
+        var labelsOverflowObject = ref.labelsOverflowObject;
         var boundary = {
-          minX: paddingObject.left + gridPaddingObject.left,
-          minY: paddingObject.top + gridPaddingObject.top,
-          maxX: width - paddingObject.right - gridPaddingObject.right,
-          maxY: height - paddingObject.bottom - gridPaddingObject.bottom
+          minX:
+            paddingObject.left +
+            gridPaddingObject.left +
+            labelsOverflowObject.left,
+          minY:
+            paddingObject.top + gridPaddingObject.top + labelsOverflowObject.top,
+          maxX:
+            width -
+            paddingObject.right -
+            gridPaddingObject.right -
+            labelsOverflowObject.right,
+          maxY:
+            height -
+            paddingObject.bottom -
+            gridPaddingObject.bottom -
+            labelsOverflowObject.bottom
         };
         return boundary;
       },
@@ -924,42 +944,45 @@
       fitLabels: function fitLabels() {
         var chart = this.$refs["chart"];
         var chartLabels = this.$refs["chart-labels"];
-
         if (
-          (chartLabels.xLabels && chartLabels.xLabels.length) ||
-          chartLabels.yLabelsAmount > 0
+          chartLabels &&
+          ((chartLabels.xLabels && chartLabels.xLabels.length) ||
+            chartLabels.yLabelsAmount > 0)
         ) {
           var chartParams = chart.getBoundingClientRect();
           var chartLabelsParams = chartLabels.$el.getBoundingClientRect();
+          var xScaleK = this.width / chartParams.width;
+          var yScaleK = this.height / chartParams.height;
+
           var top =
-            chartParams.top + this.paddingObject.top - chartLabelsParams.top;
-          if (top > 0) {
-            this.paddingObject.top += top;
-          }
+            chartParams.top * yScaleK -
+            chartLabelsParams.top * yScaleK +
+            this.paddingObject.top;
           var right =
-            chartLabelsParams.right -
-            chartParams.right +
+            chartLabelsParams.right * xScaleK -
+            chartParams.right * xScaleK +
             this.paddingObject.right;
-          if (right > 0) {
-            this.paddingObject.right += right;
-          }
           var bottom =
-            chartLabelsParams.bottom -
-            chartParams.bottom +
+            chartLabelsParams.bottom * yScaleK -
+            chartParams.bottom * yScaleK +
             this.paddingObject.bottom;
-          if (bottom > 0) {
-            this.paddingObject.bottom += bottom;
-          }
           var left =
-            this.paddingObject.left - chartLabelsParams.left + chartParams.left;
-          if (left > 0) {
-            this.paddingObject.left += left;
-          }
+            this.paddingObject.left -
+            chartLabelsParams.left * xScaleK +
+            chartParams.left * xScaleK;
+          this.labelsOverflowObject = {
+            top: top > 0 ? top : 0,
+            right: right > 0 ? right : 0,
+            bottom: bottom > 0 ? bottom : 0,
+            left: left > 0 ? left : 0
+          };
+        } else {
+          this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
         }
       }
     },
     mounted: function mounted() {
-      // this.fitLabels();
+      this.fitLabels();
     }
   };
 
