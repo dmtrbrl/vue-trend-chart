@@ -39,13 +39,6 @@
   var script = {
     name: "TrendChartGrid",
     props: {
-      padding: {
-        default: "0",
-        type: String,
-        validator: function validator(value) {
-          return validatePadding(value);
-        }
-      },
       xAxes: {
         default: false,
         type: Boolean
@@ -83,6 +76,13 @@
       yAxesStrokeDasharray: {
         default: null,
         type: String
+      },
+      padding: {
+        default: "0",
+        type: String,
+        validator: function validator(value) {
+          return validatePadding(value);
+        }
       }
     },
     computed: {
@@ -856,14 +856,6 @@
         default: null,
         type: Object
       },
-      width: {
-        default: 300,
-        type: Number
-      },
-      height: {
-        default: 75,
-        type: Number
-      },
       max: {
         type: Number
       },
@@ -880,6 +872,8 @@
     },
     data: function data() {
       return {
+        width: null,
+        height: null,
         labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 }
       };
     },
@@ -941,6 +935,11 @@
       }
     },
     methods: {
+      setSize: function setSize() {
+        var params = this.$refs["chart"].getBoundingClientRect();
+        this.width = params.width;
+        this.height = params.height;
+      },
       fitLabels: function fitLabels() {
         var chart = this.$refs["chart"];
         var chartLabels = this.$refs["chart-labels"];
@@ -950,26 +949,24 @@
             chartLabels.yLabelsAmount > 0)
         ) {
           var chartParams = chart.getBoundingClientRect();
+          console.log(chartParams.width, chartParams.height);
           var chartLabelsParams = chartLabels.$el.getBoundingClientRect();
-          var xScaleK = this.width / chartParams.width;
-          var yScaleK = this.height / chartParams.height;
+          console.log(chartLabelsParams.width, chartLabelsParams.height);
 
           var top =
-            chartParams.top * yScaleK -
-            chartLabelsParams.top * yScaleK +
-            this.paddingObject.top;
+            chartParams.top - chartLabelsParams.top + this.paddingObject.top;
           var right =
-            chartLabelsParams.right * xScaleK -
-            chartParams.right * xScaleK +
+            chartLabelsParams.right -
+            chartParams.right +
             this.paddingObject.right;
           var bottom =
-            chartLabelsParams.bottom * yScaleK -
-            chartParams.bottom * yScaleK +
+            chartLabelsParams.bottom -
+            chartParams.bottom +
             this.paddingObject.bottom;
           var left =
-            this.paddingObject.left -
-            chartLabelsParams.left * xScaleK +
-            chartParams.left * xScaleK;
+            this.paddingObject.left - chartLabelsParams.left + chartParams.left;
+          console.log(top, right, bottom, left);
+
           this.labelsOverflowObject = {
             top: top > 0 ? top : 0,
             right: right > 0 ? right : 0,
@@ -979,10 +976,25 @@
         } else {
           this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
         }
+      },
+      init: function init() {
+        var this$1 = this;
+
+        this.setSize();
+        this.$nextTick(function () {
+          this$1.fitLabels();
+        });
+      },
+      onWindowResize: function onWindowResize() {
+        this.setSize();
       }
     },
     mounted: function mounted() {
-      this.fitLabels();
+      this.init();
+      window.addEventListener("resize", this.onWindowResize);
+    },
+    destroyed: function destroyed() {
+      window.removeEventListener("resize", this.onWindowResize);
     }
   };
 
@@ -1002,10 +1014,9 @@
         ref: "chart",
         staticClass: "trend-chart",
         attrs: {
-          viewBox: "0 0 " + _vm.width + " " + _vm.height,
-          width: _vm.width,
-          height: _vm.height,
-          xmlns: "http://www.w3.org/2000/svg"
+          xmlns: "http://www.w3.org/2000/svg",
+          width: "100%",
+          height: "100%"
         }
       },
       [
