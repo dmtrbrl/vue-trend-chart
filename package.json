@@ -13,7 +13,7 @@
     "dev": "poi --serve",
     "docs:build": "poi --prod",
     "deploy": "npm run docs:build && gh-pages -d docs-dist",
-    "build": "rollup -c --environment BUILD && uglifyjs dist/vue-trend-chart.js > dist/vue-trend-chart.min.js"
+    "build": "rollup -c --environment BUILD && uglifyjs -c -m -- dist/vue-trend-chart.js > dist/vue-trend-chart.min.js"
   },
   "repository": {
     "type": "git",
