@@ -10,8 +10,7 @@
         :height="200"
         :width="500"
         :min="0"
-        :max="600"
-        padding="5 25 20 10"
+        padding="0"
       ></trend-chart>
     </div>
   </section>
@@ -27,7 +26,6 @@ export default {
       datasets: [
         {
           data: [70, 100, 400, 180, 100, 300, 500],
-          className: "dataChart1",
           smooth: true,
           strokeColor: "#a6c0fe",
           strokeWidth: 2,
@@ -37,7 +35,6 @@ export default {
         },
         {
           data: [150, 300, 350, 100, 350, 100, 15],
-          className: "dataChart2",
           smooth: true,
           strokeGradient: ["#a8edea", "#fed6e3"],
           strokeWidth: 2,
@@ -45,7 +42,6 @@ export default {
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
-          className: "dataChart3",
           smooth: true,
           strokeGradient: ["#fccb90", "#d57eeb"],
           strokeWidth: 2
@@ -57,13 +53,13 @@ export default {
         yAxes: true,
         yAxesLines: 7,
         yAxesStrokeColor: "#eee",
-        padding: "0 5 5 0"
+        padding: "0 0 5 5"
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        yLabelsAmount: 3,
-        yLabelsPosition: "right",
-        yLabelsTextFormatter: val => Math.round(val * 10) / 10
+        yLabelsAmount: 7,
+        yLabelsOffset: 7,
+        yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }
     };
   }

@@ -77,7 +77,7 @@ export default {
     boundary() {
       return this.$parent.boundary;
     },
-    paddingObject() {
+    gridPaddingObject() {
       return this.$parent.gridPaddingObject;
     }
   },
@@ -86,7 +86,7 @@ export default {
       const {
         boundary,
         xLines,
-        paddingObject,
+        gridPaddingObject,
         xAxesStrokeColor,
         xAxesStrokeWidth,
         xAxesStrokeDasharray
@@ -95,8 +95,8 @@ export default {
       const x = boundary.minX + step * (n - 1);
       const x1 = x;
       const x2 = x;
-      const y1 = boundary.minY - paddingObject.top;
-      const y2 = boundary.maxY + paddingObject.bottom;
+      const y1 = boundary.minY - gridPaddingObject.top;
+      const y2 = boundary.maxY + gridPaddingObject.bottom;
       return {
         x1,
         x2,
@@ -111,15 +111,15 @@ export default {
       const {
         boundary,
         yAxesLines,
-        paddingObject,
+        gridPaddingObject,
         yAxesStrokeColor,
         yAxesStrokeWidth,
         yAxesStrokeDasharray
       } = this;
       const step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
       const y = boundary.minY + step * (n - 1);
-      const x1 = boundary.minX - paddingObject.left;
-      const x2 = boundary.maxX + paddingObject.right;
+      const x1 = boundary.minX - gridPaddingObject.left;
+      const x2 = boundary.maxX + gridPaddingObject.right;
       const y1 = y;
       const y2 = y;
       return {
