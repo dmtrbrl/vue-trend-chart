@@ -1,6 +1,6 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('timers')) :
+  typeof define === 'function' && define.amd ? define(['timers'], factory) :
   (global = global || self, global['vue-trend-chart'] = factory());
 }(this, function () { 'use strict';
 
@@ -343,7 +343,7 @@
         }
       },
       xLabelsOffset: {
-        default: 10,
+        default: 5,
         type: Number
       },
       yLabelsAmount: {
@@ -357,7 +357,7 @@
         }
       },
       yLabelsOffset: {
-        default: 10,
+        default: 5,
         type: Number
       },
       yLabelsTextFormatter: {
@@ -412,7 +412,8 @@
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
-    return _vm.xLabels && _vm.xLabels.length
+    return (_vm.xLabels && _vm.xLabels.length) ||
+      (_vm.yLabelsAmount && _vm.yLabelsAmount > 0)
       ? _c("g", [
           _vm.xLabels && _vm.xLabels.length
             ? _c(
@@ -545,15 +546,14 @@
     var bezierX = distance / 2;
 
     // Create Line Path
-    var linePath =
-      "M " + (start.x) + "," + (start.y) +
-      points.map(function (point, index) {
-        if (!smooth) { return (" L" + (point.x) + "," + (point.y)); }
-
+    var linePath = "M " + (start.x) + "," + (start.y);
+    points.forEach(function (point, index) {
+      if (!smooth) { linePath += " L" + (point.x) + "," + (point.y); }
+      else {
         var prev = points[index - 1] || start;
-
-        return (" C " + (bezierX + prev.x) + "," + (prev.y) + " " + (bezierX + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y));
-      });
+        linePath += " C " + (bezierX + prev.x) + "," + (prev.y) + " " + (bezierX + prev.x) + "," + (point.y) + " " + (point.x) + "," + (point.y);
+      }
+    });
 
     // Create Fill Path
     var fillPath = linePath;
@@ -874,7 +874,11 @@
       }
     },
     computed: {
+      chartLabels: function chartLabels() {
+        return this.$refs["chart-labels"];
+      },
       paddingObject: function paddingObject() {
+        if (!this.padding) { return getPadding("0"); }
         return getPadding(this.padding);
       },
       gridPaddingObject: function gridPaddingObject() {
@@ -887,12 +891,13 @@
         var height = ref.height;
         var paddingObject = ref.paddingObject;
         var gridPaddingObject = ref.gridPaddingObject;
-        return {
+        var boundary = {
           minX: paddingObject.left + gridPaddingObject.left,
           minY: paddingObject.top + gridPaddingObject.top,
           maxX: width - paddingObject.right - gridPaddingObject.right,
           maxY: height - paddingObject.bottom - gridPaddingObject.bottom
         };
+        return boundary;
       },
       params: function params() {
         var maxValue = -Infinity;
@@ -914,6 +919,47 @@
         if (this.min !== undefined && this.min < minValue) { minValue = this.min; }
         return { maxValue: maxValue, minValue: minValue, maxAmount: maxAmount };
       }
+    },
+    methods: {
+      fitLabels: function fitLabels() {
+        var chart = this.$refs["chart"];
+        var chartLabels = this.$refs["chart-labels"];
+
+        if (
+          (chartLabels.xLabels && chartLabels.xLabels.length) ||
+          chartLabels.yLabelsAmount > 0
+        ) {
+          var chartParams = chart.getBoundingClientRect();
+          var chartLabelsParams = chartLabels.$el.getBoundingClientRect();
+          var top =
+            chartParams.top + this.paddingObject.top - chartLabelsParams.top;
+          if (top > 0) {
+            this.paddingObject.top += top;
+          }
+          var right =
+            chartLabelsParams.right -
+            chartParams.right +
+            this.paddingObject.right;
+          if (right > 0) {
+            this.paddingObject.right += right;
+          }
+          var bottom =
+            chartLabelsParams.bottom -
+            chartParams.bottom +
+            this.paddingObject.bottom;
+          if (bottom > 0) {
+            this.paddingObject.bottom += bottom;
+          }
+          var left =
+            this.paddingObject.left - chartLabelsParams.left + chartParams.left;
+          if (left > 0) {
+            this.paddingObject.left += left;
+          }
+        }
+      }
+    },
+    mounted: function mounted() {
+      // this.fitLabels();
     }
   };
 
@@ -930,6 +976,7 @@
     return _c(
       "svg",
       {
+        ref: "chart",
         staticClass: "trend-chart",
         attrs: {
           viewBox: "0 0 " + _vm.width + " " + _vm.height,
@@ -955,7 +1002,7 @@
           ? _c(
               "trend-chart-labels",
               _vm._b(
-                { staticClass: "trend-chart-labels" },
+                { ref: "chart-labels", staticClass: "trend-chart-labels" },
                 "trend-chart-labels",
                 _vm.labels,
                 false
