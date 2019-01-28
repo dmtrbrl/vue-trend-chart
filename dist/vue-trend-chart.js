@@ -44,36 +44,12 @@
       xAxesLines: {
         type: Number
       },
-      xAxesStrokeWidth: {
-        default: 1,
-        type: Number
-      },
-      xAxesStrokeColor: {
-        default: "black",
-        type: String
-      },
-      xAxesStrokeDasharray: {
-        default: null,
-        type: String
-      },
       yAxes: {
         default: false,
         type: Boolean
       },
       yAxesLines: {
         type: Number
-      },
-      yAxesStrokeWidth: {
-        default: 1,
-        type: Number
-      },
-      yAxesStrokeColor: {
-        default: "black",
-        type: String
-      },
-      yAxesStrokeDasharray: {
-        default: null,
-        type: String
       },
       padding: {
         default: "0",
@@ -100,9 +76,6 @@
         var boundary = ref.boundary;
         var xLines = ref.xLines;
         var gridPaddingObject = ref.gridPaddingObject;
-        var xAxesStrokeColor = ref.xAxesStrokeColor;
-        var xAxesStrokeWidth = ref.xAxesStrokeWidth;
-        var xAxesStrokeDasharray = ref.xAxesStrokeDasharray;
         var step = (boundary.maxX - boundary.minX) / (xLines - 1);
         var x = boundary.minX + step * (n - 1);
         var x1 = x;
@@ -114,9 +87,7 @@
           x2: x2,
           y1: y1,
           y2: y2,
-          stroke: xAxesStrokeColor,
-          "stroke-width": xAxesStrokeWidth,
-          "stroke-dasharray": xAxesStrokeDasharray
+          stroke: "rgba(0,0,0,0.1)"
         };
       },
       setYLineParams: function setYLineParams(n) {
@@ -124,9 +95,6 @@
         var boundary = ref.boundary;
         var yAxesLines = ref.yAxesLines;
         var gridPaddingObject = ref.gridPaddingObject;
-        var yAxesStrokeColor = ref.yAxesStrokeColor;
-        var yAxesStrokeWidth = ref.yAxesStrokeWidth;
-        var yAxesStrokeDasharray = ref.yAxesStrokeDasharray;
         var step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
         var y = boundary.minY + step * (n - 1);
         var x1 = boundary.minX - gridPaddingObject.left;
@@ -138,9 +106,7 @@
           x2: x2,
           y1: y1,
           y2: y2,
-          stroke: yAxesStrokeColor,
-          "stroke-width": yAxesStrokeWidth,
-          "stroke-dasharray": yAxesStrokeDasharray
+          stroke: "rgba(0,0,0,0.1)"
         };
       }
     },
@@ -173,7 +139,7 @@
       // y axes
       if (this.yAxes && this.yAxesLines > 0) {
         var lines$1 = [];
-        for (var i$1 = 0; i$1 <= this.yAxesLines; i$1++) {
+        for (var i$1 = 1; i$1 <= this.yAxesLines; i$1++) {
           lines$1.push(
             h("line", {
               class: "trend-chart-grid-y-axis",
@@ -321,7 +287,8 @@
               {
                 class: "trend-chart-label-y",
                 attrs: Object.assign({}, this.setYLabelsParams(i),
-                  {"text-anchor": this.yLabelsPosition == "left" ? "end" : "start"})
+                  {"text-anchor": this.yLabelsPosition == "left" ? "end" : "start",
+                  "dominant-baseline": "middle"})
               },
               this.yLabelsTextFormatter(
                 this.$parent.params.minValue +
@@ -417,71 +384,13 @@
         default: true,
         type: Boolean
       },
-      strokeWidth: {
-        default: 1,
-        type: Number
-      },
-      strokeColor: {
-        default: "black",
-        type: String
-      },
-      strokeGradient: {
-        type: Array
-      },
-      strokeGradientDirection: {
-        default: "to top",
-        type: String,
-        validator: function validator(value) {
-          return (
-            ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
-          );
-        }
-      },
-      strokeDasharray: {
-        default: "none",
-        type: String
-      },
       fill: {
         default: false,
         type: Boolean
       },
-      fillColor: {
-        default: "black",
-        type: String
-      },
-      fillGradient: {
-        type: Array
-      },
-      fillGradientDirection: {
-        default: "to top",
-        type: String,
-        validator: function validator(value) {
-          return (
-            ["to top", "to left", "to bottom", "to right"].indexOf(value) !== -1
-          );
-        }
-      },
-      fillOpacity: {
-        default: 1,
-        type: Number
-      },
       showPoints: {
         default: false,
         type: Boolean
-      },
-      pointsRadius: {
-        default: 2,
-        type: Number
-      },
-      pointsFill: {
-        default: "black",
-        type: String
-      },
-      pointsStrokeWidth: {
-        type: Number
-      },
-      pointsStrokeColor: {
-        type: String
       }
     },
     computed: {
@@ -496,35 +405,9 @@
       },
       paths: function paths() {
         return genPath(this.points, this.smooth, this.$parent.boundary);
-      },
-      strokeGradientId: function strokeGradientId() {
-        return ("vtsg" + (this._uid));
-      },
-      fillGradientId: function fillGradientId() {
-        return ("vtfg" + (this._uid));
-      }
-    },
-    methods: {
-      getGradientDirection: function getGradientDirection(ref) {
-        switch (ref) {
-          case "to left":
-            return { x1: 0, y1: 0, x2: 1, y2: 0 };
-            break;
-          case "to bottom":
-            return { x1: 0, y1: 0, x2: 0, y2: 1 };
-            break;
-          case "to right":
-            return { x1: 1, y1: 0, x2: 0, y2: 0 };
-            break;
-          default:
-            return { x1: 0, y1: 1, x2: 0, y2: 0 };
-            break;
-        }
       }
     },
     render: function render(h) {
-      var this$1 = this;
-
       var children = [];
       // Fill path
       if (this.fill && this.paths && this.paths.fillPath) {
@@ -533,10 +416,7 @@
             class: "trend-chart-fill",
             attrs: {
               d: this.paths.fillPath,
-              fill: this.fillGradient
-                ? ("url(#" + (this.fillGradientId) + ")")
-                : this.fillColor,
-              opacity: this.fillOpacity
+              fill: "rgba(0,0,0,0.15)"
             }
           })
         );
@@ -549,11 +429,7 @@
             attrs: {
               d: this.paths.linePath,
               fill: "none",
-              stroke: this.strokeGradient
-                ? ("url(#" + (this.strokeGradientId) + ")")
-                : this.strokeColor,
-              "stroke-width": this.strokeWidth,
-              "stroke-dasharray": this.strokeDasharray
+              stroke: "#000000"
             }
           })
         );
@@ -571,61 +447,12 @@
                 attrs: {
                   cx: point.x,
                   cy: point.y,
-                  r: this$1.pointsRadius,
-                  fill: this$1.pointsFill,
-                  stroke: this$1.pointsStrokeColor,
-                  "stroke-width": this$1.pointsStrokeWidth
+                  r: 3
                 }
               }); }
             )
           )
         );
-      }
-      // Gradients
-      if (this.strokeGradient || this.fillGradient) {
-        var gradients = [];
-        // Stroke Gradient
-        if (this.strokeGradient) {
-          gradients.push(
-            h(
-              "linearGradient",
-              {
-                attrs: Object.assign({}, {id: this.strokeGradientId},
-                  this.getGradientDirection(this.strokeGradientDirection))
-              },
-              this.strokeGradient.map(function (color, i) {
-                return h("stop", {
-                  attrs: {
-                    offset: i / this$1.strokeGradient.length,
-                    "stop-color": color
-                  }
-                });
-              })
-            )
-          );
-        }
-        // Fill Gradient
-        if (this.fillGradient) {
-          gradients.push(
-            h(
-              "linearGradient",
-              {
-                attrs: Object.assign({}, {id: this.fillGradientId},
-                  this.getGradientDirection(this.fillGradientDirection))
-              },
-              this.fillGradient.map(function (color, i) {
-                return h("stop", {
-                  attrs: {
-                    offset: i / this$1.fillGradient.length,
-                    "stop-color": color
-                  }
-                });
-              })
-            )
-          );
-        }
-
-        children.push(h("defs", gradients));
       }
 
       // Render component
