@@ -121,7 +121,7 @@
         for (var i = 1; i <= this.xLines; i++) {
           lines.push(
             h("line", {
-              class: "trend-chart-grid-x-axis",
+              class: "vtc-axis-x",
               attrs: Object.assign({}, this.setXLineParams(i))
             })
           );
@@ -130,7 +130,7 @@
           h(
             "g",
             {
-              class: "trend-chart-grid-x"
+              class: "vtc-axes-x"
             },
             lines
           )
@@ -142,7 +142,7 @@
         for (var i$1 = 1; i$1 <= this.yAxesLines; i$1++) {
           lines$1.push(
             h("line", {
-              class: "trend-chart-grid-y-axis",
+              class: "vtc-axis-y",
               attrs: Object.assign({}, this.setYLineParams(i$1))
             })
           );
@@ -151,7 +151,7 @@
           h(
             "g",
             {
-              class: "trend-chart-grid-y"
+              class: "vtc-axes-y"
             },
             lines$1
           )
@@ -256,13 +256,13 @@
           h(
             "g",
             {
-              class: "trend-chart-labels-x"
+              class: "vtc-labels-x"
             },
             this.xLabels.map(function (label, i) {
               return h(
                 "text",
                 {
-                  class: "trend-chart-label-x",
+                  class: "vtc-label-x",
                   attrs: Object.assign({}, this$1.setXLabelsParams(i),
                     {"text-anchor": "middle",
                     "dominant-baseline":
@@ -285,7 +285,7 @@
             h(
               "text",
               {
-                class: "trend-chart-label-y",
+                class: "vtc-label-y",
                 attrs: Object.assign({}, this.setYLabelsParams(i),
                   {"text-anchor": this.yLabelsPosition == "left" ? "end" : "start",
                   "dominant-baseline": "middle"})
@@ -303,7 +303,7 @@
           h(
             "g",
             {
-              class: "trend-chart-labels-y"
+              class: "vtc-labels-y"
             },
             labels
           )
@@ -413,7 +413,7 @@
       if (this.fill && this.paths && this.paths.fillPath) {
         children.push(
           h("path", {
-            class: "trend-chart-fill",
+            class: "vtc-curve-fill",
             attrs: {
               d: this.paths.fillPath,
               fill: "rgba(0,0,0,0.15)"
@@ -425,7 +425,7 @@
       if (this.stroke && this.paths && this.paths.linePath) {
         children.push(
           h("path", {
-            class: "trend-chart-fill",
+            class: "vtc-curve-stroke",
             attrs: {
               d: this.paths.linePath,
               fill: "none",
@@ -440,10 +440,10 @@
           h(
             "g",
             {
-              class: "trend-chart-points"
+              class: "vtc-points"
             },
             this.points.map(function (point) { return h("circle", {
-                class: "trend-chart-point",
+                class: "vtc-point",
                 attrs: {
                   cx: point.x,
                   cy: point.y,
@@ -626,7 +626,7 @@
       if (this.grid) {
         children.push(
           h(TrendChartGrid, {
-            class: "trend-chart-grid",
+            class: "vtc-grid",
             attrs: Object.assign({}, this.grid)
           })
         );
@@ -636,7 +636,7 @@
       if (this.labels) {
         children.push(
           h(TrendChartLabels, {
-            class: "trend-chart-labels",
+            class: "vtc-labels",
             ref: "chart-labels",
             attrs: Object.assign({}, this.labels)
           })
@@ -647,7 +647,7 @@
       this.datasets.map(function (dataset) {
         children.push(
           h(TrendChartCurve, {
-            class: "trend-chart-curve",
+            class: "vtc-curve",
             attrs: Object.assign({}, dataset)
           })
         );
@@ -657,7 +657,7 @@
       return h(
         "svg",
         {
-          class: "trend-chart",
+          class: "vtc",
           ref: "chart",
           attrs: {
             xmlns: "http://www.w3.org/2000/svg",
