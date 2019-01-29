@@ -1,9 +1,21 @@
 <template>
   <section class="docs">
     <h1 class="docs-heading heading">Vue Trend Chart</h1>
-    <div class="docs-subheading">Simple and elegant trend charts for Vue.js</div>
+    <div class="docs-subheading">Simple trend charts for Vue.js</div>
     <div class="docs-content">
-      <trend-chart :datasets="datasets" :grid="grid" :labels="labels" :min="0"></trend-chart>
+      <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="vtc2" x2="1" y2="1">
+            <stop offset="0%" stop-color="#a8edea"></stop>
+            <stop offset="100%" stop-color="#fed6e3"></stop>
+          </linearGradient>
+          <linearGradient id="vtc3" x2="1" y2="1">
+            <stop offset="0%" stop-color="#9795f0"></stop>
+            <stop offset="100%" stop-color="#fbc8d4"></stop>
+          </linearGradient>
+        </defs>
+      </svg>
+      <trend-chart :datasets="datasets" :grid="grid" :labels="labels" :min="0" class="example1"></trend-chart>
     </div>
   </section>
 </template>
@@ -19,16 +31,19 @@ export default {
         {
           data: [70, 100, 400, 180, 100, 300, 500],
           smooth: true,
-          showPoints: true
+          showPoints: true,
+          fill: true,
+          className: "vtc1"
         },
         {
           data: [150, 300, 350, 100, 350, 100, 15],
-          smooth: true
+          smooth: true,
+          className: "vtc2"
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
-          fill: true
+          className: "vtc3"
         }
       ],
       grid: {
@@ -91,11 +106,32 @@ body {
 }
 
 /* Trend chart styling */
-/* .trend-chart-grid-x-axis,
-.trend-chart-grid-y-axis {
+.vtc-axis-x,
+.vtc-axis-y {
   stroke: #eeeeee;
   stroke-dasharray: 2;
-} */
+}
+.vtc1 .vtc-curve-stroke {
+  stroke: #a6c0fe;
+  stroke-width: 2;
+}
+.vtc1 .vtc-curve-fill {
+  fill: #a6c0fe;
+  opacity: 0.1;
+}
+.vtc1 .vtc-point {
+  fill: #ffffff;
+  stroke: #a6c0fe;
+  stroke-width: 2;
+}
+.vtc2 .vtc-curve-stroke {
+  stroke: url(#vtc2);
+  stroke-width: 2;
+}
+.vtc3 .vtc-curve-stroke {
+  stroke: url(#vtc3);
+  stroke-width: 2;
+}
 </style>
 
 
