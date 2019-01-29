@@ -81,7 +81,7 @@ export default {
       for (let i = 1; i <= this.xLines; i++) {
         lines.push(
           h("line", {
-            class: "trend-chart-grid-x-axis",
+            class: "vtc-axis-x",
             attrs: {
               ...this.setXLineParams(i)
             }
@@ -92,7 +92,7 @@ export default {
         h(
           "g",
           {
-            class: "trend-chart-grid-x"
+            class: "vtc-axes-x"
           },
           lines
         )
@@ -104,7 +104,7 @@ export default {
       for (let i = 1; i <= this.yAxesLines; i++) {
         lines.push(
           h("line", {
-            class: "trend-chart-grid-y-axis",
+            class: "vtc-axis-y",
             attrs: {
               ...this.setYLineParams(i)
             }
@@ -115,7 +115,7 @@ export default {
         h(
           "g",
           {
-            class: "trend-chart-grid-y"
+            class: "vtc-axes-y"
           },
           lines
         )

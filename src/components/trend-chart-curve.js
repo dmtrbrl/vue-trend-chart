@@ -48,7 +48,7 @@ export default {
     if (this.fill && this.paths && this.paths.fillPath) {
       children.push(
         h("path", {
-          class: "trend-chart-fill",
+          class: "vtc-curve-fill",
           attrs: {
             d: this.paths.fillPath,
             fill: "rgba(0,0,0,0.15)"
@@ -60,7 +60,7 @@ export default {
     if (this.stroke && this.paths && this.paths.linePath) {
       children.push(
         h("path", {
-          class: "trend-chart-fill",
+          class: "vtc-curve-stroke",
           attrs: {
             d: this.paths.linePath,
             fill: "none",
@@ -75,11 +75,11 @@ export default {
         h(
           "g",
           {
-            class: "trend-chart-points"
+            class: "vtc-points"
           },
           this.points.map(point =>
             h("circle", {
-              class: "trend-chart-point",
+              class: "vtc-point",
               attrs: {
                 cx: point.x,
                 cy: point.y,

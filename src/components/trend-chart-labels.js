@@ -91,13 +91,13 @@ export default {
         h(
           "g",
           {
-            class: "trend-chart-labels-x"
+            class: "vtc-labels-x"
           },
           this.xLabels.map((label, i) => {
             return h(
               "text",
               {
-                class: "trend-chart-label-x",
+                class: "vtc-label-x",
                 attrs: {
                   ...this.setXLabelsParams(i),
                   "text-anchor": "middle",
@@ -122,7 +122,7 @@ export default {
           h(
             "text",
             {
-              class: "trend-chart-label-y",
+              class: "vtc-label-y",
               attrs: {
                 ...this.setYLabelsParams(i),
                 "text-anchor": this.yLabelsPosition == "left" ? "end" : "start",
@@ -142,7 +142,7 @@ export default {
         h(
           "g",
           {
-            class: "trend-chart-labels-y"
+            class: "vtc-labels-y"
           },
           labels
         )

@@ -165,7 +165,7 @@ export default {
     if (this.grid) {
       children.push(
         h(TrendChartGrid, {
-          class: "trend-chart-grid",
+          class: "vtc-grid",
           attrs: { ...this.grid }
         })
       );
@@ -175,7 +175,7 @@ export default {
     if (this.labels) {
       children.push(
         h(TrendChartLabels, {
-          class: "trend-chart-labels",
+          class: "vtc-labels",
           ref: "chart-labels",
           attrs: { ...this.labels }
         })
@@ -186,7 +186,7 @@ export default {
     this.datasets.map(dataset => {
       children.push(
         h(TrendChartCurve, {
-          class: "trend-chart-curve",
+          class: "vtc-curve",
           attrs: { ...dataset }
         })
       );
@@ -196,7 +196,7 @@ export default {
     return h(
       "svg",
       {
-        class: "trend-chart",
+        class: "vtc",
         ref: "chart",
         attrs: {
           xmlns: "http://www.w3.org/2000/svg",
