@@ -182,8 +182,42 @@ export default {
         this.fitLabels();
       });
     },
+    getNearestXAxisValue(val) {
+      return (
+        this.chartAxesXCoords.reduce(
+          (p, n) => (Math.abs(p) > Math.abs(n - val) ? n - val : p),
+          Infinity
+        ) + val
+      );
+    },
     onWindowResize() {
       this.setSize();
+    },
+    onMouseMove(e) {
+      this.hovered = this.getNearestXAxisValue(e.offsetX);
+      this.hoveredParams = {
+        offsetX: e.offsetX,
+        offsetY: e.offsetY,
+        x: e.clientX,
+        y: e.clientY,
+        height: this.boundary.maxY - this.boundary.minY,
+        index: this.chartAxesXCoords.indexOf(this.hovered)
+      };
+    },
+    onTouchMove(e) {
+      const { clientX, clientY } = e.touches[0];
+      const overlayParams = this.$refs["vtc-overlay"].getBoundingClientRect();
+      const offsetX = clientX - overlayParams.left;
+      const offsetY = clientX - overlayParams.top;
+      this.hovered = this.getNearestXAxisValue(offsetX);
+      this.hoveredParams = {
+        offsetX: offsetX,
+        offsetY: offsetY,
+        x: clientX,
+        y: clientY,
+        height: this.boundary.maxY - this.boundary.minY,
+        index: this.chartAxesXCoords.indexOf(this.hovered)
+      };
     }
   },
   watch: {
@@ -265,30 +299,21 @@ export default {
     if (this.hoverable && this.chartOverlayParams) {
       children.push(
         h("rect", {
+          ref: "vtc-overlay",
           attrs: {
             ...this.chartOverlayParams
           },
           on: {
-            mousemove: e => {
-              const nearest = val =>
-                this.chartAxesXCoords.reduce(
-                  (p, n) => (Math.abs(p) > Math.abs(n - val) ? n - val : p),
-                  Infinity
-                ) + val;
-              this.hovered = nearest(e.offsetX);
-              this.hoveredParams = {
-                offsetX: e.offsetX,
-                offsetY: e.offsetY,
-                x: e.x,
-                y: e.y,
-                height: this.boundary.maxY - this.boundary.minY,
-                index: this.chartAxesXCoords.indexOf(this.hovered)
-              };
-            },
+            mousemove: e => this.onMouseMove(e),
+            touchmove: e => this.onTouchMove(e),
             mouseout: () => {
               this.hovered = null;
               this.hoveredParams = null;
             }
+            // touchend: () => {
+            //   this.hovered = null;
+            //   this.hoveredParams = null;
+            // }
           }
         })
       );
