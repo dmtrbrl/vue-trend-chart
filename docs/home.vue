@@ -15,7 +15,14 @@
           </linearGradient>
         </defs>
       </svg>
-      <trend-chart :datasets="datasets" :grid="grid" :labels="labels" :min="0" class="example1"></trend-chart>
+      <trend-chart
+        :datasets="datasets"
+        :grid="grid"
+        :labels="labels"
+        :min="0"
+        :hoverable="true"
+        @onAxisHover="onAxisHover"
+      ></trend-chart>
     </div>
   </section>
 </template>
@@ -29,6 +36,7 @@ export default {
     return {
       datasets: [
         {
+          name: "Data1",
           data: [70, 100, 400, 180, 100, 300, 500],
           smooth: true,
           showPoints: true,
@@ -36,11 +44,13 @@ export default {
           className: "vtc1"
         },
         {
+          name: "Data2",
           data: [150, 300, 350, 100, 350, 100, 15],
           smooth: true,
           className: "vtc2"
         },
         {
+          name: "Data3",
           data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
           className: "vtc3"
@@ -50,16 +60,20 @@ export default {
         xAxes: true,
         yAxes: true,
         yAxesLines: 7,
-        padding: "0 0 5 5"
+        padding: "10"
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        xLabelsOffset: 10,
         yLabelsAmount: 3,
         yLabelsOffset: 7,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }
     };
+  },
+  methods: {
+    onAxisHover(params) {
+      console.log(params);
+    }
   }
 };
 </script>

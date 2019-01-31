@@ -33,13 +33,19 @@ export default {
       validator(val) {
         return validatePadding(val);
       }
+    },
+    hoverable: {
+      default: false,
+      type: Boolean
     }
   },
   data() {
     return {
       width: null,
       height: null,
-      labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 }
+      labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 },
+      hovered: null,
+      hoveredParams: null
     };
   },
   computed: {
@@ -99,6 +105,35 @@ export default {
       if (this.max !== undefined && this.max > maxValue) maxValue = this.max;
       if (this.min !== undefined && this.min < minValue) minValue = this.min;
       return { maxValue, minValue, maxAmount };
+    },
+    chartOverlayParams() {
+      const { boundary, gridPaddingObject } = this;
+      const width =
+        boundary.maxX -
+        boundary.minX +
+        gridPaddingObject.left +
+        gridPaddingObject.right;
+      const height =
+        boundary.maxY -
+        boundary.minY +
+        gridPaddingObject.top +
+        gridPaddingObject.bottom;
+      return {
+        x: boundary.minX - gridPaddingObject.left,
+        y: boundary.minY - gridPaddingObject.top,
+        width: width > 0 ? width : 0,
+        height: height > 0 ? height : 0,
+        opacity: 0
+      };
+    },
+    chartAxesXCoords() {
+      const axes = [];
+      const step =
+        (this.boundary.maxX - this.boundary.minX) / (this.params.maxAmount - 1);
+      for (let i = 0; i < this.params.maxAmount; i++) {
+        axes.push(step * i + this.boundary.minX);
+      }
+      return axes;
     }
   },
   methods: {
@@ -151,6 +186,24 @@ export default {
       this.setSize();
     }
   },
+  watch: {
+    hovered() {
+      const data = [];
+      if (this.hoveredParams) {
+        this.datasets.forEach(dataset => {
+          data.push({
+            name: dataset.name,
+            value: dataset.data[this.hoveredParams.index]
+          });
+        });
+      }
+
+      this.$emit(
+        "onAxisHover",
+        this.hoveredParams ? { ...this.hoveredParams, data } : null
+      );
+    }
+  },
   mounted() {
     this.init();
     window.addEventListener("resize", this.onWindowResize);
@@ -167,6 +220,22 @@ export default {
         h(TrendChartGrid, {
           class: "vtc-grid",
           attrs: { ...this.grid }
+        })
+      );
+    }
+
+    // Chart active axis
+    if (this.hoverable && this.chartOverlayParams && this.hovered) {
+      children.push(
+        h("line", {
+          class: "vtc-active-x",
+          attrs: {
+            x1: this.hovered,
+            x2: this.hovered,
+            y1: this.boundary.minY,
+            y2: this.boundary.maxY,
+            stroke: "black"
+          }
         })
       );
     }
@@ -191,6 +260,39 @@ export default {
         })
       );
     });
+
+    // Chart overlay
+    if (this.hoverable && this.chartOverlayParams) {
+      children.push(
+        h("rect", {
+          attrs: {
+            ...this.chartOverlayParams
+          },
+          on: {
+            mousemove: e => {
+              const nearest = val =>
+                this.chartAxesXCoords.reduce(
+                  (p, n) => (Math.abs(p) > Math.abs(n - val) ? n - val : p),
+                  Infinity
+                ) + val;
+              this.hovered = nearest(e.offsetX);
+              this.hoveredParams = {
+                offsetX: e.offsetX,
+                offsetY: e.offsetY,
+                x: e.x,
+                y: e.y,
+                height: this.boundary.maxY - this.boundary.minY,
+                index: this.chartAxesXCoords.indexOf(this.hovered)
+              };
+            },
+            mouseout: () => {
+              this.hovered = null;
+              this.hoveredParams = null;
+            }
+          }
+        })
+      );
+    }
 
     // Render component
     return h(
