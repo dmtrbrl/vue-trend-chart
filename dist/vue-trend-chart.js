@@ -494,13 +494,19 @@
         validator: function validator(val) {
           return validatePadding(val);
         }
+      },
+      hoverable: {
+        default: false,
+        type: Boolean
       }
     },
     data: function data() {
       return {
         width: null,
         height: null,
-        labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 }
+        labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 },
+        hovered: null,
+        hoveredParams: null
       };
     },
     computed: {
@@ -558,6 +564,37 @@
         if (this.max !== undefined && this.max > maxValue) { maxValue = this.max; }
         if (this.min !== undefined && this.min < minValue) { minValue = this.min; }
         return { maxValue: maxValue, minValue: minValue, maxAmount: maxAmount };
+      },
+      chartOverlayParams: function chartOverlayParams() {
+        var ref = this;
+        var boundary = ref.boundary;
+        var gridPaddingObject = ref.gridPaddingObject;
+        var width =
+          boundary.maxX -
+          boundary.minX +
+          gridPaddingObject.left +
+          gridPaddingObject.right;
+        var height =
+          boundary.maxY -
+          boundary.minY +
+          gridPaddingObject.top +
+          gridPaddingObject.bottom;
+        return {
+          x: boundary.minX - gridPaddingObject.left,
+          y: boundary.minY - gridPaddingObject.top,
+          width: width > 0 ? width : 0,
+          height: height > 0 ? height : 0,
+          opacity: 0
+        };
+      },
+      chartAxesXCoords: function chartAxesXCoords() {
+        var axes = [];
+        var step =
+          (this.boundary.maxX - this.boundary.minX) / (this.params.maxAmount - 1);
+        for (var i = 0; i < this.params.maxAmount; i++) {
+          axes.push(step * i + this.boundary.minX);
+        }
+        return axes;
       }
     },
     methods: {
@@ -612,6 +649,26 @@
         this.setSize();
       }
     },
+    watch: {
+      hovered: function hovered() {
+        var this$1 = this;
+
+        var data = [];
+        if (this.hoveredParams) {
+          this.datasets.forEach(function (dataset) {
+            data.push({
+              name: dataset.name,
+              value: dataset.data[this$1.hoveredParams.index]
+            });
+          });
+        }
+
+        this.$emit(
+          "onAxisHover",
+          this.hoveredParams ? Object.assign({}, this.hoveredParams, {data: data}) : null
+        );
+      }
+    },
     mounted: function mounted() {
       this.init();
       window.addEventListener("resize", this.onWindowResize);
@@ -620,6 +677,8 @@
       window.removeEventListener("resize", this.onWindowResize);
     },
     render: function render(h) {
+      var this$1 = this;
+
       var children = [];
 
       // Grid
@@ -628,6 +687,22 @@
           h(TrendChartGrid, {
             class: "vtc-grid",
             attrs: Object.assign({}, this.grid)
+          })
+        );
+      }
+
+      // Chart active axis
+      if (this.hoverable && this.chartOverlayParams && this.hovered) {
+        children.push(
+          h("line", {
+            class: "vtc-active-x",
+            attrs: {
+              x1: this.hovered,
+              x2: this.hovered,
+              y1: this.boundary.minY,
+              y2: this.boundary.maxY,
+              stroke: "black"
+            }
           })
         );
       }
@@ -652,6 +727,36 @@
           })
         );
       });
+
+      // Chart overlay
+      if (this.hoverable && this.chartOverlayParams) {
+        children.push(
+          h("rect", {
+            attrs: Object.assign({}, this.chartOverlayParams),
+            on: {
+              mousemove: function (e) {
+                var nearest = function (val) { return this$1.chartAxesXCoords.reduce(
+                    function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
+                    Infinity
+                  ) + val; };
+                this$1.hovered = nearest(e.offsetX);
+                this$1.hoveredParams = {
+                  offsetX: e.offsetX,
+                  offsetY: e.offsetY,
+                  x: e.x,
+                  y: e.y,
+                  height: this$1.boundary.maxY - this$1.boundary.minY,
+                  index: this$1.chartAxesXCoords.indexOf(this$1.hovered)
+                };
+              },
+              mouseout: function () {
+                this$1.hovered = null;
+                this$1.hoveredParams = null;
+              }
+            }
+          })
+        );
+      }
 
       // Render component
       return h(
