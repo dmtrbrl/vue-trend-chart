@@ -645,8 +645,44 @@
           this$1.fitLabels();
         });
       },
+      getNearestXAxisValue: function getNearestXAxisValue(val) {
+        return (
+          this.chartAxesXCoords.reduce(
+            function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
+            Infinity
+          ) + val
+        );
+      },
       onWindowResize: function onWindowResize() {
         this.setSize();
+      },
+      onMouseMove: function onMouseMove(e) {
+        this.hovered = this.getNearestXAxisValue(e.offsetX);
+        this.hoveredParams = {
+          offsetX: e.offsetX,
+          offsetY: e.offsetY,
+          x: e.clientX,
+          y: e.clientY,
+          height: this.boundary.maxY - this.boundary.minY,
+          index: this.chartAxesXCoords.indexOf(this.hovered)
+        };
+      },
+      onTouchMove: function onTouchMove(e) {
+        var ref = e.touches[0];
+        var clientX = ref.clientX;
+        var clientY = ref.clientY;
+        var overlayParams = this.$refs["vtc-overlay"].getBoundingClientRect();
+        var offsetX = clientX - overlayParams.left;
+        var offsetY = clientX - overlayParams.top;
+        this.hovered = this.getNearestXAxisValue(offsetX);
+        this.hoveredParams = {
+          offsetX: offsetX,
+          offsetY: offsetY,
+          x: clientX,
+          y: clientY,
+          height: this.boundary.maxY - this.boundary.minY,
+          index: this.chartAxesXCoords.indexOf(this.hovered)
+        };
       }
     },
     watch: {
@@ -732,27 +768,19 @@
       if (this.hoverable && this.chartOverlayParams) {
         children.push(
           h("rect", {
+            ref: "vtc-overlay",
             attrs: Object.assign({}, this.chartOverlayParams),
             on: {
-              mousemove: function (e) {
-                var nearest = function (val) { return this$1.chartAxesXCoords.reduce(
-                    function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
-                    Infinity
-                  ) + val; };
-                this$1.hovered = nearest(e.offsetX);
-                this$1.hoveredParams = {
-                  offsetX: e.offsetX,
-                  offsetY: e.offsetY,
-                  x: e.x,
-                  y: e.y,
-                  height: this$1.boundary.maxY - this$1.boundary.minY,
-                  index: this$1.chartAxesXCoords.indexOf(this$1.hovered)
-                };
-              },
+              mousemove: function (e) { return this$1.onMouseMove(e); },
+              touchmove: function (e) { return this$1.onTouchMove(e); },
               mouseout: function () {
                 this$1.hovered = null;
                 this$1.hoveredParams = null;
               }
+              // touchend: () => {
+              //   this.hovered = null;
+              //   this.hoveredParams = null;
+              // }
             }
           })
         );
