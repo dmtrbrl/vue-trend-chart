@@ -60,9 +60,9 @@ export default {
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        xLabelsOffset: 10,
+        xLabelsOffset: 0,
         yLabelsAmount: 5,
-        yLabelsOffset: 7,
+        yLabelsOffset: 0,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }
     };
@@ -121,6 +121,11 @@ body {
 .vtc-axis-y {
   stroke: #eeeeee;
   stroke-dasharray: 2;
+}
+.vtc-axis-x:first-child,
+.vtc-axis-y:first-child {
+  stroke: #000000;
+  stroke-dasharray: none;
 }
 .vtc1 .vtc-curve-stroke {
   stroke: #a6c0fe;
