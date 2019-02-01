@@ -44,13 +44,6 @@ var TrendChartGrid = {
     },
     yAxesLines: {
       type: Number
-    },
-    padding: {
-      default: "0",
-      type: String,
-      validator: function validator(value) {
-        return validatePadding(value);
-      }
     }
   },
   computed: {
@@ -59,9 +52,6 @@ var TrendChartGrid = {
     },
     boundary: function boundary() {
       return this.$parent.boundary;
-    },
-    gridPaddingObject: function gridPaddingObject() {
-      return this.$parent.gridPaddingObject;
     }
   },
   methods: {
@@ -69,16 +59,14 @@ var TrendChartGrid = {
       var ref = this;
       var boundary = ref.boundary;
       var xLines = ref.xLines;
-      var gridPaddingObject = ref.gridPaddingObject;
-      var step = (boundary.maxX - boundary.minX) / (xLines - 1);
+      var step =
+        xLines > 1 ? (boundary.maxX - boundary.minX) / (xLines - 1) : 0;
       var x = boundary.minX + step * (n - 1);
-      var x1 = x;
-      var x2 = x;
-      var y1 = boundary.minY - gridPaddingObject.top;
-      var y2 = boundary.maxY + gridPaddingObject.bottom;
+      var y1 = boundary.minY;
+      var y2 = boundary.maxY;
       return {
-        x1: x1,
-        x2: x2,
+        x1: x,
+        x2: x,
         y1: y1,
         y2: y2,
         stroke: "rgba(0,0,0,0.1)"
@@ -88,18 +76,16 @@ var TrendChartGrid = {
       var ref = this;
       var boundary = ref.boundary;
       var yAxesLines = ref.yAxesLines;
-      var gridPaddingObject = ref.gridPaddingObject;
-      var step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
-      var y = boundary.minY + step * (n - 1);
-      var x1 = boundary.minX - gridPaddingObject.left;
-      var x2 = boundary.maxX + gridPaddingObject.right;
-      var y1 = y;
-      var y2 = y;
+      var step =
+        yAxesLines > 1 ? (boundary.maxY - boundary.minY) / (yAxesLines - 1) : 0;
+      var y = boundary.maxY - step * (n - 1);
+      var x1 = boundary.minX;
+      var x2 = boundary.maxX;
       return {
         x1: x1,
         x2: x2,
-        y1: y1,
-        y2: y2,
+        y1: y,
+        y2: y,
         stroke: "rgba(0,0,0,0.1)"
       };
     }
@@ -163,26 +149,12 @@ var TrendChartLabels = {
     xLabels: {
       type: Array
     },
-    xLabelsPosition: {
-      default: "bottom",
-      type: String,
-      validator: function validator(value) {
-        return ["top", "bottom"].indexOf(value) !== -1;
-      }
-    },
     xLabelsOffset: {
       default: 5,
       type: Number
     },
     yLabelsAmount: {
       type: Number
-    },
-    yLabelsPosition: {
-      default: "left",
-      type: String,
-      validator: function validator(value) {
-        return ["left", "right"].indexOf(value) !== -1;
-      }
     },
     yLabelsOffset: {
       default: 5,
@@ -196,41 +168,28 @@ var TrendChartLabels = {
   computed: {
     boundary: function boundary() {
       return this.$parent.boundary;
-    },
-    gridPaddingObject: function gridPaddingObject() {
-      return this.$parent.gridPaddingObject;
     }
   },
   methods: {
     setXLabelsParams: function setXLabelsParams(n) {
       var ref = this;
       var boundary = ref.boundary;
-      var gridPaddingObject = ref.gridPaddingObject;
       var xLabels = ref.xLabels;
-      var xLabelsPosition = ref.xLabelsPosition;
       var xLabelsOffset = ref.xLabelsOffset;
       var step = (boundary.maxX - boundary.minX) / (xLabels.length - 1);
       var x = boundary.minX + step * n;
-      var y =
-        xLabelsPosition == "bottom"
-          ? boundary.maxY + gridPaddingObject.bottom + xLabelsOffset
-          : boundary.minY - gridPaddingObject.top - xLabelsOffset;
-      return { x: x, y: y };
+      var y = boundary.maxY + xLabelsOffset;
+      return { transform: ("translate(" + x + ", " + y + ")") };
     },
     setYLabelsParams: function setYLabelsParams(n) {
       var ref = this;
       var boundary = ref.boundary;
-      var gridPaddingObject = ref.gridPaddingObject;
       var yLabelsAmount = ref.yLabelsAmount;
-      var yLabelsPosition = ref.yLabelsPosition;
       var yLabelsOffset = ref.yLabelsOffset;
       var step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
-      var x =
-        yLabelsPosition == "left"
-          ? boundary.minX - gridPaddingObject.left - yLabelsOffset
-          : boundary.maxX + gridPaddingObject.right + yLabelsOffset;
+      var x = boundary.minX - yLabelsOffset;
       var y = boundary.maxY - step * n;
-      return { x: x, y: y };
+      return { transform: ("translate(" + x + ", " + y + ")") };
     }
   },
   render: function render(h) {
@@ -254,17 +213,25 @@ var TrendChartLabels = {
           },
           this.xLabels.map(function (label, i) {
             return h(
-              "text",
+              "g",
               {
                 class: "vtc-label-x",
-                attrs: Object.assign({}, this$1.setXLabelsParams(i),
-                  {"text-anchor": "middle",
-                  "dominant-baseline":
-                    this$1.xLabelsPosition == "bottom"
-                      ? "text-before-edge"
-                      : "text-after-edge"})
+                attrs: Object.assign({}, this$1.setXLabelsParams(i))
               },
-              label
+              [
+                h("line", { attrs: { stroke: "black", y2: 5 } }),
+                h(
+                  "text",
+                  {
+                    attrs: {
+                      dy: 10,
+                      "text-anchor": "middle",
+                      "dominant-baseline": "text-before-edge"
+                    }
+                  },
+                  label
+                )
+              ]
             );
           })
         )
@@ -277,19 +244,31 @@ var TrendChartLabels = {
       for (var i = 0; i < this.yLabelsAmount; i++) {
         labels.push(
           h(
-            "text",
+            "g",
             {
               class: "vtc-label-y",
-              attrs: Object.assign({}, this.setYLabelsParams(i),
-                {"text-anchor": this.yLabelsPosition == "left" ? "end" : "start",
-                "dominant-baseline": "middle"})
+              attrs: Object.assign({}, this.setYLabelsParams(i))
             },
-            this.yLabelsTextFormatter(
-              this.$parent.params.minValue +
-                ((this.$parent.params.maxValue - this.$parent.params.minValue) /
-                  (this.yLabelsAmount - 1)) *
-                  i
-            )
+            [
+              h(
+                "text",
+                {
+                  attrs: {
+                    dx: -10,
+                    "text-anchor": "end",
+                    "dominant-baseline": "middle"
+                  }
+                },
+                this.yLabelsTextFormatter(
+                  this.$parent.params.minValue +
+                    ((this.$parent.params.maxValue -
+                      this.$parent.params.minValue) /
+                      (this.yLabelsAmount - 1)) *
+                      i
+                )
+              ),
+              h("line", { attrs: { stroke: "black", x1: 0, x2: -5 } })
+            ]
           )
         );
       }
@@ -508,34 +487,17 @@ var TrendChart = {
       if (!this.padding) { return getPadding("0"); }
       return getPadding(this.padding);
     },
-    gridPaddingObject: function gridPaddingObject() {
-      if (!this.grid || !this.grid.padding) { return getPadding("0"); }
-      return getPadding(this.grid.padding);
-    },
     boundary: function boundary() {
       var ref = this;
       var width = ref.width;
       var height = ref.height;
       var paddingObject = ref.paddingObject;
-      var gridPaddingObject = ref.gridPaddingObject;
       var labelsOverflowObject = ref.labelsOverflowObject;
       var boundary = {
-        minX:
-          paddingObject.left +
-          gridPaddingObject.left +
-          labelsOverflowObject.left,
-        minY:
-          paddingObject.top + gridPaddingObject.top + labelsOverflowObject.top,
-        maxX:
-          width -
-          paddingObject.right -
-          gridPaddingObject.right -
-          labelsOverflowObject.right,
-        maxY:
-          height -
-          paddingObject.bottom -
-          gridPaddingObject.bottom -
-          labelsOverflowObject.bottom
+        minX: paddingObject.left + labelsOverflowObject.left,
+        minY: paddingObject.top + labelsOverflowObject.top,
+        maxX: width - paddingObject.right - labelsOverflowObject.right,
+        maxY: height - paddingObject.bottom - labelsOverflowObject.bottom
       };
       return boundary;
     },
@@ -562,20 +524,11 @@ var TrendChart = {
     chartOverlayParams: function chartOverlayParams() {
       var ref = this;
       var boundary = ref.boundary;
-      var gridPaddingObject = ref.gridPaddingObject;
-      var width =
-        boundary.maxX -
-        boundary.minX +
-        gridPaddingObject.left +
-        gridPaddingObject.right;
-      var height =
-        boundary.maxY -
-        boundary.minY +
-        gridPaddingObject.top +
-        gridPaddingObject.bottom;
+      var width = boundary.maxX - boundary.minX;
+      var height = boundary.maxY - boundary.minY;
       return {
-        x: boundary.minX - gridPaddingObject.left,
-        y: boundary.minY - gridPaddingObject.top,
+        x: boundary.minX,
+        y: boundary.minY,
         width: width > 0 ? width : 0,
         height: height > 0 ? height : 0,
         opacity: 0
@@ -639,44 +592,29 @@ var TrendChart = {
         this$1.fitLabels();
       });
     },
-    getNearestXAxisValue: function getNearestXAxisValue(val) {
-      return (
-        this.chartAxesXCoords.reduce(
-          function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
-          Infinity
-        ) + val
-      );
-    },
     onWindowResize: function onWindowResize() {
       this.setSize();
     },
     onMouseMove: function onMouseMove(e) {
-      this.hovered = this.getNearestXAxisValue(e.offsetX);
+      var this$1 = this;
+
+      var nearest = function (val) { return this$1.chartAxesXCoords.reduce(
+          function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
+          Infinity
+        ) + val; };
+      this.hovered = nearest(e.offsetX);
       this.hoveredParams = {
         offsetX: e.offsetX,
         offsetY: e.offsetY,
-        x: e.clientX,
-        y: e.clientY,
+        x: e.x,
+        y: e.y,
         height: this.boundary.maxY - this.boundary.minY,
         index: this.chartAxesXCoords.indexOf(this.hovered)
       };
     },
-    onTouchMove: function onTouchMove(e) {
-      var ref = e.touches[0];
-      var clientX = ref.clientX;
-      var clientY = ref.clientY;
-      var overlayParams = this.$refs["vtc-overlay"].getBoundingClientRect();
-      var offsetX = clientX - overlayParams.left;
-      var offsetY = clientX - overlayParams.top;
-      this.hovered = this.getNearestXAxisValue(offsetX);
-      this.hoveredParams = {
-        offsetX: offsetX,
-        offsetY: offsetY,
-        x: clientX,
-        y: clientY,
-        height: this.boundary.maxY - this.boundary.minY,
-        index: this.chartAxesXCoords.indexOf(this.hovered)
-      };
+    onMouseOut: function onMouseOut() {
+      this.hovered = null;
+      this.hoveredParams = null;
     }
   },
   watch: {
@@ -686,10 +624,7 @@ var TrendChart = {
       var data = [];
       if (this.hoveredParams) {
         this.datasets.forEach(function (dataset) {
-          data.push({
-            name: dataset.name,
-            value: dataset.data[this$1.hoveredParams.index]
-          });
+          data.push(dataset.data[this$1.hoveredParams.index]);
         });
       }
 
@@ -762,19 +697,10 @@ var TrendChart = {
     if (this.hoverable && this.chartOverlayParams) {
       children.push(
         h("rect", {
-          ref: "vtc-overlay",
           attrs: Object.assign({}, this.chartOverlayParams),
           on: {
             mousemove: function (e) { return this$1.onMouseMove(e); },
-            touchmove: function (e) { return this$1.onTouchMove(e); },
-            mouseout: function () {
-              this$1.hovered = null;
-              this$1.hoveredParams = null;
-            }
-            // touchend: () => {
-            //   this.hovered = null;
-            //   this.hoveredParams = null;
-            // }
+            mouseout: function () { return this$1.onMouseOut(); }
           }
         })
       );
