@@ -236,7 +236,9 @@ export default {
       children.push(
         h(TrendChartGrid, {
           class: "vtc-grid",
-          attrs: { ...this.grid }
+          attrs: {
+            ...this.grid
+          }
         })
       );
     }

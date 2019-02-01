@@ -39,15 +39,14 @@ export default {
   methods: {
     setXLineParams(n) {
       const { boundary, xLines, gridPaddingObject } = this;
-      const step = (boundary.maxX - boundary.minX) / (xLines - 1);
+      const step =
+        xLines > 1 ? (boundary.maxX - boundary.minX) / (xLines - 1) : 0;
       const x = boundary.minX + step * (n - 1);
-      const x1 = x;
-      const x2 = x;
       const y1 = boundary.minY - gridPaddingObject.top;
       const y2 = boundary.maxY + gridPaddingObject.bottom;
       return {
-        x1,
-        x2,
+        x1: x,
+        x2: x,
         y1,
         y2,
         stroke: "rgba(0,0,0,0.1)"
@@ -55,17 +54,16 @@ export default {
     },
     setYLineParams(n) {
       const { boundary, yAxesLines, gridPaddingObject } = this;
-      const step = (boundary.maxY - boundary.minY) / (yAxesLines - 1);
-      const y = boundary.minY + step * (n - 1);
+      const step =
+        yAxesLines > 1 ? (boundary.maxY - boundary.minY) / (yAxesLines - 1) : 0;
+      const y = boundary.maxY - step * (n - 1);
       const x1 = boundary.minX - gridPaddingObject.left;
       const x2 = boundary.maxX + gridPaddingObject.right;
-      const y1 = y;
-      const y2 = y;
       return {
         x1,
         x2,
-        y1,
-        y2,
+        y1: y,
+        y2: y,
         stroke: "rgba(0,0,0,0.1)"
       };
     }

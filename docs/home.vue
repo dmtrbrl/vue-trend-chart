@@ -36,7 +36,6 @@ export default {
     return {
       datasets: [
         {
-          name: "Data1",
           data: [70, 100, 400, 180, 100, 300, 500],
           smooth: true,
           showPoints: true,
@@ -44,13 +43,11 @@ export default {
           className: "vtc1"
         },
         {
-          name: "Data2",
           data: [150, 300, 350, 100, 350, 100, 15],
           smooth: true,
           className: "vtc2"
         },
         {
-          name: "Data3",
           data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
           className: "vtc3"
@@ -59,12 +56,12 @@ export default {
       grid: {
         xAxes: true,
         yAxes: true,
-        yAxesLines: 7,
-        padding: "10"
+        yAxesLines: 5
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        yLabelsAmount: 3,
+        xLabelsOffset: 10,
+        yLabelsAmount: 5,
         yLabelsOffset: 7,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }

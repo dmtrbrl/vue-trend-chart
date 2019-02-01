@@ -4,26 +4,12 @@ export default {
     xLabels: {
       type: Array
     },
-    xLabelsPosition: {
-      default: "bottom",
-      type: String,
-      validator(value) {
-        return ["top", "bottom"].indexOf(value) !== -1;
-      }
-    },
     xLabelsOffset: {
       default: 5,
       type: Number
     },
     yLabelsAmount: {
       type: Number
-    },
-    yLabelsPosition: {
-      default: "left",
-      type: String,
-      validator(value) {
-        return ["left", "right"].indexOf(value) !== -1;
-      }
     },
     yLabelsOffset: {
       default: 5,
@@ -44,19 +30,10 @@ export default {
   },
   methods: {
     setXLabelsParams(n) {
-      const {
-        boundary,
-        gridPaddingObject,
-        xLabels,
-        xLabelsPosition,
-        xLabelsOffset
-      } = this;
+      const { boundary, gridPaddingObject, xLabels, xLabelsOffset } = this;
       const step = (boundary.maxX - boundary.minX) / (xLabels.length - 1);
       const x = boundary.minX + step * n;
-      const y =
-        xLabelsPosition == "bottom"
-          ? boundary.maxY + gridPaddingObject.bottom + xLabelsOffset
-          : boundary.minY - gridPaddingObject.top - xLabelsOffset;
+      const y = boundary.maxY + gridPaddingObject.bottom + xLabelsOffset;
       return { x, y };
     },
     setYLabelsParams(n) {
@@ -64,14 +41,10 @@ export default {
         boundary,
         gridPaddingObject,
         yLabelsAmount,
-        yLabelsPosition,
         yLabelsOffset
       } = this;
       const step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
-      const x =
-        yLabelsPosition == "left"
-          ? boundary.minX - gridPaddingObject.left - yLabelsOffset
-          : boundary.maxX + gridPaddingObject.right + yLabelsOffset;
+      const x = boundary.minX - gridPaddingObject.left - yLabelsOffset;
       const y = boundary.maxY - step * n;
       return { x, y };
     }
@@ -101,10 +74,7 @@ export default {
                 attrs: {
                   ...this.setXLabelsParams(i),
                   "text-anchor": "middle",
-                  "dominant-baseline":
-                    this.xLabelsPosition == "bottom"
-                      ? "text-before-edge"
-                      : "text-after-edge"
+                  "dominant-baseline": "text-before-edge"
                 }
               },
               label
@@ -125,7 +95,7 @@ export default {
               class: "vtc-label-y",
               attrs: {
                 ...this.setYLabelsParams(i),
-                "text-anchor": this.yLabelsPosition == "left" ? "end" : "start",
+                "text-anchor": "end",
                 "dominant-baseline": "middle"
               }
             },
