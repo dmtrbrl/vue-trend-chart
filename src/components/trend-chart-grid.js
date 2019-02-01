@@ -1,5 +1,3 @@
-import validatePadding from "../helpers/validatePadding";
-
 export default {
   name: "TrendChartGrid",
   props: {
@@ -16,13 +14,6 @@ export default {
     },
     yAxesLines: {
       type: Number
-    },
-    padding: {
-      default: "0",
-      type: String,
-      validator(value) {
-        return validatePadding(value);
-      }
     }
   },
   computed: {
@@ -31,19 +22,16 @@ export default {
     },
     boundary() {
       return this.$parent.boundary;
-    },
-    gridPaddingObject() {
-      return this.$parent.gridPaddingObject;
     }
   },
   methods: {
     setXLineParams(n) {
-      const { boundary, xLines, gridPaddingObject } = this;
+      const { boundary, xLines } = this;
       const step =
         xLines > 1 ? (boundary.maxX - boundary.minX) / (xLines - 1) : 0;
       const x = boundary.minX + step * (n - 1);
-      const y1 = boundary.minY - gridPaddingObject.top;
-      const y2 = boundary.maxY + gridPaddingObject.bottom;
+      const y1 = boundary.minY;
+      const y2 = boundary.maxY;
       return {
         x1: x,
         x2: x,
@@ -53,12 +41,12 @@ export default {
       };
     },
     setYLineParams(n) {
-      const { boundary, yAxesLines, gridPaddingObject } = this;
+      const { boundary, yAxesLines } = this;
       const step =
         yAxesLines > 1 ? (boundary.maxY - boundary.minY) / (yAxesLines - 1) : 0;
       const y = boundary.maxY - step * (n - 1);
-      const x1 = boundary.minX - gridPaddingObject.left;
-      const x2 = boundary.maxX + gridPaddingObject.right;
+      const x1 = boundary.minX;
+      const x2 = boundary.maxX;
       return {
         x1,
         x2,

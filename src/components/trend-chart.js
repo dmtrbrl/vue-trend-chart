@@ -53,35 +53,13 @@ export default {
       if (!this.padding) return getPadding("0");
       return getPadding(this.padding);
     },
-    gridPaddingObject() {
-      if (!this.grid || !this.grid.padding) return getPadding("0");
-      return getPadding(this.grid.padding);
-    },
     boundary() {
-      const {
-        width,
-        height,
-        paddingObject,
-        gridPaddingObject,
-        labelsOverflowObject
-      } = this;
+      const { width, height, paddingObject, labelsOverflowObject } = this;
       const boundary = {
-        minX:
-          paddingObject.left +
-          gridPaddingObject.left +
-          labelsOverflowObject.left,
-        minY:
-          paddingObject.top + gridPaddingObject.top + labelsOverflowObject.top,
-        maxX:
-          width -
-          paddingObject.right -
-          gridPaddingObject.right -
-          labelsOverflowObject.right,
-        maxY:
-          height -
-          paddingObject.bottom -
-          gridPaddingObject.bottom -
-          labelsOverflowObject.bottom
+        minX: paddingObject.left + labelsOverflowObject.left,
+        minY: paddingObject.top + labelsOverflowObject.top,
+        maxX: width - paddingObject.right - labelsOverflowObject.right,
+        maxY: height - paddingObject.bottom - labelsOverflowObject.bottom
       };
       return boundary;
     },
@@ -107,20 +85,12 @@ export default {
       return { maxValue, minValue, maxAmount };
     },
     chartOverlayParams() {
-      const { boundary, gridPaddingObject } = this;
-      const width =
-        boundary.maxX -
-        boundary.minX +
-        gridPaddingObject.left +
-        gridPaddingObject.right;
-      const height =
-        boundary.maxY -
-        boundary.minY +
-        gridPaddingObject.top +
-        gridPaddingObject.bottom;
+      const { boundary } = this;
+      const width = boundary.maxX - boundary.minX;
+      const height = boundary.maxY - boundary.minY;
       return {
-        x: boundary.minX - gridPaddingObject.left,
-        y: boundary.minY - gridPaddingObject.top,
+        x: boundary.minX,
+        y: boundary.minY,
         width: width > 0 ? width : 0,
         height: height > 0 ? height : 0,
         opacity: 0

@@ -23,28 +23,20 @@ export default {
   computed: {
     boundary() {
       return this.$parent.boundary;
-    },
-    gridPaddingObject() {
-      return this.$parent.gridPaddingObject;
     }
   },
   methods: {
     setXLabelsParams(n) {
-      const { boundary, gridPaddingObject, xLabels, xLabelsOffset } = this;
+      const { boundary, xLabels, xLabelsOffset } = this;
       const step = (boundary.maxX - boundary.minX) / (xLabels.length - 1);
       const x = boundary.minX + step * n;
-      const y = boundary.maxY + gridPaddingObject.bottom + xLabelsOffset;
+      const y = boundary.maxY + xLabelsOffset;
       return { x, y };
     },
     setYLabelsParams(n) {
-      const {
-        boundary,
-        gridPaddingObject,
-        yLabelsAmount,
-        yLabelsOffset
-      } = this;
+      const { boundary, yLabelsAmount, yLabelsOffset } = this;
       const step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
-      const x = boundary.minX - gridPaddingObject.left - yLabelsOffset;
+      const x = boundary.minX - yLabelsOffset;
       const y = boundary.maxY - step * n;
       return { x, y };
     }
