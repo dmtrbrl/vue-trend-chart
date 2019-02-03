@@ -20,6 +20,7 @@
         :grid="grid"
         :labels="labels"
         :min="0"
+        :max="500"
         :hoverable="true"
         @onAxisHover="onAxisHover"
       ></trend-chart>
@@ -54,15 +55,12 @@ export default {
         }
       ],
       grid: {
-        xAxes: true,
         yAxes: true,
         yAxesLines: 5
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        xLabelsOffset: 0,
         yLabelsAmount: 5,
-        yLabelsOffset: 0,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }
     };
@@ -84,7 +82,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: "Source Sans Pro", sans-serif;
-  color: #222;
+  color: #333;
 }
 .heading {
   font-family: "Montserrat", sans-serif;
@@ -119,13 +117,10 @@ body {
 /* Trend chart styling */
 .vtc-axis-x,
 .vtc-axis-y {
-  stroke: #eeeeee;
-  stroke-dasharray: 2;
+  stroke: rgba(0, 0, 0, 0.05);
 }
-.vtc-axis-x:first-child,
-.vtc-axis-y:first-child {
-  stroke: #000000;
-  stroke-dasharray: none;
+.vtc-active-x {
+  stroke: rgba(0, 0, 0, 0.2);
 }
 .vtc1 .vtc-curve-stroke {
   stroke: #a6c0fe;
@@ -147,6 +142,9 @@ body {
 .vtc3 .vtc-curve-stroke {
   stroke: url(#vtc3);
   stroke-width: 2;
+}
+.vtc-labels line {
+  stroke: rgba(0, 0, 0, 0.05);
 }
 </style>
 

@@ -4,21 +4,19 @@ export default {
     xLabels: {
       type: Array
     },
-    xLabelsOffset: {
-      default: 5,
-      type: Number
-    },
     yLabelsAmount: {
-      type: Number
-    },
-    yLabelsOffset: {
-      default: 5,
       type: Number
     },
     yLabelsTextFormatter: {
       default: value => value,
       type: Function
     }
+  },
+  data() {
+    return {
+      xLabelHeight: null,
+      yLabelHeight: null
+    };
   },
   computed: {
     boundary() {
@@ -27,23 +25,35 @@ export default {
   },
   methods: {
     setXLabelsParams(n) {
-      const { boundary, xLabels, xLabelsOffset } = this;
+      const { boundary, xLabels } = this;
       const step = (boundary.maxX - boundary.minX) / (xLabels.length - 1);
       const x = boundary.minX + step * n;
-      const y = boundary.maxY + xLabelsOffset;
+      const y = boundary.maxY;
       return { transform: `translate(${x}, ${y})` };
     },
     setYLabelsParams(n) {
-      const { boundary, yLabelsAmount, yLabelsOffset } = this;
+      const { boundary, yLabelsAmount } = this;
       const step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
-      const x = boundary.minX - yLabelsOffset;
+      const x = boundary.minX;
       const y = boundary.maxY - step * n;
       return { transform: `translate(${x}, ${y})` };
     }
   },
+  mounted() {
+    if (this.xLabels && this.xLabels.length) {
+      this.xLabelHeight = document
+        .querySelector(".vtc-labels-x text")
+        .getBoundingClientRect().height;
+    }
+    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+      this.yLabelHeight = document
+        .querySelector(".vtc-labels-y text")
+        .getBoundingClientRect().height;
+    }
+  },
   render(h) {
     if (
-      !(this.xLabels && this.xLabels.length) ||
+      !(this.xLabels && this.xLabels.length) &&
       !(this.yLabelsAmount && this.yLabelsAmount > 0)
     )
       return;
@@ -73,9 +83,8 @@ export default {
                   "text",
                   {
                     attrs: {
-                      dy: 10,
-                      "text-anchor": "middle",
-                      "dominant-baseline": "text-before-edge"
+                      dy: this.xLabelHeight + 5,
+                      "text-anchor": "middle"
                     }
                   },
                   label
@@ -106,8 +115,8 @@ export default {
                 {
                   attrs: {
                     dx: -10,
-                    "text-anchor": "end",
-                    "dominant-baseline": "middle"
+                    dy: this.yLabelHeight / 4,
+                    "text-anchor": "end"
                   }
                 },
                 this.yLabelsTextFormatter(
