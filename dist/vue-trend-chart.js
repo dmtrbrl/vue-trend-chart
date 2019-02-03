@@ -397,6 +397,8 @@
       }
     },
     render: function render(h) {
+      var this$1 = this;
+
       var children = [];
       // Fill path
       if (this.fill && this.paths && this.paths.fillPath) {
@@ -424,19 +426,26 @@
         );
       }
       // Points
-      if (this.showPoints) {
+      if (this.showPoints && this.points) {
         children.push(
           h(
             "g",
             {
               class: "vtc-points"
             },
-            this.points.map(function (point) { return h("circle", {
-                class: "vtc-point",
+            this.points.map(function (point, i) { return h("circle", {
+                class: {
+                  "vtc-point": true,
+                  "is-active":
+                    this$1.$parent.activeLineParams &&
+                    this$1.$parent.activeLineParams.index === i
+                },
                 attrs: {
                   cx: point.x,
                   cy: point.y,
-                  r: 3
+                  r: 2,
+                  stroke: "black",
+                  "stroke-width": 1
                 }
               }); }
             )
@@ -494,8 +503,8 @@
         width: null,
         height: null,
         labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 },
-        hovered: null,
-        hoveredParams: null
+        activeLine: null,
+        activeLineParams: null
       };
     },
     computed: {
@@ -608,45 +617,47 @@
           this$1.fitLabels();
         });
       },
+      getNearestCoordinate: function getNearestCoordinate(val) {
+        return (
+          this.chartAxesXCoords.reduce(
+            function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
+            Infinity
+          ) + val
+        );
+      },
       onWindowResize: function onWindowResize() {
         this.setSize();
       },
       onMouseMove: function onMouseMove(e) {
-        var this$1 = this;
-
-        var nearest = function (val) { return this$1.chartAxesXCoords.reduce(
-            function (p, n) { return (Math.abs(p) > Math.abs(n - val) ? n - val : p); },
-            Infinity
-          ) + val; };
-        this.hovered = nearest(e.offsetX);
-        this.hoveredParams = {
-          offsetX: e.offsetX,
-          offsetY: e.offsetY,
-          x: e.x,
-          y: e.y,
-          height: this.boundary.maxY - this.boundary.minY,
-          index: this.chartAxesXCoords.indexOf(this.hovered)
-        };
+        var rect = this.$refs.chart.getBoundingClientRect();
+        this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
       },
       onMouseOut: function onMouseOut() {
-        this.hovered = null;
-        this.hoveredParams = null;
+        this.activeLine = null;
+        this.activeLineParams = null;
       }
     },
     watch: {
-      hovered: function hovered() {
+      activeLine: function activeLine(val) {
         var this$1 = this;
 
         var data = [];
-        if (this.hoveredParams) {
+        if (val) {
+          var params = this.$refs["chart"].getBoundingClientRect();
+          this.activeLineParams = {
+            top: this.boundary.minY + params.top,
+            left: this.boundary.minX + params.left + this.activeLine,
+            height: this.boundary.maxY - this.boundary.minY,
+            index: this.chartAxesXCoords.indexOf(this.activeLine)
+          };
           this.datasets.forEach(function (dataset) {
-            data.push(dataset.data[this$1.hoveredParams.index]);
+            data.push(dataset.data[this$1.activeLineParams.index]);
           });
         }
 
         this.$emit(
-          "onAxisHover",
-          this.hoveredParams ? Object.assign({}, this.hoveredParams, {data: data}) : null
+          "onMouseMove",
+          this.activeLineParams ? Object.assign({}, this.activeLineParams, {data: data}) : null
         );
       }
     },
@@ -672,14 +683,15 @@
         );
       }
 
-      // Chart active axis
-      if (this.hoverable && this.chartOverlayParams && this.hovered) {
+      // Chart active line
+      if (this.hoverable && this.chartOverlayParams && this.activeLine) {
         children.push(
           h("line", {
-            class: "vtc-active-x",
+            class: "vtc-active-line",
+            ref: "chart-active-line",
             attrs: {
-              x1: this.hovered,
-              x2: this.hovered,
+              x1: this.activeLine,
+              x2: this.activeLine,
               y1: this.boundary.minY,
               y2: this.boundary.maxY,
               stroke: "black"
@@ -713,6 +725,7 @@
       if (this.hoverable && this.chartOverlayParams) {
         children.push(
           h("rect", {
+            ref: "chart-hover-area",
             attrs: Object.assign({}, this.chartOverlayParams),
             on: {
               mousemove: function (e) { return this$1.onMouseMove(e); },
