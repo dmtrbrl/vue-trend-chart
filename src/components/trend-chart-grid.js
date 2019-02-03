@@ -20,6 +20,9 @@ export default {
     xLines() {
       return this.xAxesLines || this.$parent.params.maxAmount;
     },
+    yLines() {
+      return this.yAxesLines || this.$parent.labels.yLabelsAmount;
+    },
     boundary() {
       return this.$parent.boundary;
     }
@@ -41,9 +44,9 @@ export default {
       };
     },
     setYLineParams(n) {
-      const { boundary, yAxesLines } = this;
+      const { boundary, yLines } = this;
       const step =
-        yAxesLines > 1 ? (boundary.maxY - boundary.minY) / (yAxesLines - 1) : 0;
+        yLines > 1 ? (boundary.maxY - boundary.minY) / (yLines - 1) : 0;
       const y = boundary.maxY - step * (n - 1);
       const x1 = boundary.minX;
       const x2 = boundary.maxX;
@@ -57,7 +60,7 @@ export default {
     }
   },
   render(h) {
-    if (!this.xAxes || !this.yAxes) return;
+    if (!this.xAxes && !this.yAxes) return;
 
     const children = [];
 
@@ -85,9 +88,9 @@ export default {
       );
     }
     // y axes
-    if (this.yAxes && this.yAxesLines > 0) {
+    if (this.yAxes && this.yLines > 0) {
       const lines = [];
-      for (let i = 1; i <= this.yAxesLines; i++) {
+      for (let i = 1; i <= this.yLines; i++) {
         lines.push(
           h("line", {
             class: "vtc-axis-y",
