@@ -44,8 +44,8 @@ export default {
       width: null,
       height: null,
       labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 },
-      hovered: null,
-      hoveredParams: null
+      activeLine: null,
+      activeLineParams: null
     };
   },
   computed: {
@@ -152,42 +152,45 @@ export default {
         this.fitLabels();
       });
     },
+    getNearestCoordinate(val) {
+      return (
+        this.chartAxesXCoords.reduce(
+          (p, n) => (Math.abs(p) > Math.abs(n - val) ? n - val : p),
+          Infinity
+        ) + val
+      );
+    },
     onWindowResize() {
       this.setSize();
     },
     onMouseMove(e) {
-      const nearest = val =>
-        this.chartAxesXCoords.reduce(
-          (p, n) => (Math.abs(p) > Math.abs(n - val) ? n - val : p),
-          Infinity
-        ) + val;
-      this.hovered = nearest(e.offsetX);
-      this.hoveredParams = {
-        offsetX: e.offsetX,
-        offsetY: e.offsetY,
-        x: e.x,
-        y: e.y,
-        height: this.boundary.maxY - this.boundary.minY,
-        index: this.chartAxesXCoords.indexOf(this.hovered)
-      };
+      const rect = this.$refs.chart.getBoundingClientRect();
+      this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
     },
     onMouseOut() {
-      this.hovered = null;
-      this.hoveredParams = null;
+      this.activeLine = null;
+      this.activeLineParams = null;
     }
   },
   watch: {
-    hovered() {
+    activeLine(val) {
       const data = [];
-      if (this.hoveredParams) {
+      if (val) {
+        const params = this.$refs["chart"].getBoundingClientRect();
+        this.activeLineParams = {
+          top: this.boundary.minY + params.top,
+          left: this.boundary.minX + params.left + this.activeLine,
+          height: this.boundary.maxY - this.boundary.minY,
+          index: this.chartAxesXCoords.indexOf(this.activeLine)
+        };
         this.datasets.forEach(dataset => {
-          data.push(dataset.data[this.hoveredParams.index]);
+          data.push(dataset.data[this.activeLineParams.index]);
         });
       }
 
       this.$emit(
-        "onAxisHover",
-        this.hoveredParams ? { ...this.hoveredParams, data } : null
+        "onMouseMove",
+        this.activeLineParams ? { ...this.activeLineParams, data } : null
       );
     }
   },
@@ -213,14 +216,15 @@ export default {
       );
     }
 
-    // Chart active axis
-    if (this.hoverable && this.chartOverlayParams && this.hovered) {
+    // Chart active line
+    if (this.hoverable && this.chartOverlayParams && this.activeLine) {
       children.push(
         h("line", {
-          class: "vtc-active-x",
+          class: "vtc-active-line",
+          ref: "chart-active-line",
           attrs: {
-            x1: this.hovered,
-            x2: this.hovered,
+            x1: this.activeLine,
+            x2: this.activeLine,
             y1: this.boundary.minY,
             y2: this.boundary.maxY,
             stroke: "black"
@@ -254,6 +258,7 @@ export default {
     if (this.hoverable && this.chartOverlayParams) {
       children.push(
         h("rect", {
+          ref: "chart-hover-area",
           attrs: {
             ...this.chartOverlayParams
           },

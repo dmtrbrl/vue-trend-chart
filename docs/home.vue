@@ -3,7 +3,7 @@
     <h1 class="docs-heading heading">Vue Trend Chart</h1>
     <div class="docs-subheading">Simple trend charts for Vue.js</div>
     <div class="docs-content">
-      <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+      <!-- <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="vtc2" x2="1" y2="1">
             <stop offset="0%" stop-color="#a8edea"></stop>
@@ -14,7 +14,7 @@
             <stop offset="100%" stop-color="#fbc8d4"></stop>
           </linearGradient>
         </defs>
-      </svg>
+      </svg>-->
       <trend-chart
         :datasets="datasets"
         :grid="grid"
@@ -22,7 +22,7 @@
         :min="0"
         :max="500"
         :hoverable="true"
-        @onAxisHover="onAxisHover"
+        @onMouseMove="onMouseMove"
       ></trend-chart>
     </div>
   </section>
@@ -46,11 +46,13 @@ export default {
         {
           data: [150, 300, 350, 100, 350, 100, 15],
           smooth: true,
+          showPoints: true,
           className: "vtc2"
         },
         {
           data: [50, 150, 200, 50, 120, 250, 200],
           smooth: true,
+          showPoints: true,
           className: "vtc3"
         }
       ],
@@ -66,7 +68,7 @@ export default {
     };
   },
   methods: {
-    onAxisHover(params) {
+    onMouseMove(params) {
       console.log(params);
     }
   }
@@ -119,29 +121,43 @@ body {
 .vtc-axis-y {
   stroke: rgba(0, 0, 0, 0.05);
 }
-.vtc-active-x {
+.vtc-active-line {
   stroke: rgba(0, 0, 0, 0.2);
 }
+.vtc .vtc-point {
+  stroke-width: 2;
+  transition: stroke-width 0.2s;
+}
+.vtc .vtc-point.is-active {
+  stroke-width: 5;
+}
 .vtc1 .vtc-curve-stroke {
-  stroke: #a6c0fe;
+  stroke: #fbac91;
   stroke-width: 2;
 }
 .vtc1 .vtc-curve-fill {
-  fill: #a6c0fe;
-  opacity: 0.1;
+  fill: #fbac91;
+  opacity: 0.05;
 }
 .vtc1 .vtc-point {
-  fill: #ffffff;
-  stroke: #a6c0fe;
-  stroke-width: 2;
+  fill: #fbac91;
+  stroke: #fbac91;
 }
 .vtc2 .vtc-curve-stroke {
-  stroke: url(#vtc2);
+  stroke: #fbe1b6;
   stroke-width: 2;
 }
+.vtc2 .vtc-point {
+  fill: #fbe1b6;
+  stroke: #fbe1b6;
+}
 .vtc3 .vtc-curve-stroke {
-  stroke: url(#vtc3);
+  stroke: #7fdfd4;
   stroke-width: 2;
+}
+.vtc3 .vtc-point {
+  fill: #7fdfd4;
+  stroke: #7fdfd4;
 }
 .vtc-labels line {
   stroke: rgba(0, 0, 0, 0.05);

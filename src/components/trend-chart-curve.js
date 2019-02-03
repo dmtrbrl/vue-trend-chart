@@ -70,20 +70,27 @@ export default {
       );
     }
     // Points
-    if (this.showPoints) {
+    if (this.showPoints && this.points) {
       children.push(
         h(
           "g",
           {
             class: "vtc-points"
           },
-          this.points.map(point =>
+          this.points.map((point, i) =>
             h("circle", {
-              class: "vtc-point",
+              class: {
+                "vtc-point": true,
+                "is-active":
+                  this.$parent.activeLineParams &&
+                  this.$parent.activeLineParams.index === i
+              },
               attrs: {
                 cx: point.x,
                 cy: point.y,
-                r: 3
+                r: 2,
+                stroke: "black",
+                "stroke-width": 1
               }
             })
           )
