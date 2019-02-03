@@ -52,6 +52,9 @@ var TrendChartGrid = {
     xLines: function xLines() {
       return this.xAxesLines || this.$parent.params.maxAmount;
     },
+    yLines: function yLines() {
+      return this.yAxesLines || this.$parent.labels.yLabelsAmount;
+    },
     boundary: function boundary() {
       return this.$parent.boundary;
     }
@@ -77,9 +80,9 @@ var TrendChartGrid = {
     setYLineParams: function setYLineParams(n) {
       var ref = this;
       var boundary = ref.boundary;
-      var yAxesLines = ref.yAxesLines;
+      var yLines = ref.yLines;
       var step =
-        yAxesLines > 1 ? (boundary.maxY - boundary.minY) / (yAxesLines - 1) : 0;
+        yLines > 1 ? (boundary.maxY - boundary.minY) / (yLines - 1) : 0;
       var y = boundary.maxY - step * (n - 1);
       var x1 = boundary.minX;
       var x2 = boundary.maxX;
@@ -93,7 +96,7 @@ var TrendChartGrid = {
     }
   },
   render: function render(h) {
-    if (!this.xAxes || !this.yAxes) { return; }
+    if (!this.xAxes && !this.yAxes) { return; }
 
     var children = [];
 
@@ -119,9 +122,9 @@ var TrendChartGrid = {
       );
     }
     // y axes
-    if (this.yAxes && this.yAxesLines > 0) {
+    if (this.yAxes && this.yLines > 0) {
       var lines$1 = [];
-      for (var i$1 = 1; i$1 <= this.yAxesLines; i$1++) {
+      for (var i$1 = 1; i$1 <= this.yLines; i$1++) {
         lines$1.push(
           h("line", {
             class: "vtc-axis-y",
@@ -151,21 +154,19 @@ var TrendChartLabels = {
     xLabels: {
       type: Array
     },
-    xLabelsOffset: {
-      default: 5,
-      type: Number
-    },
     yLabelsAmount: {
-      type: Number
-    },
-    yLabelsOffset: {
-      default: 5,
       type: Number
     },
     yLabelsTextFormatter: {
       default: function (value) { return value; },
       type: Function
     }
+  },
+  data: function data() {
+    return {
+      xLabelHeight: null,
+      yLabelHeight: null
+    };
   },
   computed: {
     boundary: function boundary() {
@@ -177,28 +178,38 @@ var TrendChartLabels = {
       var ref = this;
       var boundary = ref.boundary;
       var xLabels = ref.xLabels;
-      var xLabelsOffset = ref.xLabelsOffset;
       var step = (boundary.maxX - boundary.minX) / (xLabels.length - 1);
       var x = boundary.minX + step * n;
-      var y = boundary.maxY + xLabelsOffset;
+      var y = boundary.maxY;
       return { transform: ("translate(" + x + ", " + y + ")") };
     },
     setYLabelsParams: function setYLabelsParams(n) {
       var ref = this;
       var boundary = ref.boundary;
       var yLabelsAmount = ref.yLabelsAmount;
-      var yLabelsOffset = ref.yLabelsOffset;
       var step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
-      var x = boundary.minX - yLabelsOffset;
+      var x = boundary.minX;
       var y = boundary.maxY - step * n;
       return { transform: ("translate(" + x + ", " + y + ")") };
+    }
+  },
+  mounted: function mounted() {
+    if (this.xLabels && this.xLabels.length) {
+      this.xLabelHeight = document
+        .querySelector(".vtc-labels-x text")
+        .getBoundingClientRect().height;
+    }
+    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+      this.yLabelHeight = document
+        .querySelector(".vtc-labels-y text")
+        .getBoundingClientRect().height;
     }
   },
   render: function render(h) {
     var this$1 = this;
 
     if (
-      !(this.xLabels && this.xLabels.length) ||
+      !(this.xLabels && this.xLabels.length) &&
       !(this.yLabelsAmount && this.yLabelsAmount > 0)
     )
       { return; }
@@ -226,9 +237,8 @@ var TrendChartLabels = {
                   "text",
                   {
                     attrs: {
-                      dy: 10,
-                      "text-anchor": "middle",
-                      "dominant-baseline": "text-before-edge"
+                      dy: this$1.xLabelHeight + 5,
+                      "text-anchor": "middle"
                     }
                   },
                   label
@@ -257,8 +267,8 @@ var TrendChartLabels = {
                 {
                   attrs: {
                     dx: -10,
-                    "text-anchor": "end",
-                    "dominant-baseline": "middle"
+                    dy: this.yLabelHeight / 4,
+                    "text-anchor": "end"
                   }
                 },
                 this.yLabelsTextFormatter(
