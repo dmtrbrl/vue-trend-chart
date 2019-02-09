@@ -6,6 +6,7 @@
       :labels="labels"
       :min="0"
       :max="500"
+      padding="0"
       :hoverable="true"
       @onMouseMove="onMouseMove"
     ></trend-chart>

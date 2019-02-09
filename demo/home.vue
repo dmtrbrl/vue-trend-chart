@@ -1,12 +1,8 @@
 <template>
   <section class="demo">
-    <header class="demo-header">
-      <svg
-        class="demo-logo"
-        viewBox="0 0 454 130"
-        xmlns="http://www.w3.org/2000/svg"
-        title="Vue Trend Chart"
-      >
+    <header class="demo__header">
+      <svg class="demo__logo" viewBox="0 0 454 130" xmlns="http://www.w3.org/2000/svg">
+        <title>Vue Trend Chart</title>
         <g fill="none" fill-rule="evenodd">
           <path d="M.5 45h20c30 0 30 80 60 80s30-110 60-110h20" stroke="#39AF77" stroke-width="10"></path>
           <path
@@ -26,11 +22,11 @@
       </svg>
       <GithubCorner/>
     </header>
-    <main class="demo-examples">
-      <example1 class="demo-example"/>
-      <example3 class="demo-example"/>
+    <main class="demo__examples">
+      <frameworks-downloads class="demo__example"/>
+      <example3 class="demo__example"/>
     </main>
-    <footer class="demo-footer">
+    <footer class="demo__footer">
       Released under the
       <a href="#">MIT</a> license.
       <a href="#">View source</a>.
@@ -52,11 +48,11 @@
 
 <script>
 import GithubCorner from "./components/github-corner.vue";
-import example1 from "./components/example1.vue";
+import FrameworksDownloads from "./components/frameworks-downloads.vue";
 import example3 from "./components/example3.vue";
 export default {
   name: "home",
-  components: { GithubCorner, example1, example3 }
+  components: { GithubCorner, FrameworksDownloads, example3 }
 };
 </script>
 
@@ -72,30 +68,30 @@ body {
   color: #2f4053;
 }
 .demo {
-  &-header {
+  &__header {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 120px;
+    height: 150px;
     padding: 20px;
     background: #f8f8f8;
   }
-  &-logo {
+  &__logo {
     width: auto;
-    height: 70px;
+    height: 80px;
   }
-  &-examples {
+  &__examples {
     display: flex;
     width: 100%;
   }
-  &-example {
+  &__example {
     width: 100%;
-    padding: 30px;
+    padding: 50px;
     &:nth-child(2n) {
       border-left: 1px solid #f8f8f8;
     }
   }
-  &-footer {
+  &__footer {
     padding: 20px;
     background: #f8f8f8;
     font-size: 13px;
