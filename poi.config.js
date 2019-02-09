@@ -1,7 +1,7 @@
 module.exports = {
-  entry: "./docs/app.js",
+  entry: "./demo/app.js",
   output: {
-    dir: "./docs-dist",
+    dir: "./demo-dist",
     publicUrl: "./"
   },
   configureWebpack(config) {
