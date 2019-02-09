@@ -17,15 +17,16 @@ export default {
   computed: {
     datasets() {
       if (!this.data) return null;
-      return this.frameworks.map(f => {
-        if (this.data[f])
+      return this.frameworks
+        .filter(f => this.data[f])
+        .map(f => {
           return {
             slug: f,
             data: this.data[f].downloads.map(d => {
               return { value: d.downloads, day: d.day };
             })
           };
-      });
+        });
     }
   },
   methods: {
@@ -51,11 +52,10 @@ export default {
 <style lang="scss">
 .frameworks {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 250px;
+  flex-wrap: wrap;
+  height: 100%;
   .vtc {
-    width: 180px;
+    width: 160px;
     height: 50px;
     margin-right: -5px;
   }
@@ -112,8 +112,46 @@ export default {
   }
 }
 .framework {
-  display: flex;
-  justify-content: space-between;
+  width: calc(50% - 25px);
+  &:nth-child(2n) {
+    margin-left: 50px;
+  }
+  &:nth-child(n + 3) {
+    margin-top: 50px;
+  }
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__name {
+    width: 150px;
+  }
+  &__period {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    opacity: 0.5;
+    &-icon {
+      display: block;
+      height: 10px;
+      width: auto;
+      margin-right: 5px;
+    }
+    &-text {
+      font-size: 11px;
+      line-height: 16px;
+    }
+  }
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  &__downloads {
+    font-size: 24px;
+  }
   &.vue {
     border-bottom: 2px solid rgba(#39af77, 0.2);
   }

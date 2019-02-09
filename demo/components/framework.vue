@@ -1,22 +1,27 @@
 <template>
-  <div class="framework" :class="slug" v-if="data">
-    <div class="framework-info">
-      <strong class="framework-info-heading">{{name}}</strong>
-      <span>{{info.label}}: {{info.value}}</span>
+  <section class="framework" :class="slug" v-if="data">
+    <header class="framework__header">
+      <strong class="framework__name">{{name}}</strong>
+    </header>
+    <div class="framework__data">
+      <div class="framework__data-info">
+        <div class="framework__period">
+          <svg viewBox="0 0 7.22 11.76" class="framework__period-icon">
+            <path d="M4.59 4.94V0H2.62v4.94H0l3.28 4.59 3.94-4.59H4.59zM.11 10.76h7v1h-7z"></path>
+          </svg>
+          <span class="framework__period-text">{{info.label}}</span>
+        </div>
+        <strong class="framework__downloads">{{info.value}}</strong>
+      </div>
+      <trend-chart
+        :datasets="[dataset]"
+        :min="0"
+        padding="5 5 0"
+        :hoverable="true"
+        @onMouseMove="onMouseMove"
+      ></trend-chart>
     </div>
-    <trend-chart
-      :datasets="[{
-        data,
-        showPoints: true,
-        fill: true,
-        className: `curve-${slug}`
-      }]"
-      :min="0"
-      padding="5 5 0"
-      :hoverable="true"
-      @onMouseMove="onMouseMove"
-    ></trend-chart>
-  </div>
+  </section>
 </template>
 <script>
 export default {
@@ -41,6 +46,14 @@ export default {
     },
     weeklyDownloads() {
       return this.data.reduce((a, c) => a + c.value, 0);
+    },
+    dataset() {
+      return {
+        data: this.data,
+        showPoints: true,
+        fill: true,
+        className: `curve-${this.slug}`
+      };
     },
     info() {
       return {

@@ -85,7 +85,7 @@ body {
     width: 100%;
   }
   &__example {
-    width: 100%;
+    width: 50%;
     padding: 50px;
     &:nth-child(2n) {
       border-left: 1px solid #f8f8f8;
