@@ -6,7 +6,7 @@
       :labels="labels"
       :min="0"
       :max="500"
-      padding="0"
+      padding="5"
       :hoverable="true"
       @onMouseMove="onMouseMove"
     ></trend-chart>
@@ -39,12 +39,13 @@ export default {
         }
       ],
       grid: {
+        xAxes: true,
         yAxes: true,
         yAxesLines: 5
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        yLabelsAmount: 5,
+        yLabels: 5,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       }
     };
@@ -59,9 +60,13 @@ export default {
 
 <style lang="scss">
 .example3 {
+  width: 100%;
   .vtc {
-    min-height: 250px;
+    height: 250px;
     font-size: 12px;
+    @media (min-width: 699px) {
+      height: 320px;
+    }
   }
   .vtc-axis-x,
   .vtc-axis-y {

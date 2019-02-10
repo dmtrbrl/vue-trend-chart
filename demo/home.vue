@@ -23,36 +23,56 @@
       <GithubCorner/>
     </header>
     <main class="demo__examples">
-      <frameworks-downloads class="demo__example"/>
-      <example3 class="demo__example"/>
+      <div class="demo__example">
+        <div class="demo__example-container">
+          <div class="demo__example-header">
+            <div class="demo__example-intro">
+              <strong class="demo__example-heading">BTC price</strong>
+              <em class="demo__example-description">Static line chart example</em>
+            </div>
+          </div>
+          <bitcoin-price/>
+        </div>
+      </div>
+      <div class="demo__example">
+        <div class="demo__example-container">
+          <div class="demo__example-header">
+            <div class="demo__example-intro">
+              <strong class="demo__example-heading">Downloads from npm</strong>
+              <em class="demo__example-description">Interactive trend curves example</em>
+            </div>
+          </div>
+          <frameworks-downloads/>
+        </div>
+      </div>
+      <div class="demo__example">
+        <div class="demo__example-container">
+          <div class="demo__example-header">
+            <div class="demo__example-intro">
+              <strong class="demo__example-heading">Stock prices</strong>
+              <em class="demo__example-description">Interactive multiline chart example</em>
+            </div>
+          </div>
+          <example3/>
+        </div>
+      </div>
     </main>
     <footer class="demo__footer">
       Released under the
       <a href="#">MIT</a> license.
       <a href="#">View source</a>.
     </footer>
-    <!-- <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="vtc2" x2="1" y2="1">
-            <stop offset="0%" stop-color="#a8edea"></stop>
-            <stop offset="100%" stop-color="#fed6e3"></stop>
-          </linearGradient>
-          <linearGradient id="vtc3" x2="1" y2="1">
-            <stop offset="0%" stop-color="#9795f0"></stop>
-            <stop offset="100%" stop-color="#fbc8d4"></stop>
-          </linearGradient>
-        </defs>
-    </svg>-->
   </section>
 </template>
 
 <script>
 import GithubCorner from "./components/github-corner.vue";
+import BitcoinPrice from "./components/bitcoin-price.vue";
 import FrameworksDownloads from "./components/frameworks-downloads.vue";
 import example3 from "./components/example3.vue";
 export default {
   name: "home",
-  components: { GithubCorner, FrameworksDownloads, example3 }
+  components: { GithubCorner, BitcoinPrice, FrameworksDownloads, example3 }
 };
 </script>
 
@@ -72,23 +92,63 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 150px;
+    height: 120px;
     padding: 20px;
     background: #f8f8f8;
   }
   &__logo {
     width: auto;
-    height: 80px;
+    height: 60px;
   }
   &__examples {
     display: flex;
+    flex-wrap: wrap;
     width: 100%;
   }
   &__example {
-    width: 50%;
-    padding: 50px;
-    &:nth-child(2n) {
-      border-left: 1px solid #f8f8f8;
+    display: flex;
+    width: 100%;
+    padding: 50px 20px;
+    @media (max-width: 1199px) {
+      width: 100%;
+      &:nth-child(n + 2) {
+        border-top: 1px solid #f8f8f8;
+      }
+    }
+    @media (min-width: 1200px) {
+      padding: 50px;
+      width: 50%;
+      &:nth-child(2n) {
+        border-left: 1px solid #f8f8f8;
+      }
+      &:nth-child(n + 3) {
+        border-top: 1px solid #f8f8f8;
+      }
+      &:nth-child(odd) {
+        justify-content: flex-end;
+      }
+      &:nth-child(3) {
+        width: 100%;
+      }
+    }
+    &-container {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    &-header {
+      display: flex;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(#333, 0.1);
+    }
+    &-heading {
+      display: block;
+      font-size: 18px;
+    }
+    &-description {
+      font-size: 14px;
+      opacity: 0.5;
     }
   }
   &__footer {

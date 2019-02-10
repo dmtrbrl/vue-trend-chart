@@ -34,7 +34,8 @@
   "peerDependencies": {
     "axios": "^0.18.0",
     "vue": "^2.6.4",
-    "vue-axios": "^2.1.4"
+    "vue-axios": "^2.1.4",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "gh-pages": "^2.0.1",

@@ -10,7 +10,7 @@ export default {
   components: { Framework },
   data() {
     return {
-      frameworks: ["vue", "react", "angular"],
+      frameworks: ["vue", "react", "angular", "hapi", "express", "koa"],
       data: null
     };
   },
@@ -53,10 +53,9 @@ export default {
 .frameworks {
   display: flex;
   flex-wrap: wrap;
-  height: 100%;
   .vtc {
     width: 160px;
-    height: 50px;
+    height: 60px;
     margin-right: -5px;
   }
   .vtc-curve-stroke {
@@ -74,51 +73,27 @@ export default {
   .vtc-point.is-active {
     display: block;
   }
-  .curve-vue {
-    .vtc-curve-stroke {
-      stroke: #39af77;
-    }
-    .vtc-curve-fill {
-      fill: #39af77;
-    }
-    .vtc-point {
-      fill: #39af77;
-      stroke: #39af77;
-    }
-  }
-  .curve-react {
-    .vtc-curve-stroke {
-      stroke: #61dafb;
-    }
-    .vtc-curve-fill {
-      fill: #61dafb;
-    }
-    .vtc-point {
-      fill: #61dafb;
-      stroke: #61dafb;
-    }
-  }
-  .curve-angular {
-    .vtc-curve-stroke {
-      stroke: #d8002b;
-    }
-    .vtc-curve-fill {
-      fill: #d8002b;
-    }
-    .vtc-point {
-      fill: #d8002b;
-      stroke: #d8002b;
-    }
-  }
 }
 .framework {
-  width: calc(50% - 25px);
-  &:nth-child(2n) {
-    margin-left: 50px;
+  width: 100%;
+  @media (max-width: 699px) {
+    &:nth-child(n + 2) {
+      margin-top: 30px;
+    }
+    &:nth-child(n + 4) {
+      display: none;
+    }
   }
-  &:nth-child(n + 3) {
-    margin-top: 50px;
+  @media (min-width: 700px) {
+    width: calc(50% - 25px);
+    &:nth-child(2n) {
+      margin-left: 50px;
+    }
+    &:nth-child(n + 3) {
+      margin-top: 50px;
+    }
   }
+
   &__header {
     display: flex;
     align-items: center;
@@ -141,6 +116,7 @@ export default {
     &-text {
       font-size: 11px;
       line-height: 16px;
+      white-space: nowrap;
     }
   }
   &__data {
@@ -160,6 +136,87 @@ export default {
   }
   &.angular {
     border-bottom: 2px solid rgba(#d8002b, 0.2);
+  }
+  &.hapi {
+    border-bottom: 2px solid rgba(#febc6b, 0.2);
+  }
+  &.express {
+    border-bottom: 2px solid rgba(#259dff, 0.2);
+  }
+  &.koa {
+    border-bottom: 2px solid rgba(#33333d, 0.2);
+  }
+}
+.curve-vue {
+  .vtc-curve-stroke {
+    stroke: #39af77;
+  }
+  .vtc-curve-fill {
+    fill: #39af77;
+  }
+  .vtc-point {
+    fill: #39af77;
+    stroke: #39af77;
+  }
+}
+.curve-react {
+  .vtc-curve-stroke {
+    stroke: #61dafb;
+  }
+  .vtc-curve-fill {
+    fill: #61dafb;
+  }
+  .vtc-point {
+    fill: #61dafb;
+    stroke: #61dafb;
+  }
+}
+.curve-angular {
+  .vtc-curve-stroke {
+    stroke: #d8002b;
+  }
+  .vtc-curve-fill {
+    fill: #d8002b;
+  }
+  .vtc-point {
+    fill: #d8002b;
+    stroke: #d8002b;
+  }
+}
+.curve-hapi {
+  .vtc-curve-stroke {
+    stroke: #febc6b;
+  }
+  .vtc-curve-fill {
+    fill: #febc6b;
+  }
+  .vtc-point {
+    fill: #febc6b;
+    stroke: #febc6b;
+  }
+}
+.curve-express {
+  .vtc-curve-stroke {
+    stroke: #259dff;
+  }
+  .vtc-curve-fill {
+    fill: #259dff;
+  }
+  .vtc-point {
+    fill: #259dff;
+    stroke: #259dff;
+  }
+}
+.curve-koa {
+  .vtc-curve-stroke {
+    stroke: #33333d;
+  }
+  .vtc-curve-fill {
+    fill: #33333d;
+  }
+  .vtc-point {
+    fill: #33333d;
+    stroke: #33333d;
   }
 }
 </style>

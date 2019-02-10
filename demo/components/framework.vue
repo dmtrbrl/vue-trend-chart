@@ -45,7 +45,7 @@ export default {
       return `${this.slug[0].toUpperCase() + this.slug.slice(1)}`;
     },
     weeklyDownloads() {
-      return this.data.reduce((a, c) => a + c.value, 0);
+      return this.numberWithSpaces(this.data.reduce((a, c) => a + c.value, 0));
     },
     dataset() {
       return {
@@ -63,6 +63,9 @@ export default {
     }
   },
   methods: {
+    numberWithSpaces(n) {
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    },
     onMouseMove(params) {
       if (!params) {
         this.currentInfo = null;
@@ -70,7 +73,7 @@ export default {
       }
       this.currentInfo = {
         label: params.data[0].day,
-        value: params.data[0].value
+        value: this.numberWithSpaces(params.data[0].value)
       };
     }
   }
