@@ -4,7 +4,7 @@ export default {
     xLabels: {
       type: Array
     },
-    yLabelsAmount: {
+    yLabels: {
       type: Number
     },
     yLabelsTextFormatter: {
@@ -32,8 +32,8 @@ export default {
       return { transform: `translate(${x}, ${y})` };
     },
     setYLabelsParams(n) {
-      const { boundary, yLabelsAmount } = this;
-      const step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
+      const { boundary, yLabels } = this;
+      const step = (boundary.maxY - boundary.minY) / (yLabels - 1);
       const x = boundary.minX;
       const y = boundary.maxY - step * n;
       return { transform: `translate(${x}, ${y})` };
@@ -45,7 +45,7 @@ export default {
         .querySelector(".vtc-labels-x text")
         .getBoundingClientRect().height;
     }
-    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+    if (this.yLabels && this.yLabels > 0) {
       this.yLabelHeight = document
         .querySelector(".vtc-labels-y text")
         .getBoundingClientRect().height;
@@ -54,7 +54,7 @@ export default {
   render(h) {
     if (
       !(this.xLabels && this.xLabels.length) &&
-      !(this.yLabelsAmount && this.yLabelsAmount > 0)
+      !(this.yLabels && this.yLabels > 0)
     )
       return;
 
@@ -78,7 +78,6 @@ export default {
                 }
               },
               [
-                h("line", { attrs: { stroke: "black", y2: 5 } }),
                 h(
                   "text",
                   {
@@ -88,7 +87,8 @@ export default {
                     }
                   },
                   label
-                )
+                ),
+                h("line", { attrs: { stroke: "black", y2: 5 } })
               ]
             );
           })
@@ -97,9 +97,9 @@ export default {
     }
 
     // y labels
-    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+    if (this.yLabels && this.yLabels > 0) {
       const labels = [];
-      for (let i = 0; i < this.yLabelsAmount; i++) {
+      for (let i = 0; i < this.yLabels; i++) {
         labels.push(
           h(
             "g",
@@ -123,7 +123,7 @@ export default {
                   this.$parent.params.minValue +
                     ((this.$parent.params.maxValue -
                       this.$parent.params.minValue) /
-                      (this.yLabelsAmount - 1)) *
+                      (this.yLabels - 1)) *
                       i
                 )
               ),
