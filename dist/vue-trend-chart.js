@@ -158,7 +158,7 @@
       xLabels: {
         type: Array
       },
-      yLabelsAmount: {
+      yLabels: {
         type: Number
       },
       yLabelsTextFormatter: {
@@ -190,8 +190,8 @@
       setYLabelsParams: function setYLabelsParams(n) {
         var ref = this;
         var boundary = ref.boundary;
-        var yLabelsAmount = ref.yLabelsAmount;
-        var step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
+        var yLabels = ref.yLabels;
+        var step = (boundary.maxY - boundary.minY) / (yLabels - 1);
         var x = boundary.minX;
         var y = boundary.maxY - step * n;
         return { transform: ("translate(" + x + ", " + y + ")") };
@@ -203,7 +203,7 @@
           .querySelector(".vtc-labels-x text")
           .getBoundingClientRect().height;
       }
-      if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+      if (this.yLabels && this.yLabels > 0) {
         this.yLabelHeight = document
           .querySelector(".vtc-labels-y text")
           .getBoundingClientRect().height;
@@ -214,7 +214,7 @@
 
       if (
         !(this.xLabels && this.xLabels.length) &&
-        !(this.yLabelsAmount && this.yLabelsAmount > 0)
+        !(this.yLabels && this.yLabels > 0)
       )
         { return; }
 
@@ -236,7 +236,6 @@
                   attrs: Object.assign({}, this$1.setXLabelsParams(i))
                 },
                 [
-                  h("line", { attrs: { stroke: "black", y2: 5 } }),
                   h(
                     "text",
                     {
@@ -246,7 +245,8 @@
                       }
                     },
                     label
-                  )
+                  ),
+                  h("line", { attrs: { stroke: "black", y2: 5 } })
                 ]
               );
             })
@@ -255,9 +255,9 @@
       }
 
       // y labels
-      if (this.yLabelsAmount && this.yLabelsAmount > 0) {
+      if (this.yLabels && this.yLabels > 0) {
         var labels = [];
-        for (var i = 0; i < this.yLabelsAmount; i++) {
+        for (var i = 0; i < this.yLabels; i++) {
           labels.push(
             h(
               "g",
@@ -279,7 +279,7 @@
                     this.$parent.params.minValue +
                       ((this.$parent.params.maxValue -
                         this.$parent.params.minValue) /
-                        (this.yLabelsAmount - 1)) *
+                        (this.yLabels - 1)) *
                         i
                   )
                 ),
