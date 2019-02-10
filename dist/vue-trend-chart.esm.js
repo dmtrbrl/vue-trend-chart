@@ -152,7 +152,7 @@ var TrendChartLabels = {
     xLabels: {
       type: Array
     },
-    yLabels: {
+    yLabelsAmount: {
       type: Number
     },
     yLabelsTextFormatter: {
@@ -184,8 +184,8 @@ var TrendChartLabels = {
     setYLabelsParams: function setYLabelsParams(n) {
       var ref = this;
       var boundary = ref.boundary;
-      var yLabels = ref.yLabels;
-      var step = (boundary.maxY - boundary.minY) / (yLabels - 1);
+      var yLabelsAmount = ref.yLabelsAmount;
+      var step = (boundary.maxY - boundary.minY) / (yLabelsAmount - 1);
       var x = boundary.minX;
       var y = boundary.maxY - step * n;
       return { transform: ("translate(" + x + ", " + y + ")") };
@@ -197,7 +197,7 @@ var TrendChartLabels = {
         .querySelector(".vtc-labels-x text")
         .getBoundingClientRect().height;
     }
-    if (this.yLabels && this.yLabels > 0) {
+    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
       this.yLabelHeight = document
         .querySelector(".vtc-labels-y text")
         .getBoundingClientRect().height;
@@ -208,7 +208,7 @@ var TrendChartLabels = {
 
     if (
       !(this.xLabels && this.xLabels.length) &&
-      !(this.yLabels && this.yLabels > 0)
+      !(this.yLabelsAmount && this.yLabelsAmount > 0)
     )
       { return; }
 
@@ -230,6 +230,7 @@ var TrendChartLabels = {
                 attrs: Object.assign({}, this$1.setXLabelsParams(i))
               },
               [
+                h("line", { attrs: { stroke: "black", y2: 5 } }),
                 h(
                   "text",
                   {
@@ -239,8 +240,7 @@ var TrendChartLabels = {
                     }
                   },
                   label
-                ),
-                h("line", { attrs: { stroke: "black", y2: 5 } })
+                )
               ]
             );
           })
@@ -249,9 +249,9 @@ var TrendChartLabels = {
     }
 
     // y labels
-    if (this.yLabels && this.yLabels > 0) {
+    if (this.yLabelsAmount && this.yLabelsAmount > 0) {
       var labels = [];
-      for (var i = 0; i < this.yLabels; i++) {
+      for (var i = 0; i < this.yLabelsAmount; i++) {
         labels.push(
           h(
             "g",
@@ -273,7 +273,7 @@ var TrendChartLabels = {
                   this.$parent.params.minValue +
                     ((this.$parent.params.maxValue -
                       this.$parent.params.minValue) /
-                      (this.yLabels - 1)) *
+                      (this.yLabelsAmount - 1)) *
                       i
                 )
               ),
