@@ -64,7 +64,7 @@ export default {
           attrs: {
             d: this.paths.linePath,
             fill: "none",
-            stroke: "#000000"
+            stroke: "black"
           }
         })
       );
@@ -89,7 +89,7 @@ export default {
                 cx: point.x,
                 cy: point.y,
                 r: 2,
-                stroke: "black",
+                stroke: "#000000",
                 "stroke-width": 1
               }
             })

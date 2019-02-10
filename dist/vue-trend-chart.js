@@ -420,7 +420,7 @@
             attrs: {
               d: this.paths.linePath,
               fill: "none",
-              stroke: "#000000"
+              stroke: "black"
             }
           })
         );
@@ -444,7 +444,7 @@
                   cx: point.x,
                   cy: point.y,
                   r: 2,
-                  stroke: "black",
+                  stroke: "#000000",
                   "stroke-width": 1
                 }
               }); }
