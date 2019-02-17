@@ -34,7 +34,7 @@ export default {
         return validatePadding(val);
       }
     },
-    hoverable: {
+    interactive: {
       default: false,
       type: Boolean
     }
@@ -223,7 +223,7 @@ export default {
     }
 
     // Chart active line
-    if (this.hoverable && this.chartOverlayParams && this.activeLine) {
+    if (this.interactive && this.chartOverlayParams && this.activeLine) {
       children.push(
         h("line", {
           class: "vtc-active-line",
@@ -273,7 +273,7 @@ export default {
     });
 
     // Chart overlay
-    if (this.hoverable && this.chartOverlayParams) {
+    if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("rect", {
           ref: "chart-hover-area",

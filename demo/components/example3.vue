@@ -7,7 +7,7 @@
       :min="0"
       :max="500"
       padding="5"
-      :hoverable="true"
+      :interactive="true"
       @onMouseMove="onMouseMove"
     ></trend-chart>
   </div>

@@ -17,7 +17,7 @@
         :datasets="[dataset]"
         :min="0"
         padding="5 5 0"
-        :hoverable="true"
+        :interactive="true"
         @onMouseMove="onMouseMove"
       ></trend-chart>
     </div>
