@@ -27,6 +27,11 @@
             <strong class="demo__example-heading">BTC price</strong>
             <em class="demo__example-description">Static line chart example</em>
           </div>
+          <a
+            href="https://codepen.io/dimonline/pen/wNRzQY"
+            target="_blank"
+            class="demo__show-code"
+          >Show Code</a>
         </div>
         <bitcoin-price/>
       </div>
@@ -36,6 +41,11 @@
             <strong class="demo__example-heading">Downloads from npm</strong>
             <em class="demo__example-description">Interactive trend curves example</em>
           </div>
+          <a
+            href="https://codepen.io/dimonline/pen/bzOwXZ"
+            target="_blank"
+            class="demo__show-code"
+          >Show Code</a>
         </div>
         <frameworks-downloads/>
       </div>
@@ -51,6 +61,11 @@
               >popper.js</a>) example
             </em>
           </div>
+          <a
+            href="https://codepen.io/dimonline/pen/vbvyXa"
+            target="_blank"
+            class="demo__show-code"
+          >Show Code</a>
         </div>
         <random-chart/>
       </div>
@@ -124,9 +139,16 @@ body {
     }
     &-header {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
       padding-bottom: 10px;
       margin-bottom: 20px;
       border-bottom: 1px solid rgba(#333, 0.1);
+    }
+    &-intro {
+      width: 100%;
+      padding-right: 20px;
     }
     &-heading {
       display: block;
@@ -135,6 +157,21 @@ body {
     &-description {
       font-size: 14px;
       opacity: 0.5;
+    }
+  }
+  &__show-code {
+    display: inline-block;
+    padding: 0 10px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 24px;
+    border: 1px solid #39af77;
+    transition: all 0.5s;
+    &:hover {
+      color: #fff;
+      background: #39af77;
     }
   }
   &__footer {
