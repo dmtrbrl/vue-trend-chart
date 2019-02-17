@@ -1,19 +1,31 @@
 <template>
-  <div class="example3">
+  <div class="random">
     <trend-chart
       :datasets="datasets"
       :grid="grid"
       :labels="labels"
       :min="0"
-      :max="500"
       padding="5"
       :interactive="true"
       @onMouseMove="onMouseMove"
+      class="random-chart"
+      v-if="datasets.length"
     ></trend-chart>
+    <div id="pop" role="tooltip" ref="tooltip" class="tooltip" :class="{'is-active': tooltipData}">
+      <div class="tooltip-container" v-if="tooltipData">
+        <strong>{{labels.xLabels[tooltipData.index]}}</strong>
+        <div class="tooltip-data">
+          <div class="tooltip-data-item tooltip-data-item--1">{{tooltipData.data[0]}}</div>
+          <div class="tooltip-data-item tooltip-data-item--2">{{tooltipData.data[1]}}</div>
+          <div class="tooltip-data-item tooltip-data-item--3">{{tooltipData.data[2]}}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Popper from "popper.js";
 export default {
   data() {
     return {
@@ -46,19 +58,41 @@ export default {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         yLabels: 5,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
-      }
+      },
+      tooltipData: null,
+      popper: null,
+      popperIsActive: false
     };
   },
   methods: {
+    initPopper() {
+      const chart = document.querySelector(".random-chart");
+      const ref = chart.querySelector(".vtc-active-line");
+      const tooltip = this.$refs.tooltip;
+      this.popper = new Popper(ref, tooltip, {
+        placement: "right",
+        modifiers: {
+          offset: { offset: "0,10" },
+          preventOverflow: {
+            boundariesElement: chart
+          }
+        }
+      });
+    },
     onMouseMove(params) {
-      console.log(params);
+      this.popperIsActive = !!params;
+      this.popper.scheduleUpdate();
+      this.tooltipData = params || null;
     }
+  },
+  mounted() {
+    this.initPopper();
   }
 };
 </script>
 
 <style lang="scss">
-.example3 {
+.random {
   width: 100%;
   .vtc {
     height: 250px;
@@ -111,6 +145,42 @@ export default {
   }
   .vtc-labels line {
     stroke: rgba(0, 0, 0, 0.05);
+  }
+
+  .tooltip {
+    &:not(.is-active) {
+      display: none;
+    }
+    padding: 10px;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    &-data {
+      display: flex;
+      &-item {
+        display: flex;
+        align-items: center;
+        &:not(:first-child) {
+          margin-left: 20px;
+        }
+        &:before {
+          content: "";
+          display: block;
+          width: 15px;
+          height: 15px;
+          margin-right: 5px;
+        }
+        &--1:before {
+          background: #fbac91;
+        }
+        &--2:before {
+          background: #fbe1b6;
+        }
+        &--3:before {
+          background: #7fdfd4;
+        }
+      }
+    }
   }
 }
 </style>

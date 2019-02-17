@@ -42,11 +42,17 @@
       <div class="demo__example">
         <div class="demo__example-header">
           <div class="demo__example-intro">
-            <strong class="demo__example-heading">Stock prices</strong>
-            <em class="demo__example-description">Interactive multiline chart example</em>
+            <strong class="demo__example-heading">Some Random Data</strong>
+            <em class="demo__example-description">
+              Interactive multiline chart with tooltip (using
+              <a
+                href="https://popper.js.org"
+                target="_blank"
+              >popper.js</a>) example
+            </em>
           </div>
         </div>
-        <example3/>
+        <random-chart/>
       </div>
     </main>
     <footer class="demo__footer">
@@ -61,10 +67,10 @@
 import GithubCorner from "./components/github-corner.vue";
 import BitcoinPrice from "./components/bitcoin-price.vue";
 import FrameworksDownloads from "./components/frameworks-downloads.vue";
-import example3 from "./components/example3.vue";
+import RandomChart from "./components/random-chart.vue";
 export default {
   name: "home",
-  components: { GithubCorner, BitcoinPrice, FrameworksDownloads, example3 }
+  components: { GithubCorner, BitcoinPrice, FrameworksDownloads, RandomChart }
 };
 </script>
 
@@ -88,6 +94,9 @@ body {
   max-width: 800px;
   margin: 0 auto;
   background: #fff;
+  a {
+    color: #39af77;
+  }
   &__header {
     position: relative;
     display: flex;
@@ -133,9 +142,6 @@ body {
     background: #f8f8f8;
     font-size: 13px;
     text-align: center;
-    a {
-      color: #39af77;
-    }
   }
 }
 </style>
