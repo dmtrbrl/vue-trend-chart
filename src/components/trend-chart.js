@@ -245,7 +245,12 @@ export default {
         h(TrendChartLabels, {
           class: "vtc-labels",
           ref: "chart-labels",
-          attrs: { ...this.labels }
+          attrs: {
+            ...this.labels,
+            boundary: this.boundary,
+            minValue: this.params.minValue,
+            maxValue: this.params.maxValue
+          }
         })
       );
     }

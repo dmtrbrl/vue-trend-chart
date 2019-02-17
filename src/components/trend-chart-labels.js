@@ -1,6 +1,16 @@
 export default {
   name: "TrendChartLabels",
   props: {
+    boundary: {
+      required: true,
+      type: Object
+    },
+    minValue: {
+      type: Number
+    },
+    maxValue: {
+      type: Number
+    },
     xLabels: {
       type: Array
     },
@@ -17,11 +27,6 @@ export default {
       xLabelHeight: null,
       yLabelHeight: null
     };
-  },
-  computed: {
-    boundary() {
-      return this.$parent.boundary;
-    }
   },
   methods: {
     setXLabelsParams(n) {
@@ -72,7 +77,7 @@ export default {
             return h(
               "g",
               {
-                class: "vtc-label-x",
+                class: "vtc-labels-x-tick",
                 attrs: {
                   ...this.setXLabelsParams(i)
                 }
@@ -104,7 +109,7 @@ export default {
           h(
             "g",
             {
-              class: "vtc-label-y",
+              class: "vtc-labels-y-tick",
               attrs: {
                 ...this.setYLabelsParams(i)
               }
@@ -120,11 +125,8 @@ export default {
                   }
                 },
                 this.yLabelsTextFormatter(
-                  this.$parent.params.minValue +
-                    ((this.$parent.params.maxValue -
-                      this.$parent.params.minValue) /
-                      (this.yLabels - 1)) *
-                      i
+                  this.minValue +
+                    ((this.maxValue - this.minValue) / (this.yLabels - 1)) * i
                 )
               ),
               h("line", { attrs: { stroke: "black", x1: 0, x2: -5 } })
