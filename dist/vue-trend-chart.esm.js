@@ -31,39 +31,36 @@ function getPadding (padding) {
 var TrendChartGrid = {
   name: "TrendChartGrid",
   props: {
-    xAxes: {
+    boundary: {
+      required: true,
+      type: Object
+    },
+    verticalLines: {
       default: false,
       type: Boolean
     },
-    xAxesLines: {
+    verticalLinesNumber: {
+      default: 0,
       type: Number
     },
-    yAxes: {
+    horizontalLines: {
       default: false,
       type: Boolean
     },
-    yAxesLines: {
+    horizontalLinesNumber: {
+      default: 0,
       type: Number
-    }
-  },
-  computed: {
-    xLines: function xLines() {
-      return this.xAxesLines || this.$parent.params.maxAmount;
-    },
-    yLines: function yLines() {
-      return this.yAxesLines || this.$parent.labels.yLabelsAmount;
-    },
-    boundary: function boundary() {
-      return this.$parent.boundary;
     }
   },
   methods: {
-    setXLineParams: function setXLineParams(n) {
+    setVerticalLinesParams: function setVerticalLinesParams(n) {
       var ref = this;
       var boundary = ref.boundary;
-      var xLines = ref.xLines;
+      var verticalLinesNumber = ref.verticalLinesNumber;
       var step =
-        xLines > 1 ? (boundary.maxX - boundary.minX) / (xLines - 1) : 0;
+        verticalLinesNumber > 1
+          ? (boundary.maxX - boundary.minX) / (verticalLinesNumber - 1)
+          : 0;
       var x = boundary.minX + step * (n - 1);
       var y1 = boundary.minY;
       var y2 = boundary.maxY;
@@ -75,12 +72,14 @@ var TrendChartGrid = {
         stroke: "rgba(0,0,0,0.1)"
       };
     },
-    setYLineParams: function setYLineParams(n) {
+    setHorizontalLinesParams: function setHorizontalLinesParams(n) {
       var ref = this;
       var boundary = ref.boundary;
-      var yLines = ref.yLines;
+      var horizontalLinesNumber = ref.horizontalLinesNumber;
       var step =
-        yLines > 1 ? (boundary.maxY - boundary.minY) / (yLines - 1) : 0;
+        horizontalLinesNumber > 1
+          ? (boundary.maxY - boundary.minY) / (horizontalLinesNumber - 1)
+          : 0;
       var y = boundary.maxY - step * (n - 1);
       var x1 = boundary.minX;
       var x2 = boundary.maxX;
@@ -94,18 +93,18 @@ var TrendChartGrid = {
     }
   },
   render: function render(h) {
-    if (!this.xAxes && !this.yAxes) { return; }
+    if (!this.verticalLines && !this.horizontalLines) { return; }
 
     var children = [];
 
-    // x axes
-    if (this.xAxes && this.xLines > 0) {
+    // Vertical Lines
+    if (this.verticalLines && this.verticalLinesNumber > 0) {
       var lines = [];
-      for (var i = 1; i <= this.xLines; i++) {
+      for (var i = 1; i <= this.verticalLinesNumber; i++) {
         lines.push(
           h("line", {
-            class: "vtc-axis-x",
-            attrs: Object.assign({}, this.setXLineParams(i))
+            class: "vtc-grid-v-line",
+            attrs: Object.assign({}, this.setVerticalLinesParams(i))
           })
         );
       }
@@ -113,20 +112,20 @@ var TrendChartGrid = {
         h(
           "g",
           {
-            class: "vtc-axes-x"
+            class: "vtc-grid-v"
           },
           lines
         )
       );
     }
-    // y axes
-    if (this.yAxes && this.yLines > 0) {
+    // Horizontal Lines
+    if (this.horizontalLines && this.horizontalLinesNumber > 0) {
       var lines$1 = [];
-      for (var i$1 = 1; i$1 <= this.yLines; i$1++) {
+      for (var i$1 = 1; i$1 <= this.horizontalLinesNumber; i$1++) {
         lines$1.push(
           h("line", {
-            class: "vtc-axis-y",
-            attrs: Object.assign({}, this.setYLineParams(i$1))
+            class: "vtc-grid-h-line",
+            attrs: Object.assign({}, this.setHorizontalLinesParams(i$1))
           })
         );
       }
@@ -134,7 +133,7 @@ var TrendChartGrid = {
         h(
           "g",
           {
-            class: "vtc-axes-y"
+            class: "vtc-grid-h"
           },
           lines$1
         )
@@ -149,6 +148,16 @@ var TrendChartGrid = {
 var TrendChartLabels = {
   name: "TrendChartLabels",
   props: {
+    boundary: {
+      required: true,
+      type: Object
+    },
+    minValue: {
+      type: Number
+    },
+    maxValue: {
+      type: Number
+    },
     xLabels: {
       type: Array
     },
@@ -165,11 +174,6 @@ var TrendChartLabels = {
       xLabelHeight: null,
       yLabelHeight: null
     };
-  },
-  computed: {
-    boundary: function boundary() {
-      return this.$parent.boundary;
-    }
   },
   methods: {
     setXLabelsParams: function setXLabelsParams(n) {
@@ -226,7 +230,7 @@ var TrendChartLabels = {
             return h(
               "g",
               {
-                class: "vtc-label-x",
+                class: "vtc-labels-x-tick",
                 attrs: Object.assign({}, this$1.setXLabelsParams(i))
               },
               [
@@ -256,7 +260,7 @@ var TrendChartLabels = {
           h(
             "g",
             {
-              class: "vtc-label-y",
+              class: "vtc-labels-y-tick",
               attrs: Object.assign({}, this.setYLabelsParams(i))
             },
             [
@@ -270,11 +274,8 @@ var TrendChartLabels = {
                   }
                 },
                 this.yLabelsTextFormatter(
-                  this.$parent.params.minValue +
-                    ((this.$parent.params.maxValue -
-                      this.$parent.params.minValue) /
-                      (this.yLabels - 1)) *
-                      i
+                  this.minValue +
+                    ((this.maxValue - this.minValue) / (this.yLabels - 1)) * i
                 )
               ),
               h("line", { attrs: { stroke: "black", x1: 0, x2: -5 } })
@@ -352,6 +353,25 @@ function genPath (pnts, smooth, ref) {
 var TrendChartCurve = {
   name: "TrendChartCurve",
   props: {
+    boundary: {
+      required: true,
+      type: Object
+    },
+    minValue: {
+      required: true,
+      type: Number
+    },
+    maxValue: {
+      required: true,
+      type: Number
+    },
+    maxAmount: {
+      required: true,
+      type: Number
+    },
+    activeLineParams: {
+      type: Object
+    },
     data: {
       required: true,
       type: Array
@@ -380,14 +400,14 @@ var TrendChartCurve = {
     points: function points() {
       return genPoints(
         this.data,
-        this.$parent.boundary,
-        this.$parent.params.maxValue,
-        this.$parent.params.minValue,
-        this.$parent.params.maxAmount
+        this.boundary,
+        this.maxValue,
+        this.minValue,
+        this.maxAmount
       );
     },
     paths: function paths() {
-      return genPath(this.points, this.smooth, this.$parent.boundary);
+      return genPath(this.points, this.smooth, this.boundary);
     }
   },
   render: function render(h) {
@@ -431,8 +451,7 @@ var TrendChartCurve = {
               class: {
                 "vtc-point": true,
                 "is-active":
-                  this$1.$parent.activeLineParams &&
-                  this$1.$parent.activeLineParams.index === i
+                  this$1.activeLineParams && this$1.activeLineParams.index === i
               },
               attrs: {
                 cx: point.x,
@@ -672,7 +691,15 @@ var TrendChart = {
       children.push(
         h(TrendChartGrid, {
           class: "vtc-grid",
-          attrs: Object.assign({}, this.grid)
+          attrs: {
+            verticalLines: this.grid.verticalLines,
+            verticalLinesNumber:
+              this.grid.verticalLinesNumber || this.params.maxAmount,
+            horizontalLines: this.grid.horizontalLines,
+            horizontalLinesNumber:
+              this.grid.horizontalLinesNumber || this.labels.yLabels,
+            boundary: this.boundary
+          }
         })
       );
     }
@@ -700,7 +727,10 @@ var TrendChart = {
         h(TrendChartLabels, {
           class: "vtc-labels",
           ref: "chart-labels",
-          attrs: Object.assign({}, this.labels)
+          attrs: Object.assign({}, this.labels,
+            {boundary: this.boundary,
+            minValue: this.params.minValue,
+            maxValue: this.params.maxValue})
         })
       );
     }
@@ -710,7 +740,12 @@ var TrendChart = {
       children.push(
         h(TrendChartCurve, {
           class: "vtc-curve",
-          attrs: Object.assign({}, dataset)
+          attrs: Object.assign({}, dataset,
+            {boundary: this$1.boundary,
+            minValue: this$1.params.minValue,
+            maxValue: this$1.params.maxValue,
+            maxAmount: this$1.params.maxAmount,
+            activeLineParams: this$1.activeLineParams})
         })
       );
     });
