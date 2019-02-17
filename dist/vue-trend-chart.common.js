@@ -508,7 +508,7 @@ var TrendChart = {
         return validatePadding(val);
       }
     },
-    hoverable: {
+    interactive: {
       default: false,
       type: Boolean
     }
@@ -658,11 +658,7 @@ var TrendChart = {
 
       var data = [];
       if (val) {
-        var params = this.$refs["chart"].getBoundingClientRect();
         this.activeLineParams = {
-          top: this.boundary.minY + params.top,
-          left: this.boundary.minX + params.left + this.activeLine,
-          height: this.boundary.maxY - this.boundary.minY,
           index: this.chartAxesXCoords.indexOf(this.activeLine)
         };
         this.datasets.forEach(function (dataset) {
@@ -707,17 +703,18 @@ var TrendChart = {
     }
 
     // Chart active line
-    if (this.hoverable && this.chartOverlayParams && this.activeLine) {
+    if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("line", {
           class: "vtc-active-line",
           ref: "chart-active-line",
           attrs: {
-            x1: this.activeLine,
-            x2: this.activeLine,
+            x1: this.activeLine || this.boundary.minX,
+            x2: this.activeLine || this.boundary.minX,
             y1: this.boundary.minY,
             y2: this.boundary.maxY,
-            stroke: "black"
+            stroke: "black",
+            visibility: this.activeLine ? "visible" : "hidden"
           }
         })
       );
@@ -753,7 +750,7 @@ var TrendChart = {
     });
 
     // Chart overlay
-    if (this.hoverable && this.chartOverlayParams) {
+    if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("rect", {
           ref: "chart-hover-area",
