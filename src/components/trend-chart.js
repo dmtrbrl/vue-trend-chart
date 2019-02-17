@@ -260,7 +260,14 @@ export default {
       children.push(
         h(TrendChartCurve, {
           class: "vtc-curve",
-          attrs: { ...dataset }
+          attrs: {
+            ...dataset,
+            boundary: this.boundary,
+            minValue: this.params.minValue,
+            maxValue: this.params.maxValue,
+            maxAmount: this.params.maxAmount,
+            activeLineParams: this.activeLineParams
+          }
         })
       );
     });

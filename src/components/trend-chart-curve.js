@@ -4,6 +4,25 @@ import genPath from "../helpers/genPath";
 export default {
   name: "TrendChartCurve",
   props: {
+    boundary: {
+      required: true,
+      type: Object
+    },
+    minValue: {
+      required: true,
+      type: Number
+    },
+    maxValue: {
+      required: true,
+      type: Number
+    },
+    maxAmount: {
+      required: true,
+      type: Number
+    },
+    activeLineParams: {
+      type: Object
+    },
     data: {
       required: true,
       type: Array
@@ -32,14 +51,14 @@ export default {
     points() {
       return genPoints(
         this.data,
-        this.$parent.boundary,
-        this.$parent.params.maxValue,
-        this.$parent.params.minValue,
-        this.$parent.params.maxAmount
+        this.boundary,
+        this.maxValue,
+        this.minValue,
+        this.maxAmount
       );
     },
     paths() {
-      return genPath(this.points, this.smooth, this.$parent.boundary);
+      return genPath(this.points, this.smooth, this.boundary);
     }
   },
   render(h) {
@@ -82,8 +101,7 @@ export default {
               class: {
                 "vtc-point": true,
                 "is-active":
-                  this.$parent.activeLineParams &&
-                  this.$parent.activeLineParams.index === i
+                  this.activeLineParams && this.activeLineParams.index === i
               },
               attrs: {
                 cx: point.x,
