@@ -33,9 +33,9 @@
   "homepage": "https://dmtrbrl.github.io/vue-trend-chart/",
   "peerDependencies": {
     "axios": "^0.18.0",
+    "moment": "^2.24.0",
     "vue": "^2.6.4",
-    "vue-axios": "^2.1.4",
-    "moment": "^2.24.0"
+    "vue-axios": "^2.1.4"
   },
   "devDependencies": {
     "gh-pages": "^2.0.1",
