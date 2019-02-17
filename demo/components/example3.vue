@@ -39,9 +39,9 @@ export default {
         }
       ],
       grid: {
-        xAxes: true,
-        yAxes: true,
-        yAxesLines: 5
+        verticalLines: true,
+        verticalLinesNumber: 13,
+        horizontalLines: true
       },
       labels: {
         xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],

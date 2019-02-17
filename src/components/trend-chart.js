@@ -210,7 +210,13 @@ export default {
         h(TrendChartGrid, {
           class: "vtc-grid",
           attrs: {
-            ...this.grid
+            verticalLines: this.grid.verticalLines,
+            verticalLinesNumber:
+              this.grid.verticalLinesNumber || this.params.maxAmount,
+            horizontalLines: this.grid.horizontalLines,
+            horizontalLinesNumber:
+              this.grid.horizontalLinesNumber || this.labels.yLabels,
+            boundary: this.boundary
           }
         })
       );

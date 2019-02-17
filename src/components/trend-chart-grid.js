@@ -1,37 +1,34 @@
 export default {
   name: "TrendChartGrid",
   props: {
-    xAxes: {
+    boundary: {
+      required: true,
+      type: Object
+    },
+    verticalLines: {
       default: false,
       type: Boolean
     },
-    xAxesLines: {
+    verticalLinesNumber: {
+      default: 0,
       type: Number
     },
-    yAxes: {
+    horizontalLines: {
       default: false,
       type: Boolean
     },
-    yAxesLines: {
+    horizontalLinesNumber: {
+      default: 0,
       type: Number
-    }
-  },
-  computed: {
-    xLines() {
-      return this.xAxesLines || this.$parent.params.maxAmount;
-    },
-    yLines() {
-      return this.yAxesLines || this.$parent.labels.yLabelsAmount;
-    },
-    boundary() {
-      return this.$parent.boundary;
     }
   },
   methods: {
-    setXLineParams(n) {
-      const { boundary, xLines } = this;
+    setVerticalLinesParams(n) {
+      const { boundary, verticalLinesNumber } = this;
       const step =
-        xLines > 1 ? (boundary.maxX - boundary.minX) / (xLines - 1) : 0;
+        verticalLinesNumber > 1
+          ? (boundary.maxX - boundary.minX) / (verticalLinesNumber - 1)
+          : 0;
       const x = boundary.minX + step * (n - 1);
       const y1 = boundary.minY;
       const y2 = boundary.maxY;
@@ -43,10 +40,12 @@ export default {
         stroke: "rgba(0,0,0,0.1)"
       };
     },
-    setYLineParams(n) {
-      const { boundary, yLines } = this;
+    setHorizontalLinesParams(n) {
+      const { boundary, horizontalLinesNumber } = this;
       const step =
-        yLines > 1 ? (boundary.maxY - boundary.minY) / (yLines - 1) : 0;
+        horizontalLinesNumber > 1
+          ? (boundary.maxY - boundary.minY) / (horizontalLinesNumber - 1)
+          : 0;
       const y = boundary.maxY - step * (n - 1);
       const x1 = boundary.minX;
       const x2 = boundary.maxX;
@@ -60,19 +59,19 @@ export default {
     }
   },
   render(h) {
-    if (!this.xAxes && !this.yAxes) return;
+    if (!this.verticalLines && !this.horizontalLines) return;
 
     const children = [];
 
-    // x axes
-    if (this.xAxes && this.xLines > 0) {
+    // Vertical Lines
+    if (this.verticalLines && this.verticalLinesNumber > 0) {
       const lines = [];
-      for (let i = 1; i <= this.xLines; i++) {
+      for (let i = 1; i <= this.verticalLinesNumber; i++) {
         lines.push(
           h("line", {
-            class: "vtc-axis-x",
+            class: "vtc-grid-v-line",
             attrs: {
-              ...this.setXLineParams(i)
+              ...this.setVerticalLinesParams(i)
             }
           })
         );
@@ -81,21 +80,21 @@ export default {
         h(
           "g",
           {
-            class: "vtc-axes-x"
+            class: "vtc-grid-v"
           },
           lines
         )
       );
     }
-    // y axes
-    if (this.yAxes && this.yLines > 0) {
+    // Horizontal Lines
+    if (this.horizontalLines && this.horizontalLinesNumber > 0) {
       const lines = [];
-      for (let i = 1; i <= this.yLines; i++) {
+      for (let i = 1; i <= this.horizontalLinesNumber; i++) {
         lines.push(
           h("line", {
-            class: "vtc-axis-y",
+            class: "vtc-grid-h-line",
             attrs: {
-              ...this.setYLineParams(i)
+              ...this.setHorizontalLinesParams(i)
             }
           })
         );
@@ -104,7 +103,7 @@ export default {
         h(
           "g",
           {
-            class: "vtc-axes-y"
+            class: "vtc-grid-h"
           },
           lines
         )

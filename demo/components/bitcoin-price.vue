@@ -13,7 +13,7 @@
       :datasets="[{data: dataset, fill: true, className: 'curve-btc'}]"
       :labels="labels"
       :min="0"
-      :grid="{xAxes: true, xAxesLines: 1, yAxes: true, yAxesLines: 1}"
+      :grid="grid"
     />
   </div>
 </template>
@@ -27,6 +27,12 @@ export default {
         xLabels: [],
         yLabels: 5,
         yLabelsTextFormatter: val => "$" + Math.round(val * 100) / 100
+      },
+      grid: {
+        verticalLines: true,
+        verticalLinesNumber: 1,
+        horizontalLines: true,
+        horizontalLinesNumber: 1
       }
     };
   },
@@ -62,14 +68,14 @@ export default {
     }
   }
   .vtc-labels-x {
-    .vtc-label-x {
+    &-tick {
       text {
         display: none;
       }
       line {
         opacity: 0.3;
       }
-      &:nth-child(5n),
+      &:nth-child(6n),
       &:first-child {
         text {
           display: block;
