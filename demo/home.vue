@@ -51,8 +51,8 @@
     </main>
     <footer class="demo__footer">
       Released under the
-      <a href="#">MIT</a> license.
-      <a href="#">View source</a>.
+      <a href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/LICENSE">MIT</a> license.
+      <a href="https://github.com/dmtrbrl/vue-trend-chart">View source</a>.
     </footer>
   </section>
 </template>
