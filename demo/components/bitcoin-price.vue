@@ -39,7 +39,7 @@ export default {
   mounted() {
     this.$http
       .get(
-        "https://api.coindesk.com/v1/bpi/historical/close.json?start=2018-11-01&end=2018-11-30"
+        "https://api.coindesk.com/v1/bpi/historical/close.json?start=2019-01-01&end=2019-01-31"
       )
       .then(res => {
         const data = res.data.bpi;
@@ -75,7 +75,7 @@ export default {
       line {
         opacity: 0.3;
       }
-      &:nth-child(6n),
+      &:nth-child(6n + 1),
       &:first-child {
         text {
           display: block;

@@ -22,37 +22,31 @@
     </header>
     <main class="demo__examples">
       <div class="demo__example">
-        <div class="demo__example-container">
-          <div class="demo__example-header">
-            <div class="demo__example-intro">
-              <strong class="demo__example-heading">BTC price</strong>
-              <em class="demo__example-description">Static line chart example</em>
-            </div>
+        <div class="demo__example-header">
+          <div class="demo__example-intro">
+            <strong class="demo__example-heading">BTC price</strong>
+            <em class="demo__example-description">Static line chart example</em>
           </div>
-          <bitcoin-price/>
         </div>
+        <bitcoin-price/>
       </div>
       <div class="demo__example">
-        <div class="demo__example-container">
-          <div class="demo__example-header">
-            <div class="demo__example-intro">
-              <strong class="demo__example-heading">Downloads from npm</strong>
-              <em class="demo__example-description">Interactive trend curves example</em>
-            </div>
+        <div class="demo__example-header">
+          <div class="demo__example-intro">
+            <strong class="demo__example-heading">Downloads from npm</strong>
+            <em class="demo__example-description">Interactive trend curves example</em>
           </div>
-          <frameworks-downloads/>
         </div>
+        <frameworks-downloads/>
       </div>
       <div class="demo__example">
-        <div class="demo__example-container">
-          <div class="demo__example-header">
-            <div class="demo__example-intro">
-              <strong class="demo__example-heading">Stock prices</strong>
-              <em class="demo__example-description">Interactive multiline chart example</em>
-            </div>
+        <div class="demo__example-header">
+          <div class="demo__example-intro">
+            <strong class="demo__example-heading">Stock prices</strong>
+            <em class="demo__example-description">Interactive multiline chart example</em>
           </div>
-          <example3/>
         </div>
+        <example3/>
       </div>
     </main>
     <footer class="demo__footer">
@@ -84,9 +78,18 @@ body {
   margin: 0;
   font-family: "Source Sans Pro", sans-serif;
   color: #2f4053;
+
+  @media (min-width: 768px) {
+    padding: 10px;
+    background: #2f4053;
+  }
 }
 .demo {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
   &__header {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -99,40 +102,16 @@ body {
     height: 60px;
   }
   &__examples {
-    display: flex;
-    flex-wrap: wrap;
     width: 100%;
   }
   &__example {
-    display: flex;
     width: 100%;
-    padding: 50px 20px;
-    @media (max-width: 1199px) {
-      width: 100%;
-      &:nth-child(n + 2) {
-        border-top: 1px solid #f8f8f8;
-      }
+    padding: 20px;
+    &:nth-child(n + 2) {
+      border-top: 1px solid #f8f8f8;
     }
-    @media (min-width: 1200px) {
-      padding: 50px;
-      width: 50%;
-      &:nth-child(2n) {
-        border-left: 1px solid #f8f8f8;
-      }
-      &:nth-child(n + 3) {
-        border-top: 1px solid #f8f8f8;
-      }
-      &:nth-child(odd) {
-        justify-content: flex-end;
-      }
-      &:nth-child(3) {
-        width: 100%;
-      }
-    }
-    &-container {
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
+    @media (min-width: 768px) {
+      padding: 30px;
     }
     &-header {
       display: flex;

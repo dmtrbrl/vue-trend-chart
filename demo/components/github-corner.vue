@@ -8,7 +8,7 @@
       width="70"
       height="70"
       viewBox="0 0 250 250"
-      style="fill:#2F4053; color:#f8f8f8; position: absolute; top: 0; border: 0; right: 0;"
+      style="fill:#39af77; color:#f8f8f8; position: absolute; top: 0; border: 0; right: 0;"
       aria-hidden="true"
     >
       <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>

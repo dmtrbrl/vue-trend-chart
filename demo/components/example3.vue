@@ -40,7 +40,6 @@ export default {
       ],
       grid: {
         verticalLines: true,
-        verticalLinesNumber: 13,
         horizontalLines: true
       },
       labels: {
