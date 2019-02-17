@@ -34,6 +34,7 @@
   "peerDependencies": {
     "axios": "^0.18.0",
     "moment": "^2.24.0",
+    "popper.js": "^1.14.7",
     "vue": "^2.6.4",
     "vue-axios": "^2.1.4"
   },
