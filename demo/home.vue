@@ -19,55 +19,67 @@
         </g>
       </svg>
       <GithubCorner/>
+      <svg class="wave" viewBox="0 0 1920 240">
+        <path
+          fill="#fbfbfb"
+          d="M1920 144.5V240H0v-65.5c196-36 452.146-15.726 657.5 8.5 229.698 27.098 870 57 1262.5-38.5z"
+        ></path>
+      </svg>
     </header>
     <main class="demo__examples">
       <div class="demo__example">
-        <div class="demo__example-header">
-          <div class="demo__example-intro">
-            <strong class="demo__example-heading">BTC price</strong>
-            <em class="demo__example-description">Static line chart example</em>
+        <div class="demo__example-container">
+          <div class="demo__example-header">
+            <div class="demo__example-intro">
+              <strong class="demo__example-heading">BTC price</strong>
+              <em class="demo__example-description">Static line chart example</em>
+            </div>
+            <a
+              href="https://codepen.io/dimonline/pen/wNRzQY"
+              target="_blank"
+              class="demo__show-code"
+            >Show Code</a>
           </div>
-          <a
-            href="https://codepen.io/dimonline/pen/wNRzQY"
-            target="_blank"
-            class="demo__show-code"
-          >Show Code</a>
+          <bitcoin-price/>
         </div>
-        <bitcoin-price/>
       </div>
       <div class="demo__example">
-        <div class="demo__example-header">
-          <div class="demo__example-intro">
-            <strong class="demo__example-heading">Downloads from npm</strong>
-            <em class="demo__example-description">Interactive trend curves example</em>
+        <div class="demo__example-container">
+          <div class="demo__example-header">
+            <div class="demo__example-intro">
+              <strong class="demo__example-heading">Downloads from npm</strong>
+              <em class="demo__example-description">Interactive trend curves example</em>
+            </div>
+            <a
+              href="https://codepen.io/dimonline/pen/bzOwXZ"
+              target="_blank"
+              class="demo__show-code"
+            >Show Code</a>
           </div>
-          <a
-            href="https://codepen.io/dimonline/pen/bzOwXZ"
-            target="_blank"
-            class="demo__show-code"
-          >Show Code</a>
+          <frameworks-downloads/>
         </div>
-        <frameworks-downloads/>
       </div>
       <div class="demo__example">
-        <div class="demo__example-header">
-          <div class="demo__example-intro">
-            <strong class="demo__example-heading">Some Random Data</strong>
-            <em class="demo__example-description">
-              Interactive multiline chart with tooltip (using
-              <a
-                href="https://popper.js.org"
-                target="_blank"
-              >popper.js</a>) example
-            </em>
+        <div class="demo__example-container">
+          <div class="demo__example-header">
+            <div class="demo__example-intro">
+              <strong class="demo__example-heading">Some Random Data</strong>
+              <em class="demo__example-description">
+                Interactive multiline chart with tooltip (using
+                <a
+                  href="https://popper.js.org"
+                  target="_blank"
+                >popper.js</a>) example
+              </em>
+            </div>
+            <a
+              href="https://codepen.io/dimonline/pen/vbvyXa"
+              target="_blank"
+              class="demo__show-code"
+            >Show Code</a>
           </div>
-          <a
-            href="https://codepen.io/dimonline/pen/vbvyXa"
-            target="_blank"
-            class="demo__show-code"
-          >Show Code</a>
+          <random-chart/>
         </div>
-        <random-chart/>
       </div>
     </main>
     <footer class="demo__footer">
@@ -99,14 +111,8 @@ body {
   margin: 0;
   font-family: "Source Sans Pro", sans-serif;
   color: #2f4053;
-
-  @media (min-width: 768px) {
-    padding: 10px;
-    background: #2f4053;
-  }
 }
 .demo {
-  max-width: 800px;
   margin: 0 auto;
   background: #fff;
   a {
@@ -117,9 +123,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 120px;
-    padding: 20px;
-    background: #f8f8f8;
+    height: 150px;
+    padding: 20px 20px 40px;
+    @media (min-width: 768px) {
+      height: 200px;
+      padding: 20px 20px 50px;
+    }
   }
   &__logo {
     width: auto;
@@ -129,13 +138,24 @@ body {
     width: 100%;
   }
   &__example {
-    width: 100%;
-    padding: 20px;
-    &:nth-child(n + 2) {
-      border-top: 1px solid #f8f8f8;
+    position: relative;
+    padding: 40px 20px;
+    &:first-child {
+      padding-top: 30px;
+    }
+    &:nth-child(odd) {
+      background: #fbfbfb;
     }
     @media (min-width: 768px) {
-      padding: 30px;
+      padding: 80px 20px;
+      &:first-child {
+        padding-top: 50px;
+      }
+    }
+    &-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
     }
     &-header {
       display: flex;
@@ -175,11 +195,16 @@ body {
     }
   }
   &__footer {
-    padding: 20px;
-    background: #f8f8f8;
+    padding: 30px 20px;
     font-size: 13px;
     text-align: center;
   }
+}
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 </style>
 
