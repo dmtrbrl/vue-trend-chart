@@ -18,13 +18,13 @@
           ></path>
         </g>
       </svg>
-      <GithubCorner/>
       <svg class="wave" viewBox="0 0 1920 240">
         <path
           fill="#fbfbfb"
           d="M1920 144.5V240H0v-65.5c196-36 452.146-15.726 657.5 8.5 229.698 27.098 870 57 1262.5-38.5z"
         ></path>
       </svg>
+      <GithubCorner/>
     </header>
     <main class="demo__examples">
       <div class="demo__example">
