@@ -27,7 +27,7 @@ Vue.use(TrendChart);
 **Required**  
 Type: **Array**  
   
-*Array of objects with properties for each dataset*
+*Array of objects with properties for each dataset.*
 
 ### **`grid`**
 Type: **Object**  
@@ -37,7 +37,7 @@ Type: **Object**
 ### **`labels`**
 Type: **Object**  
   
-*Labels properties*
+*[Labels properties](#labels-props)*
 
 ### **`min`**
 Type: **Number**  
@@ -115,7 +115,7 @@ Default: **false**
 ### **`xLabels`**
 Type: **Array**
   
-*X axis labels  
+*X axis labels.  
 Example: `["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]`*
 
 ### **`yLabels`**
@@ -131,7 +131,7 @@ Example: `val => "$" + Math.round(val * 100) / 100`*
 
 ## Styling
 
-Just use CSS
+You need to use CSS to style chart.
 
 ## Development
 
