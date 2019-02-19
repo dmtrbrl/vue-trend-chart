@@ -69,7 +69,9 @@ Default: **false**
 Or `@mouseMove`  
 Type: **Function**  
   
-*Callback function for **onmouseover** interaction. This has no effect if `interactive` isn't set to true. Receives an **object** `{index: Number, data: Array}` parameter based on current active line. This function has no effect if `interactive` isn't set to `true`.*
+*Callback function for **onmouseover** interaction.  
+Receives an **object** `{index: Number, data: Array}` parameter based on current active line.  
+This function has no effect if `interactive` isn't set to `true`.*
 
 ## Dataset Props
 
@@ -122,7 +124,8 @@ Default: false
 Type: **Number**  
 Default: number of `xLabels`
   
-*Allows to set custom number of vertical gridlines. This prop has no effect if `verticalLines` isn't set to `true`.*
+*Allows to set custom number of vertical gridlines.  
+This prop has no effect if `verticalLines` isn't set to `true`.*
 
 ### **`horizontalLines`**
 Type: **Boolean**  
@@ -134,7 +137,8 @@ Default: false
 Type: **Number**  
 Default: number of `yLabels`
   
-*Allows to set custom number of horizontal gridlines. This prop has no effect if `horizontalLines` isn't set to `true`.*
+*Allows to set custom number of horizontal gridlines.  
+This prop has no effect if `horizontalLines` isn't set to `true`.*
 
 ## Labels Props
 
