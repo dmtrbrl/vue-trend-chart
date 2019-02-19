@@ -23,28 +23,39 @@ Vue.use(TrendChart);
 
 ## Props
 
-**`datasets`** Array, **required**  
+#### **`datasets`** required
+Type: **Array**  
+*Array of objects with properties for each dataset*
+
+#### **`grid`**
+Type: **Object**  
+*Grid properties*
+
+#### **`labels`**
+Type: **Object**  
+*Labels properties*
+
+#### **`min`**
+Type: **Number**  
+Default: min value from datasets
+
+#### **`max`**
+Type: **Number**  
+Default:  max value from datasets
+
+#### **`padding`**  
+Type: **String**  
+Default: "5"  
   
-Array of objects with properties for each dataset
+*If you set a large *stroke-width* on your lines, you may notice that it gets "cropped" towards the edges. It's similar to padding css property but without specifying units.*  
 
-**`grid`** Object  
-Grid properties
-
-**`labels`** Object  
-Labels properties
-
-**`min`** Number  
-Specify min value if necessary. Default value is a min value from datasets
-
-**`max`** Number  
-Specify max value if necessary. Default value is a max value from datasets
-
-**`padding`** String  
-If you set a large *stroke-width* on your lines, you may notice that it gets "cropped" towards the edges.  
-It's similar to padding css property but without specifying units.  
-*Default value:* `"5"`  
-*Examples:*  
+Examples:  
 `"5"` apply to all four sides  
 `"5 10"` vertical | horizontal  
 `"5 15 10"` top | horizontal | bottom  
 `"5 10 15 20"` top | right | bottom | left
+
+
+
+
+
