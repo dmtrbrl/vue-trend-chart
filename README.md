@@ -153,7 +153,8 @@ Type: **Number**
 Type: **Function**
   
 *Allows to format Y axis labels text.  
-Example: `val => "$" + Math.round(val * 100) / 100`*
+Example: `val => "$" + Math.round(val * 100) / 100`  
+This function has no effect if `yLabels` prop has no value.*
 
 ## Styling
 
