@@ -75,6 +75,23 @@ Type: **Function**
 
 ## Labels Props
 
+### **`xLabels`**
+Type: **Array**
+  
+*X axis labels values  
+Example: `["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]`*
+
+### **`yLabels`**
+Type: **Number**
+  
+*Number of Y axis labels. Labels value is based on data values*
+
+### **`yLabelsTextFormatter`**
+Type: **Function**
+  
+*Allows to format Y axis labels values  
+Example: `val => "$" + Math.round(val * 100) / 100`*
+
 ## Styling
 
 Just use CSS
