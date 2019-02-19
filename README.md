@@ -27,12 +27,12 @@ Vue.use(TrendChart);
 **Required**  
 Type: **Array**  
   
-*Array of objects with properties for each dataset.*
+*Array of objects with [properties for each dataset](#dataset-props).*
 
 ### **`grid`**
 Type: **Object**  
   
-*Grid properties*
+*[Grid properties](#grid-props)*
 
 ### **`labels`**
 Type: **Object**  
@@ -69,7 +69,7 @@ Default: **false**
 Or `@mouseMove`  
 Type: **Function**  
   
-*Callback function for onmouseover interaction. This has no effect if `interactive` isn't set to true. Receives an **object** `{index: Number, data: Array}` parameter based on current active line.*
+*Callback function for **onmouseover** interaction. This has no effect if `interactive` isn't set to true. Receives an **object** `{index: Number, data: Array}` parameter based on current active line.*
 
 ## Dataset Props
 
@@ -109,6 +109,32 @@ Type: **Boolean**
 Default: **false**
 
 *Allows to show points. Set to `true` to enable.*
+
+## Grid Props
+
+### **`verticalLines`**
+Type: **Boolean**  
+Default: false
+  
+*Allows to show vertical gridlines. Set to `true` to enable.*
+
+### **`verticalLinesNumber`**
+Type: **Number**  
+Default: number of `xLabels`
+  
+*Allows to set custom number of vertical gridlines.*
+
+### **`horizontalLines`**
+Type: **Boolean**  
+Default: false
+  
+*Allows to show horizontal gridlines. Set to `true` to enable.*
+
+### **`horizontalLinesNumber`**
+Type: **Number**  
+Default: number of `yLabels`
+  
+*Allows to set custom number of horizontal gridlines.*
 
 ## Labels Props
 
