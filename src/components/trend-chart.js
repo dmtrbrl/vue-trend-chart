@@ -160,16 +160,16 @@ export default {
         ) + val
       );
     },
-    onWindowResize() {
-      this.setSize();
-    },
-    onMouseMove(e) {
+    mouseMove(e) {
       const rect = this.$refs.chart.getBoundingClientRect();
       this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
     },
-    onMouseOut() {
+    mouseOut() {
       this.activeLine = null;
       this.activeLineParams = null;
+    },
+    onWindowResize() {
+      this.setSize();
     }
   },
   watch: {
@@ -185,7 +185,7 @@ export default {
       }
 
       this.$emit(
-        "onMouseMove",
+        "mouseMove",
         this.activeLineParams ? { ...this.activeLineParams, data } : null
       );
     }
@@ -278,8 +278,8 @@ export default {
             ...this.chartOverlayParams
           },
           on: {
-            mousemove: e => this.onMouseMove(e),
-            mouseout: () => this.onMouseOut()
+            mousemove: e => this.mouseMove(e),
+            mouseout: () => this.mouseOut()
           }
         })
       );

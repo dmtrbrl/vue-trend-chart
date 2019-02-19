@@ -18,7 +18,7 @@
         :min="0"
         padding="5 5 0"
         :interactive="true"
-        @onMouseMove="onMouseMove"
+        @mouseMove="onMouseMove"
       ></trend-chart>
     </div>
   </section>
