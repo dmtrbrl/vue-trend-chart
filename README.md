@@ -2,11 +2,10 @@
   <img src="https://raw.githubusercontent.com/dmtrbrl/vue-trend-chart/master/media/vtc-logo.png" width="230" alt="Vue Trend">
 </div>
 
----
+----
 <div align="center">
-  <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
+  <a href="https://dmtrbrl.github.io/vue-trend-chart/" style="color: #39af77">Live Demo</a>
 </div>
----
 
 ## Installation
 
