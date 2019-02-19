@@ -31,10 +31,12 @@ Type: **Array**
 
 ### **`grid`**
 Type: **Object**  
+  
 *Grid properties*
 
 ### **`labels`**
 Type: **Object**  
+  
 *Labels properties*
 
 ### **`min`**
@@ -67,4 +69,27 @@ Default: **false**
 Or `@mouseMove`  
 Type: **Function**  
   
-*Callback function for onmouseover interaction. This has no effect if `interactive` isn't set to true. Receives an **object** `{index: Number, data: Array}` parameter based on current active line. *
+*Callback function for onmouseover interaction. This has no effect if `interactive` isn't set to true. Receives an **object** `{index: Number, data: Array}` parameter based on current active line.*
+
+## Dataset Props
+
+## Labels Props
+
+## Styling
+
+Just use CSS
+
+## Development
+
+```shell
+npm install
+npm run dev
+```
+
+## Contributing
+
+Pull requests are welcome!
+
+## License
+
+MIT
