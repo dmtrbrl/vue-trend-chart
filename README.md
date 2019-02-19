@@ -23,17 +23,17 @@ Vue.use(TrendChart);
 
 ## Props
 
-**`datasets`** **required**
+**`datasets`** Array **required**
+Array of objects with properties for each dataset
 
-*Type:* Array
-*Description:* Array of objects with properties for each dataset
+**`grid`** Object
+Specify number of vertical and horizontal lines
 
-------------
+**`labels`** Object
+Labels properties
 
-**`grid`**
+**`min`** Number
+Specify min value. By default it takes min value from datasets
 
-*Type:* Object
-*Default:* null
-*Description:* Grid properties
-
-------------
+**`max`** **Number**
+Specify max value. By default it takes max value from datasets
