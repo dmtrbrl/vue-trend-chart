@@ -4,7 +4,7 @@
 
 ----
 <div align="center">
-  <a href="https://dmtrbrl.github.io/vue-trend-chart/" style="color: #39af77">Live Demo</a>
+  <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
 </div>
 
 ## Installation
@@ -20,3 +20,20 @@ import TrendChart from "vue-trend-chart";
 
 Vue.use(TrendChart);
 ```
+
+## Props
+
+**`datasets`** **required**
+
+*Type:* Array
+*Description:* Array of objects with properties for each dataset
+
+------------
+
+**`grid`**
+
+*Type:* Object
+*Default:* null
+*Description:* Grid properties
+
+------------
