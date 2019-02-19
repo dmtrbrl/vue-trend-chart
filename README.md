@@ -73,23 +73,60 @@ Type: **Function**
 
 ## Dataset Props
 
+Chart line (curve) properties
+
+### **`data`**
+Type: **Number|Object**
+  
+*Example: `[70, 100, 400, 180, 100]` or `[{ value: 70 }, { value: 100 }, { value: 400 }, { value: 180 }, { value: 100 }]`  
+For object type you can also add other properties to use them in `interactive` mode.*
+
+### **`className`**  
+Type: **String**  
+  
+*Allows to append custom class to chart line for future styling.*
+
+### **`smooth`**
+Type: **Boolean**  
+Default: **false**  
+  
+*Allows the peaks to be 'rounded' out.*
+
+### **`stroke`**
+Type: **Boolean**  
+Default: **true**  
+  
+*If `false`, the line is not drawn for this dataset.*
+
+### **`fill`**
+Type: **Boolean**  
+Default: **false**
+  
+*Allows to fill the area under the line. Set to `true` to enable.*
+
+### **`showPoints`**
+Type: **Boolean**  
+Default: **false**
+
+*Allows to show points. Set to `true` to enable.*
+
 ## Labels Props
 
 ### **`xLabels`**
 Type: **Array**
   
-*X axis labels values  
+*X axis labels  
 Example: `["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]`*
 
 ### **`yLabels`**
 Type: **Number**
   
-*Number of Y axis labels. Labels value is based on data values*
+*Number of Y axis labels. Labels text is based on data values.*
 
 ### **`yLabelsTextFormatter`**
 Type: **Function**
   
-*Allows to format Y axis labels values  
+*Allows to format Y axis labels text.  
 Example: `val => "$" + Math.round(val * 100) / 100`*
 
 ## Styling
