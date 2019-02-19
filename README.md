@@ -23,32 +23,33 @@ Vue.use(TrendChart);
 
 ## Props
 
-#### **`datasets`**
+### **`datasets`**
 **Required**  
 Type: **Array**  
+  
 *Array of objects with properties for each dataset*
 
-#### **`grid`**
+### **`grid`**
 Type: **Object**  
 *Grid properties*
 
-#### **`labels`**
+### **`labels`**
 Type: **Object**  
 *Labels properties*
 
-#### **`min`**
+### **`min`**
 Type: **Number**  
 Default: min value from datasets
 
-#### **`max`**
+### **`max`**
 Type: **Number**  
 Default:  max value from datasets
 
-#### **`padding`**  
+### **`padding`**  
 Type: **String**  
 Default: "5"  
   
-*If you set a large *stroke-width* on your lines, you may notice that it gets "cropped" towards the edges. It's similar to padding css property but without specifying units.*  
+*If you set a large *stroke-width* on your lines, you may notice that it gets "cropped" towards the edges. It's similar to "padding" CSS property but without specifying units.*  
 
 Examples:  
 `"5"` apply to all four sides  
@@ -56,7 +57,14 @@ Examples:
 `"5 15 10"` top | horizontal | bottom  
 `"5 10 15 20"` top | right | bottom | left
 
-#### **`interactive`**
+### **`interactive`**
 Type: **Boolean**  
 Default: **false**  
+  
 *Allows to set onmousemove interaction. Set to `true` to enable.*
+
+### **`v-on:mouseMove`**
+Or `@mouseMove`  
+Type: **Function**  
+  
+*Callback function for onmouseover interaction. This has no effect if `interactive` isn't set to true. Receives an **object** `{index: Number, data: Array}` parameter based on current active line. *
