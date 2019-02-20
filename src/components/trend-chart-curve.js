@@ -67,7 +67,7 @@ export default {
     if (this.fill && this.paths && this.paths.fillPath) {
       children.push(
         h("path", {
-          class: "vtc-curve-fill",
+          class: "fill",
           attrs: {
             d: this.paths.fillPath,
             fill: "rgba(0,0,0,0.15)"
@@ -79,7 +79,7 @@ export default {
     if (this.stroke && this.paths && this.paths.linePath) {
       children.push(
         h("path", {
-          class: "vtc-curve-stroke",
+          class: "stroke",
           attrs: {
             d: this.paths.linePath,
             fill: "none",
@@ -94,12 +94,12 @@ export default {
         h(
           "g",
           {
-            class: "vtc-points"
+            class: "points"
           },
           this.points.map((point, i) =>
             h("circle", {
               class: {
-                "vtc-point": true,
+                point: true,
                 "is-active":
                   this.activeLineParams && this.activeLineParams.index === i
               },

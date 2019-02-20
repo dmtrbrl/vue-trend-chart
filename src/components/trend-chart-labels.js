@@ -46,13 +46,13 @@ export default {
   },
   mounted() {
     if (this.xLabels && this.xLabels.length) {
-      this.xLabelHeight = document
-        .querySelector(".vtc-labels-x text")
+      this.xLabelHeight = this.$refs.xLabels
+        .querySelector("text")
         .getBoundingClientRect().height;
     }
     if (this.yLabels && this.yLabels > 0) {
-      this.yLabelHeight = document
-        .querySelector(".vtc-labels-y text")
+      this.yLabelHeight = this.$refs.yLabels
+        .querySelector("text")
         .getBoundingClientRect().height;
     }
   },
@@ -71,13 +71,14 @@ export default {
         h(
           "g",
           {
-            class: "vtc-labels-x"
+            class: "x-labels",
+            ref: "xLabels"
           },
           this.xLabels.map((label, i) => {
             return h(
               "g",
               {
-                class: "vtc-labels-x-tick",
+                class: "label",
                 attrs: {
                   ...this.setXLabelsParams(i)
                 }
@@ -93,7 +94,7 @@ export default {
                   },
                   label
                 ),
-                h("line", { attrs: { stroke: "black", y2: 5 } })
+                h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", y2: 5 } })
               ]
             );
           })
@@ -109,7 +110,7 @@ export default {
           h(
             "g",
             {
-              class: "vtc-labels-y-tick",
+              class: "label",
               attrs: {
                 ...this.setYLabelsParams(i)
               }
@@ -129,7 +130,7 @@ export default {
                     ((this.maxValue - this.minValue) / (this.yLabels - 1)) * i
                 )
               ),
-              h("line", { attrs: { stroke: "black", x1: 0, x2: -5 } })
+              h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", x1: 0, x2: -5 } })
             ]
           )
         );
@@ -138,7 +139,8 @@ export default {
         h(
           "g",
           {
-            class: "vtc-labels-y"
+            class: "y-labels",
+            ref: "yLabels"
           },
           labels
         )

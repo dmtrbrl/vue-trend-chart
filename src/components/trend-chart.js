@@ -114,7 +114,7 @@ export default {
     },
     fitLabels() {
       const chart = this.$refs["chart"];
-      const chartLabels = this.$refs["chart-labels"];
+      const chartLabels = this.$refs["labels"];
       if (
         chartLabels &&
         ((chartLabels.xLabels && chartLabels.xLabels.length) ||
@@ -204,7 +204,7 @@ export default {
     if (this.grid) {
       children.push(
         h(TrendChartGrid, {
-          class: "vtc-grid",
+          class: "grid",
           attrs: {
             verticalLines: this.grid.verticalLines,
             verticalLinesNumber:
@@ -224,8 +224,8 @@ export default {
     if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("line", {
-          class: "vtc-active-line",
-          ref: "chart-active-line",
+          class: "active-line",
+          ref: "active-line",
           attrs: {
             x1: this.activeLine || this.boundary.minX,
             x2: this.activeLine || this.boundary.minX,
@@ -242,8 +242,8 @@ export default {
     if (this.labels) {
       children.push(
         h(TrendChartLabels, {
-          class: "vtc-labels",
-          ref: "chart-labels",
+          class: "labels",
+          ref: "labels",
           attrs: {
             ...this.labels,
             boundary: this.boundary,
@@ -258,7 +258,7 @@ export default {
     this.datasets.map(dataset => {
       children.push(
         h(TrendChartCurve, {
-          class: "vtc-curve",
+          class: "curve",
           attrs: {
             ...dataset,
             boundary: this.boundary,
@@ -275,7 +275,7 @@ export default {
     if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("rect", {
-          ref: "chart-hover-area",
+          ref: "interactive-area",
           attrs: {
             ...this.chartOverlayParams
           },

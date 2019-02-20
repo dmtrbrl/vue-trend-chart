@@ -69,7 +69,7 @@ export default {
       for (let i = 1; i <= this.verticalLinesNumber; i++) {
         lines.push(
           h("line", {
-            class: "vtc-grid-v-line",
+            class: "line",
             attrs: {
               ...this.setVerticalLinesParams(i)
             }
@@ -80,7 +80,7 @@ export default {
         h(
           "g",
           {
-            class: "vtc-grid-v"
+            class: "vertical"
           },
           lines
         )
@@ -92,7 +92,7 @@ export default {
       for (let i = 1; i <= this.horizontalLinesNumber; i++) {
         lines.push(
           h("line", {
-            class: "vtc-grid-h-line",
+            class: "line",
             attrs: {
               ...this.setHorizontalLinesParams(i)
             }
@@ -103,7 +103,7 @@ export default {
         h(
           "g",
           {
-            class: "vtc-grid-h"
+            class: "horizontal"
           },
           lines
         )
