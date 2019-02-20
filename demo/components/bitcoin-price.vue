@@ -61,14 +61,14 @@ export default {
       height: 350px;
     }
   }
-  .vtc-grid,
-  .vtc-labels {
+  .grid,
+  .labels {
     line {
       stroke: rgba(#f69119, 0.5);
     }
   }
-  .vtc-labels-x {
-    &-tick {
+  .x-labels {
+    .label {
       text {
         display: none;
       }
@@ -87,11 +87,11 @@ export default {
     }
   }
   .curve-btc {
-    .vtc-curve-stroke {
+    .stroke {
       stroke: #f69119;
       stroke-width: 2;
     }
-    .vtc-curve-fill {
+    .fill {
       fill: url(#btcFill);
       fill-opacity: 0.5;
     }

@@ -67,7 +67,7 @@ export default {
   methods: {
     initPopper() {
       const chart = document.querySelector(".random-chart");
-      const ref = chart.querySelector(".vtc-active-line");
+      const ref = chart.querySelector(".active-line");
       const tooltip = this.$refs.tooltip;
       this.popper = new Popper(ref, tooltip, {
         placement: "right",
@@ -101,50 +101,52 @@ export default {
       height: 320px;
     }
   }
-  .vtc-axis-x,
-  .vtc-axis-y {
+  .labels {
     stroke: rgba(0, 0, 0, 0.05);
   }
-  .vtc-active-line {
+  .active-line {
     stroke: rgba(0, 0, 0, 0.2);
   }
-  .vtc .vtc-point {
+  .point {
     stroke-width: 2;
     transition: stroke-width 0.2s;
   }
-  .vtc .vtc-point.is-active {
+  .point.is-active {
     stroke-width: 5;
   }
-  .curve1 .vtc-curve-stroke {
-    stroke: #fbac91;
-    stroke-width: 2;
+  .curve1 {
+    .stroke {
+      stroke: #fbac91;
+      stroke-width: 2;
+    }
+    .fill {
+      fill: #fbac91;
+      opacity: 0.05;
+    }
+    .point {
+      fill: #fbac91;
+      stroke: #fbac91;
+    }
   }
-  .curve1 .vtc-curve-fill {
-    fill: #fbac91;
-    opacity: 0.05;
+  .curve2 {
+    .stroke {
+      stroke: #fbe1b6;
+      stroke-width: 2;
+    }
+    .point {
+      fill: #fbe1b6;
+      stroke: #fbe1b6;
+    }
   }
-  .curve1 .vtc-point {
-    fill: #fbac91;
-    stroke: #fbac91;
-  }
-  .curve2 .vtc-curve-stroke {
-    stroke: #fbe1b6;
-    stroke-width: 2;
-  }
-  .curve2 .vtc-point {
-    fill: #fbe1b6;
-    stroke: #fbe1b6;
-  }
-  .curve3 .vtc-curve-stroke {
-    stroke: #7fdfd4;
-    stroke-width: 2;
-  }
-  .curve3 .vtc-point {
-    fill: #7fdfd4;
-    stroke: #7fdfd4;
-  }
-  .vtc-labels line {
-    stroke: rgba(0, 0, 0, 0.05);
+  .curve3 {
+    .stroke {
+      stroke: #7fdfd4;
+      stroke-width: 2;
+    }
+    .point {
+      fill: #7fdfd4;
+      stroke: #7fdfd4;
+    }
   }
 
   .tooltip {

@@ -58,19 +58,19 @@ export default {
     height: 60px;
     margin-right: -5px;
   }
-  .vtc-curve-stroke {
+  .stroke {
     stroke-width: 2;
   }
-  .vtc-curve-fill {
+  .fill {
     opacity: 0.2;
   }
-  .vtc-active-line {
+  .active-line {
     stroke: rgba(0, 0, 0, 0.2);
   }
-  .vtc-point {
+  .point {
     display: none;
   }
-  .vtc-point.is-active {
+  .point.is-active {
     display: block;
   }
 }
@@ -148,73 +148,73 @@ export default {
   }
 }
 .curve-vue {
-  .vtc-curve-stroke {
+  .stroke {
     stroke: #39af77;
   }
-  .vtc-curve-fill {
+  .fill {
     fill: #39af77;
   }
-  .vtc-point {
+  .point {
     fill: #39af77;
     stroke: #39af77;
   }
 }
 .curve-react {
-  .vtc-curve-stroke {
+  .stroke {
     stroke: #61dafb;
   }
-  .vtc-curve-fill {
+  .fill {
     fill: #61dafb;
   }
-  .vtc-point {
+  .point {
     fill: #61dafb;
     stroke: #61dafb;
   }
 }
 .curve-angular {
-  .vtc-curve-stroke {
+  .stroke {
     stroke: #d8002b;
   }
-  .vtc-curve-fill {
+  .fill {
     fill: #d8002b;
   }
-  .vtc-point {
+  .point {
     fill: #d8002b;
     stroke: #d8002b;
   }
 }
 .curve-hapi {
-  .vtc-curve-stroke {
+  .stroke {
     stroke: #febc6b;
   }
-  .vtc-curve-fill {
+  .fill {
     fill: #febc6b;
   }
-  .vtc-point {
+  .point {
     fill: #febc6b;
     stroke: #febc6b;
   }
 }
 .curve-express {
-  .vtc-curve-stroke {
+  .stroke {
     stroke: #259dff;
   }
-  .vtc-curve-fill {
+  .fill {
     fill: #259dff;
   }
-  .vtc-point {
+  .point {
     fill: #259dff;
     stroke: #259dff;
   }
 }
 .curve-koa {
-  .vtc-curve-stroke {
+  .stroke {
     stroke: #33333d;
   }
-  .vtc-curve-fill {
+  .fill {
     fill: #33333d;
   }
-  .vtc-point {
+  .point {
     fill: #33333d;
     stroke: #33333d;
   }
