@@ -118,7 +118,7 @@ export default {
       if (
         chartLabels &&
         ((chartLabels.xLabels && chartLabels.xLabels.length) ||
-          chartLabels.yLabelsAmount > 0)
+          chartLabels.yLabels > 0)
       ) {
         const chartParams = chart.getBoundingClientRect();
         const chartLabelsParams = chartLabels.$el.getBoundingClientRect();
