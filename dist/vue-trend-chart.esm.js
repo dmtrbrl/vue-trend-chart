@@ -638,16 +638,16 @@ var TrendChart = {
         ) + val
       );
     },
-    onWindowResize: function onWindowResize() {
-      this.setSize();
-    },
-    onMouseMove: function onMouseMove(e) {
+    mouseMove: function mouseMove(e) {
       var rect = this.$refs.chart.getBoundingClientRect();
       this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
     },
-    onMouseOut: function onMouseOut() {
+    mouseOut: function mouseOut() {
       this.activeLine = null;
       this.activeLineParams = null;
+    },
+    onWindowResize: function onWindowResize() {
+      this.setSize();
     }
   },
   watch: {
@@ -665,7 +665,7 @@ var TrendChart = {
       }
 
       this.$emit(
-        "onMouseMove",
+        "mouseMove",
         this.activeLineParams ? Object.assign({}, this.activeLineParams, {data: data}) : null
       );
     }
@@ -754,8 +754,8 @@ var TrendChart = {
           ref: "chart-hover-area",
           attrs: Object.assign({}, this.chartOverlayParams),
           on: {
-            mousemove: function (e) { return this$1.onMouseMove(e); },
-            mouseout: function () { return this$1.onMouseOut(); }
+            mousemove: function (e) { return this$1.mouseMove(e); },
+            mouseout: function () { return this$1.mouseOut(); }
           }
         })
       );
