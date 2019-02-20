@@ -20,6 +20,20 @@ import TrendChart from "vue-trend-chart";
 
 Vue.use(TrendChart);
 ```
+_vue template_
+
+```html
+<TrendChart
+  :datasets="[
+    {
+      data: [10, 50, 20, 100, 40, 60],
+      smooth: true,
+      fill: true
+    }
+  ]"
+  :min="0">
+</TrendChart>
+```
 
 ## Props
 
