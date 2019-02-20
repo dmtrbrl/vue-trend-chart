@@ -103,7 +103,7 @@ var TrendChartGrid = {
       for (var i = 1; i <= this.verticalLinesNumber; i++) {
         lines.push(
           h("line", {
-            class: "vtc-grid-v-line",
+            class: "line",
             attrs: Object.assign({}, this.setVerticalLinesParams(i))
           })
         );
@@ -112,7 +112,7 @@ var TrendChartGrid = {
         h(
           "g",
           {
-            class: "vtc-grid-v"
+            class: "vertical"
           },
           lines
         )
@@ -124,7 +124,7 @@ var TrendChartGrid = {
       for (var i$1 = 1; i$1 <= this.horizontalLinesNumber; i$1++) {
         lines$1.push(
           h("line", {
-            class: "vtc-grid-h-line",
+            class: "line",
             attrs: Object.assign({}, this.setHorizontalLinesParams(i$1))
           })
         );
@@ -133,7 +133,7 @@ var TrendChartGrid = {
         h(
           "g",
           {
-            class: "vtc-grid-h"
+            class: "horizontal"
           },
           lines$1
         )
@@ -197,13 +197,13 @@ var TrendChartLabels = {
   },
   mounted: function mounted() {
     if (this.xLabels && this.xLabels.length) {
-      this.xLabelHeight = document
-        .querySelector(".vtc-labels-x text")
+      this.xLabelHeight = this.$refs.xLabels
+        .querySelector("text")
         .getBoundingClientRect().height;
     }
     if (this.yLabels && this.yLabels > 0) {
-      this.yLabelHeight = document
-        .querySelector(".vtc-labels-y text")
+      this.yLabelHeight = this.$refs.yLabels
+        .querySelector("text")
         .getBoundingClientRect().height;
     }
   },
@@ -224,13 +224,14 @@ var TrendChartLabels = {
         h(
           "g",
           {
-            class: "vtc-labels-x"
+            class: "x-labels",
+            ref: "xLabels"
           },
           this.xLabels.map(function (label, i) {
             return h(
               "g",
               {
-                class: "vtc-labels-x-tick",
+                class: "label",
                 attrs: Object.assign({}, this$1.setXLabelsParams(i))
               },
               [
@@ -244,7 +245,7 @@ var TrendChartLabels = {
                   },
                   label
                 ),
-                h("line", { attrs: { stroke: "black", y2: 5 } })
+                h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", y2: 5 } })
               ]
             );
           })
@@ -260,7 +261,7 @@ var TrendChartLabels = {
           h(
             "g",
             {
-              class: "vtc-labels-y-tick",
+              class: "label",
               attrs: Object.assign({}, this.setYLabelsParams(i))
             },
             [
@@ -278,7 +279,7 @@ var TrendChartLabels = {
                     ((this.maxValue - this.minValue) / (this.yLabels - 1)) * i
                 )
               ),
-              h("line", { attrs: { stroke: "black", x1: 0, x2: -5 } })
+              h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", x1: 0, x2: -5 } })
             ]
           )
         );
@@ -287,7 +288,8 @@ var TrendChartLabels = {
         h(
           "g",
           {
-            class: "vtc-labels-y"
+            class: "y-labels",
+            ref: "yLabels"
           },
           labels
         )
@@ -418,7 +420,7 @@ var TrendChartCurve = {
     if (this.fill && this.paths && this.paths.fillPath) {
       children.push(
         h("path", {
-          class: "vtc-curve-fill",
+          class: "fill",
           attrs: {
             d: this.paths.fillPath,
             fill: "rgba(0,0,0,0.15)"
@@ -430,7 +432,7 @@ var TrendChartCurve = {
     if (this.stroke && this.paths && this.paths.linePath) {
       children.push(
         h("path", {
-          class: "vtc-curve-stroke",
+          class: "stroke",
           attrs: {
             d: this.paths.linePath,
             fill: "none",
@@ -445,11 +447,11 @@ var TrendChartCurve = {
         h(
           "g",
           {
-            class: "vtc-points"
+            class: "points"
           },
           this.points.map(function (point, i) { return h("circle", {
               class: {
-                "vtc-point": true,
+                point: true,
                 "is-active":
                   this$1.activeLineParams && this$1.activeLineParams.index === i
               },
@@ -590,7 +592,7 @@ var TrendChart = {
     },
     fitLabels: function fitLabels() {
       var chart = this.$refs["chart"];
-      var chartLabels = this.$refs["chart-labels"];
+      var chartLabels = this.$refs["labels"];
       if (
         chartLabels &&
         ((chartLabels.xLabels && chartLabels.xLabels.length) ||
@@ -686,7 +688,7 @@ var TrendChart = {
     if (this.grid) {
       children.push(
         h(TrendChartGrid, {
-          class: "vtc-grid",
+          class: "grid",
           attrs: {
             verticalLines: this.grid.verticalLines,
             verticalLinesNumber:
@@ -706,8 +708,8 @@ var TrendChart = {
     if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("line", {
-          class: "vtc-active-line",
-          ref: "chart-active-line",
+          class: "active-line",
+          ref: "active-line",
           attrs: {
             x1: this.activeLine || this.boundary.minX,
             x2: this.activeLine || this.boundary.minX,
@@ -724,8 +726,8 @@ var TrendChart = {
     if (this.labels) {
       children.push(
         h(TrendChartLabels, {
-          class: "vtc-labels",
-          ref: "chart-labels",
+          class: "labels",
+          ref: "labels",
           attrs: Object.assign({}, this.labels,
             {boundary: this.boundary,
             minValue: this.params.minValue,
@@ -738,7 +740,7 @@ var TrendChart = {
     this.datasets.map(function (dataset) {
       children.push(
         h(TrendChartCurve, {
-          class: "vtc-curve",
+          class: "curve",
           attrs: Object.assign({}, dataset,
             {boundary: this$1.boundary,
             minValue: this$1.params.minValue,
@@ -753,7 +755,7 @@ var TrendChart = {
     if (this.interactive && this.chartOverlayParams) {
       children.push(
         h("rect", {
-          ref: "chart-hover-area",
+          ref: "interactive-area",
           attrs: Object.assign({}, this.chartOverlayParams),
           on: {
             mousemove: function (e) { return this$1.mouseMove(e); },
