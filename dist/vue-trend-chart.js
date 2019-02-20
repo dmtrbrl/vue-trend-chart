@@ -699,7 +699,9 @@
                 this.grid.verticalLinesNumber || this.params.maxAmount,
               horizontalLines: this.grid.horizontalLines,
               horizontalLinesNumber:
-                this.grid.horizontalLinesNumber || this.labels.yLabels,
+                this.grid.horizontalLinesNumber ||
+                (this.labels && this.labels.yLabels) ||
+                0,
               boundary: this.boundary
             }
           })
