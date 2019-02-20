@@ -596,7 +596,7 @@ var TrendChart = {
       if (
         chartLabels &&
         ((chartLabels.xLabels && chartLabels.xLabels.length) ||
-          chartLabels.yLabelsAmount > 0)
+          chartLabels.yLabels > 0)
       ) {
         var chartParams = chart.getBoundingClientRect();
         var chartLabelsParams = chartLabels.$el.getBoundingClientRect();
