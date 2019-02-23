@@ -41,17 +41,17 @@ _Example:_
 **Required**  
 Type: **Array**  
   
-*Array of objects with [properties for each dataset](#dataset-props).*
+*Array of objects with [properties for each dataset](#chart_with_upwards_trend-dataset-props).*
 
 ### **`grid`**
 Type: **Object**  
   
-*[Grid properties](#grid-props)*
+*[Grid properties](#hash-grid-props)*
 
 ### **`labels`**
 Type: **Object**  
   
-*[Labels properties](#labels-props)*
+*[Labels properties](#abc-labels-props)*
 
 ### **`min`**
 Type: **Number**  
