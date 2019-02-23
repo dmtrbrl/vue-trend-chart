@@ -7,12 +7,12 @@
   <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
 </div>
 
-## Installation
+## :cd: Installation
 
 ```shell
 npm i vue-trend-chart
 ```
-## Usage
+## :rocket: Usage
 
 ```js
 import Vue from "vue";
@@ -20,7 +20,7 @@ import TrendChart from "vue-trend-chart";
 
 Vue.use(TrendChart);
 ```
-_vue template_
+_Example:_
 
 ```html
 <TrendChart
@@ -35,7 +35,7 @@ _vue template_
 </TrendChart>
 ```
 
-## Props
+## :wrench: Props
 
 ### **`datasets`**
 **Required**  
@@ -87,7 +87,7 @@ Type: **Function**
 Receives an **object** `{index: Number, data: Array}` parameter based on current active line.  
 This function has no effect if `interactive` isn't set to `true`.*
 
-## Dataset Props
+## :chart_with_upwards_trend: Dataset Props
 
 Chart line (curve) properties
 
@@ -126,7 +126,7 @@ Default: **false**
 
 *Allows to show points. Set to `true` to enable.*
 
-## Grid Props
+## :hash: Grid Props
 
 ### **`verticalLines`**
 Type: **Boolean**  
@@ -154,7 +154,7 @@ Default: number of `yLabels`
 *Allows to set custom number of horizontal gridlines.  
 This prop has no effect if `horizontalLines` isn't set to `true`.*
 
-## Labels Props
+## :abc: Labels Props
 
 ### **`xLabels`**
 Type: **Array**
@@ -174,21 +174,21 @@ Type: **Function**
 Example: `val => "$" + Math.round(val * 100) / 100`  
 This function has no effect if `yLabels` prop has no value.*
 
-## Styling
+## :art: Styling
 
 You need to use CSS to style chart.
 
-## Development
+## :hammer: Development
 
 ```shell
 npm install
 npm run dev
 ```
 
-## Contributing
+## :two_hearts: Contributing
 
 Pull requests are welcome!
 
-## License
+## :lock: License
 
 MIT
