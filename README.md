@@ -184,7 +184,53 @@ This function has no effect if `yLabels` prop has no value.*
 
 ## :art: Styling
 
-You need to use CSS to style chart.
+Just use CSS to style your charts.
+
+*Here is an example of a tree structure with available class names:*
+
+```html
+<svg class="vtc">
+  
+  <g class="grid">
+    <g class="vertical">
+      <line class="line"></line>
+      ...
+    </g>
+    <g class="horizontal">
+      <line class="line"></line>
+      ...
+    </g>
+  </g>
+  
+  <g class="labels">
+    <g class="x-labels">
+      <g class="label">
+        <text></text>
+      </g>
+      ...
+    </g>
+    <g class="y-labels">
+      <g class="label">
+        <text></text>
+      </g>
+      ...
+    </g>
+  </g>
+  
+  <g class="curve">
+    <path class="fill"></path>
+    <path class="stroke"></path>
+    <g class="points">
+      <circle class="point"></circle>
+      ...
+    </g>
+  </g>
+  ...
+  
+  <line class="active-line"></line>
+  
+</svg>
+```
 
 ## :hammer: Development
 
