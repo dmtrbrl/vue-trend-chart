@@ -35,7 +35,7 @@
     "axios": "^0.18.0",
     "moment": "^2.24.0",
     "popper.js": "^1.14.7",
-    "vue": "^2.6.4",
+    "vue": "^2.6.10",
     "vue-axios": "^2.1.4"
   },
   "devDependencies": {
@@ -46,6 +46,6 @@
     "rollup-plugin-buble": "^0.19.6",
     "sass-loader": "^7.1.0",
     "uglify-js": "^3.4.9",
-    "vue-template-compiler": "^2.6.4"
+    "vue-template-compiler": "^2.6.10"
   }
 }
