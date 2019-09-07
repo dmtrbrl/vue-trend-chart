@@ -604,21 +604,25 @@
           ((chartLabels.xLabels && chartLabels.xLabels.length) ||
             chartLabels.yLabels > 0)
         ) {
-          var chartParams = chart.getBoundingClientRect();
-          var chartLabelsParams = chartLabels.$el.getBoundingClientRect();
+          var chartClientRect = chart.getBoundingClientRect();
+          var chartLabelsClientRect = chartLabels.$el.getBoundingClientRect();
 
           var top =
-            chartParams.top - chartLabelsParams.top + this.paddingObject.top;
+            chartClientRect.top -
+            chartLabelsClientRect.top +
+            this.paddingObject.top;
           var right =
-            chartLabelsParams.right -
-            chartParams.right +
+            chartLabelsClientRect.right -
+            chartClientRect.right +
             this.paddingObject.right;
           var bottom =
-            chartLabelsParams.bottom -
-            chartParams.bottom +
+            chartLabelsClientRect.bottom -
+            chartClientRect.bottom +
             this.paddingObject.bottom;
           var left =
-            this.paddingObject.left - chartLabelsParams.left + chartParams.left;
+            this.paddingObject.left -
+            chartLabelsClientRect.left +
+            chartClientRect.left;
 
           this.labelsOverflowObject = {
             top: top > 0 ? top : 0,
@@ -676,6 +680,19 @@
           "mouseMove",
           this.activeLineParams ? Object.assign({}, this.activeLineParams, {data: data}) : null
         );
+      },
+      labels: {
+        handler: function handler() {
+          var this$1 = this;
+
+          // Reset labels rect overflow
+          this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
+          // Calculate new labels rect overflow
+          this.$nextTick(function () {
+            this$1.fitLabels();
+          });
+        },
+        deep: true
       }
     },
     mounted: function mounted() {
