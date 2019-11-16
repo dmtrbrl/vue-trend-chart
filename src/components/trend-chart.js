@@ -189,7 +189,7 @@ export default {
       }
 
       this.$emit(
-        "mouseMove",
+        "mouse-move",
         this.activeLineParams ? { ...this.activeLineParams, data } : null
       );
     },
