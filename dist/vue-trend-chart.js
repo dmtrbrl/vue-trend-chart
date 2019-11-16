@@ -677,7 +677,7 @@
         }
 
         this.$emit(
-          "mouseMove",
+          "mouse-move",
           this.activeLineParams ? Object.assign({}, this.activeLineParams, {data: data}) : null
         );
       },
