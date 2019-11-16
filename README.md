@@ -97,10 +97,9 @@ Default: **false**
 
 _Allows to set onmousemove interaction. Set to `true` to enable._
 
-### **`v-on:mouseMove`**
+## :zap: Events
 
-Or `@mouseMove`  
-Type: **Function**
+### **`mouse-move`**
 
 _Callback function for **onmouseover** interaction.  
 Receives an **object** `{index: Number, data: Array}` parameter based on current active line.  
@@ -202,7 +201,7 @@ _Number of Y axis labels. Labels text is based on data values._
 
 Type: **Function**
 
-_Allows to format Y axis labels text.  
+_Allows to format Y axis labels text._
 Example: `val => "\$" + Math.round(val _ 100) / 100`This function has no effect if`yLabels` prop has no value.\*
 
 ## :art: Styling
