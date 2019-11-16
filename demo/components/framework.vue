@@ -7,7 +7,7 @@
       <div class="framework__data-info">
         <div class="framework__period">
           <svg viewBox="0 0 7.22 11.76" class="framework__period-icon">
-            <path d="M4.59 4.94V0H2.62v4.94H0l3.28 4.59 3.94-4.59H4.59zM.11 10.76h7v1h-7z"></path>
+            <path d="M4.59 4.94V0H2.62v4.94H0l3.28 4.59 3.94-4.59H4.59zM.11 10.76h7v1h-7z" />
           </svg>
           <span class="framework__period-text">{{info.label}}</span>
         </div>
@@ -18,7 +18,7 @@
         :min="0"
         padding="5 5 0"
         :interactive="true"
-        @mouseMove="onMouseMove"
+        @mouse-move="onMouseMove"
       ></trend-chart>
     </div>
   </section>
