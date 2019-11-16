@@ -7,7 +7,7 @@
       :min="0"
       padding="5"
       :interactive="true"
-      @mouseMove="onMouseMove"
+      @mouse-move="onMouseMove"
       class="random-chart"
       v-if="datasets.length"
     ></trend-chart>
