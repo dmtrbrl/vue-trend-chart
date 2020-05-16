@@ -201,8 +201,9 @@ _Number of Y axis labels. Labels text is based on data values._
 
 Type: **Function**
 
-_Allows to format Y axis labels text._
-Example: `val => "\$" + Math.round(val _ 100) / 100`This function has no effect if`yLabels` prop has no value.\*
+_Allows to format Y axis labels text.
+Example: `val => "$" + Math.round(val * 100) / 100`
+This function has no effect if `yLabels` prop has no value._
 
 ## :art: Styling
 
