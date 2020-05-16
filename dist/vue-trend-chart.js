@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global['vue-trend-chart'] = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
   function validatePadding (padding) {
     var arr = padding
@@ -21,16 +21,12 @@
     switch (arr.length) {
       case 4:
         return { top: arr[0], right: arr[1], bottom: arr[2], left: arr[3] };
-        break;
       case 3:
         return { top: arr[0], right: arr[1], bottom: arr[2], left: arr[1] };
-        break;
       case 2:
         return { top: arr[0], right: arr[1], bottom: arr[0], left: arr[1] };
-        break;
       default:
         return { top: arr[0], right: arr[0], bottom: arr[0], left: arr[0] };
-        break;
     }
   }
 
@@ -815,4 +811,4 @@
 
   return TrendChart;
 
-}));
+})));
