@@ -165,8 +165,10 @@ export default {
       );
     },
     mouseMove(e) {
-      const rect = this.$refs.chart.getBoundingClientRect();
-      this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
+      if (this.$refs.chart !== undefined) {
+        const rect = this.$refs.chart.getBoundingClientRect();
+        this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
+      }
     },
     mouseOut() {
       this.activeLine = null;
