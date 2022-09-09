@@ -1,3 +1,5 @@
+import { h } from "vue";
+
 export default {
   name: "TrendChartGrid",
   props: {
@@ -58,7 +60,7 @@ export default {
       };
     }
   },
-  render(h) {
+  render() {
     if (!this.verticalLines && !this.horizontalLines) return;
 
     const children = [];

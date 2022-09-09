@@ -1,3 +1,5 @@
+import { h } from "vue";
+
 import validatePadding from "../helpers/validatePadding";
 import getPadding from "../helpers/getPadding";
 
@@ -214,7 +216,7 @@ export default {
   destroyed() {
     window.removeEventListener("resize", this.onWindowResize);
   },
-  render(h) {
+  render() {
     const children = [];
 
     // Grid
