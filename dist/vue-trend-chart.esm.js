@@ -1,3 +1,5 @@
+import { h } from 'vue';
+
 function validatePadding (padding) {
   var arr = padding
     .split(" ")
@@ -88,7 +90,7 @@ var TrendChartGrid = {
       };
     }
   },
-  render: function render(h) {
+  render: function render() {
     if (!this.verticalLines && !this.horizontalLines) { return; }
 
     var children = [];
@@ -203,8 +205,8 @@ var TrendChartLabels = {
         .getBoundingClientRect().height;
     }
   },
-  render: function render(h) {
-    var this$1 = this;
+  render: function render() {
+    var this$1$1 = this;
 
     if (
       !(this.xLabels && this.xLabels.length) &&
@@ -228,14 +230,14 @@ var TrendChartLabels = {
               "g",
               {
                 class: "label",
-                attrs: Object.assign({}, this$1.setXLabelsParams(i))
+                attrs: Object.assign({}, this$1$1.setXLabelsParams(i))
               },
               [
                 h(
                   "text",
                   {
                     attrs: {
-                      dy: this$1.xLabelHeight + 5,
+                      dy: this$1$1.xLabelHeight + 5,
                       "text-anchor": "middle"
                     }
                   },
@@ -408,8 +410,8 @@ var TrendChartCurve = {
       return genPath(this.points, this.smooth, this.boundary);
     }
   },
-  render: function render(h) {
-    var this$1 = this;
+  render: function render() {
+    var this$1$1 = this;
 
     var children = [];
     // Fill path
@@ -449,7 +451,7 @@ var TrendChartCurve = {
               class: {
                 point: true,
                 "is-active":
-                  this$1.activeLineParams && this$1.activeLineParams.index === i
+                  this$1$1.activeLineParams && this$1$1.activeLineParams.index === i
               },
               attrs: {
                 cx: point.x,
@@ -625,11 +627,11 @@ var TrendChart = {
       }
     },
     init: function init() {
-      var this$1 = this;
+      var this$1$1 = this;
 
       this.setSize();
       this.$nextTick(function () {
-        this$1.fitLabels();
+        this$1$1.fitLabels();
       });
     },
     getNearestCoordinate: function getNearestCoordinate(val) {
@@ -641,8 +643,10 @@ var TrendChart = {
       );
     },
     mouseMove: function mouseMove(e) {
-      var rect = this.$refs.chart.getBoundingClientRect();
-      this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
+      if (this.$refs.chart !== undefined) {
+        var rect = this.$refs.chart.getBoundingClientRect();
+        this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
+      }
     },
     mouseOut: function mouseOut() {
       this.activeLine = null;
@@ -654,7 +658,7 @@ var TrendChart = {
   },
   watch: {
     activeLine: function activeLine(val) {
-      var this$1 = this;
+      var this$1$1 = this;
 
       var data = [];
       if (val) {
@@ -662,7 +666,7 @@ var TrendChart = {
           index: this.chartAxesXCoords.indexOf(this.activeLine)
         };
         this.datasets.forEach(function (dataset) {
-          data.push(dataset.data[this$1.activeLineParams.index]);
+          data.push(dataset.data[this$1$1.activeLineParams.index]);
         });
       }
 
@@ -673,13 +677,13 @@ var TrendChart = {
     },
     labels: {
       handler: function handler() {
-        var this$1 = this;
+        var this$1$1 = this;
 
         // Reset labels rect overflow
         this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
         // Calculate new labels rect overflow
         this.$nextTick(function () {
-          this$1.fitLabels();
+          this$1$1.fitLabels();
         });
       },
       deep: true
@@ -692,8 +696,8 @@ var TrendChart = {
   destroyed: function destroyed() {
     window.removeEventListener("resize", this.onWindowResize);
   },
-  render: function render(h) {
-    var this$1 = this;
+  render: function render() {
+    var this$1$1 = this;
 
     var children = [];
 
@@ -755,11 +759,11 @@ var TrendChart = {
         h(TrendChartCurve, {
           class: "curve",
           attrs: Object.assign({}, dataset,
-            {boundary: this$1.boundary,
-            minValue: this$1.params.minValue,
-            maxValue: this$1.params.maxValue,
-            maxAmount: this$1.params.maxAmount,
-            activeLineParams: this$1.activeLineParams})
+            {boundary: this$1$1.boundary,
+            minValue: this$1$1.params.minValue,
+            maxValue: this$1$1.params.maxValue,
+            maxAmount: this$1$1.params.maxAmount,
+            activeLineParams: this$1$1.activeLineParams})
         })
       );
     });
@@ -771,8 +775,8 @@ var TrendChart = {
           ref: "interactive-area",
           attrs: Object.assign({}, this.chartOverlayParams),
           on: {
-            mousemove: function (e) { return this$1.mouseMove(e); },
-            mouseout: function () { return this$1.mouseOut(); }
+            mousemove: function (e) { return this$1$1.mouseMove(e); },
+            mouseout: function () { return this$1$1.mouseOut(); }
           }
         })
       );
@@ -803,4 +807,4 @@ if (typeof window !== "undefined" && window.Vue) {
   window.Vue.use(TrendChart);
 }
 
-export default TrendChart;
+export { TrendChart as default };

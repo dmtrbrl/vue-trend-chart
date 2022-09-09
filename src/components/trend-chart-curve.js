@@ -1,3 +1,5 @@
+import { h } from "vue";
+
 import genPoints from "../helpers/genPoints";
 import genPath from "../helpers/genPath";
 
@@ -61,7 +63,7 @@ export default {
       return genPath(this.points, this.smooth, this.boundary);
     }
   },
-  render(h) {
+  render() {
     const children = [];
     // Fill path
     if (this.fill && this.paths && this.paths.fillPath) {

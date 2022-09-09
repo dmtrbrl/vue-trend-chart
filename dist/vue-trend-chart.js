@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global['vue-trend-chart'] = factory());
-}(this, (function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('vue')) :
+  typeof define === 'function' && define.amd ? define(['vue'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global["vue-trend-chart"] = factory(global.vue));
+})(this, (function (vue) { 'use strict';
 
   function validatePadding (padding) {
     var arr = padding
@@ -94,7 +94,7 @@
         };
       }
     },
-    render: function render(h) {
+    render: function render() {
       if (!this.verticalLines && !this.horizontalLines) { return; }
 
       var children = [];
@@ -104,14 +104,14 @@
         var lines = [];
         for (var i = 1; i <= this.verticalLinesNumber; i++) {
           lines.push(
-            h("line", {
+            vue.h("line", {
               class: "line",
               attrs: Object.assign({}, this.setVerticalLinesParams(i))
             })
           );
         }
         children.push(
-          h(
+          vue.h(
             "g",
             {
               class: "vertical"
@@ -125,14 +125,14 @@
         var lines$1 = [];
         for (var i$1 = 1; i$1 <= this.horizontalLinesNumber; i$1++) {
           lines$1.push(
-            h("line", {
+            vue.h("line", {
               class: "line",
               attrs: Object.assign({}, this.setHorizontalLinesParams(i$1))
             })
           );
         }
         children.push(
-          h(
+          vue.h(
             "g",
             {
               class: "horizontal"
@@ -143,7 +143,7 @@
       }
 
       // Render component
-      return h("g", children);
+      return vue.h("g", children);
     }
   };
 
@@ -209,8 +209,8 @@
           .getBoundingClientRect().height;
       }
     },
-    render: function render(h) {
-      var this$1 = this;
+    render: function render() {
+      var this$1$1 = this;
 
       if (
         !(this.xLabels && this.xLabels.length) &&
@@ -223,31 +223,31 @@
       // x labels
       if (this.xLabels && this.xLabels.length) {
         children.push(
-          h(
+          vue.h(
             "g",
             {
               class: "x-labels",
               ref: "xLabels"
             },
             this.xLabels.map(function (label, i) {
-              return h(
+              return vue.h(
                 "g",
                 {
                   class: "label",
-                  attrs: Object.assign({}, this$1.setXLabelsParams(i))
+                  attrs: Object.assign({}, this$1$1.setXLabelsParams(i))
                 },
                 [
-                  h(
+                  vue.h(
                     "text",
                     {
                       attrs: {
-                        dy: this$1.xLabelHeight + 5,
+                        dy: this$1$1.xLabelHeight + 5,
                         "text-anchor": "middle"
                       }
                     },
                     label
                   ),
-                  h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", y2: 5 } })
+                  vue.h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", y2: 5 } })
                 ]
               );
             })
@@ -260,14 +260,14 @@
         var labels = [];
         for (var i = 0; i < this.yLabels; i++) {
           labels.push(
-            h(
+            vue.h(
               "g",
               {
                 class: "label",
                 attrs: Object.assign({}, this.setYLabelsParams(i))
               },
               [
-                h(
+                vue.h(
                   "text",
                   {
                     attrs: {
@@ -281,13 +281,13 @@
                       ((this.maxValue - this.minValue) / (this.yLabels - 1)) * i
                   )
                 ),
-                h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", x1: 0, x2: -5 } })
+                vue.h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", x1: 0, x2: -5 } })
               ]
             )
           );
         }
         children.push(
-          h(
+          vue.h(
             "g",
             {
               class: "y-labels",
@@ -299,7 +299,7 @@
       }
 
       // Render component
-      return h("g", children);
+      return vue.h("g", children);
     }
   };
 
@@ -414,14 +414,14 @@
         return genPath(this.points, this.smooth, this.boundary);
       }
     },
-    render: function render(h) {
-      var this$1 = this;
+    render: function render() {
+      var this$1$1 = this;
 
       var children = [];
       // Fill path
       if (this.fill && this.paths && this.paths.fillPath) {
         children.push(
-          h("path", {
+          vue.h("path", {
             class: "fill",
             attrs: {
               d: this.paths.fillPath,
@@ -433,7 +433,7 @@
       // Stroke path
       if (this.stroke && this.paths && this.paths.linePath) {
         children.push(
-          h("path", {
+          vue.h("path", {
             class: "stroke",
             attrs: {
               d: this.paths.linePath,
@@ -446,16 +446,16 @@
       // Points
       if (this.showPoints && this.points) {
         children.push(
-          h(
+          vue.h(
             "g",
             {
               class: "points"
             },
-            this.points.map(function (point, i) { return h("circle", {
+            this.points.map(function (point, i) { return vue.h("circle", {
                 class: {
                   point: true,
                   "is-active":
-                    this$1.activeLineParams && this$1.activeLineParams.index === i
+                    this$1$1.activeLineParams && this$1$1.activeLineParams.index === i
                 },
                 attrs: {
                   cx: point.x,
@@ -471,7 +471,7 @@
       }
 
       // Render component
-      return h(
+      return vue.h(
         "g",
         {
           class: this.className
@@ -631,11 +631,11 @@
         }
       },
       init: function init() {
-        var this$1 = this;
+        var this$1$1 = this;
 
         this.setSize();
         this.$nextTick(function () {
-          this$1.fitLabels();
+          this$1$1.fitLabels();
         });
       },
       getNearestCoordinate: function getNearestCoordinate(val) {
@@ -647,8 +647,10 @@
         );
       },
       mouseMove: function mouseMove(e) {
-        var rect = this.$refs.chart.getBoundingClientRect();
-        this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
+        if (this.$refs.chart !== undefined) {
+          var rect = this.$refs.chart.getBoundingClientRect();
+          this.activeLine = this.getNearestCoordinate(e.clientX - rect.left);
+        }
       },
       mouseOut: function mouseOut() {
         this.activeLine = null;
@@ -660,7 +662,7 @@
     },
     watch: {
       activeLine: function activeLine(val) {
-        var this$1 = this;
+        var this$1$1 = this;
 
         var data = [];
         if (val) {
@@ -668,7 +670,7 @@
             index: this.chartAxesXCoords.indexOf(this.activeLine)
           };
           this.datasets.forEach(function (dataset) {
-            data.push(dataset.data[this$1.activeLineParams.index]);
+            data.push(dataset.data[this$1$1.activeLineParams.index]);
           });
         }
 
@@ -679,13 +681,13 @@
       },
       labels: {
         handler: function handler() {
-          var this$1 = this;
+          var this$1$1 = this;
 
           // Reset labels rect overflow
           this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
           // Calculate new labels rect overflow
           this.$nextTick(function () {
-            this$1.fitLabels();
+            this$1$1.fitLabels();
           });
         },
         deep: true
@@ -698,15 +700,15 @@
     destroyed: function destroyed() {
       window.removeEventListener("resize", this.onWindowResize);
     },
-    render: function render(h) {
-      var this$1 = this;
+    render: function render() {
+      var this$1$1 = this;
 
       var children = [];
 
       // Grid
       if (this.grid) {
         children.push(
-          h(TrendChartGrid, {
+          vue.h(TrendChartGrid, {
             class: "grid",
             attrs: {
               verticalLines: this.grid.verticalLines,
@@ -726,7 +728,7 @@
       // Chart active line
       if (this.interactive && this.chartOverlayParams) {
         children.push(
-          h("line", {
+          vue.h("line", {
             class: "active-line",
             ref: "active-line",
             attrs: {
@@ -744,7 +746,7 @@
       // Labels
       if (this.labels) {
         children.push(
-          h(TrendChartLabels, {
+          vue.h(TrendChartLabels, {
             class: "labels",
             ref: "labels",
             attrs: Object.assign({}, this.labels,
@@ -758,14 +760,14 @@
       // Curves
       this.datasets.map(function (dataset) {
         children.push(
-          h(TrendChartCurve, {
+          vue.h(TrendChartCurve, {
             class: "curve",
             attrs: Object.assign({}, dataset,
-              {boundary: this$1.boundary,
-              minValue: this$1.params.minValue,
-              maxValue: this$1.params.maxValue,
-              maxAmount: this$1.params.maxAmount,
-              activeLineParams: this$1.activeLineParams})
+              {boundary: this$1$1.boundary,
+              minValue: this$1$1.params.minValue,
+              maxValue: this$1$1.params.maxValue,
+              maxAmount: this$1$1.params.maxAmount,
+              activeLineParams: this$1$1.activeLineParams})
           })
         );
       });
@@ -773,19 +775,19 @@
       // Chart overlay
       if (this.interactive && this.chartOverlayParams) {
         children.push(
-          h("rect", {
+          vue.h("rect", {
             ref: "interactive-area",
             attrs: Object.assign({}, this.chartOverlayParams),
             on: {
-              mousemove: function (e) { return this$1.mouseMove(e); },
-              mouseout: function () { return this$1.mouseOut(); }
+              mousemove: function (e) { return this$1$1.mouseMove(e); },
+              mouseout: function () { return this$1$1.mouseOut(); }
             }
           })
         );
       }
 
       // Render component
-      return h(
+      return vue.h(
         "svg",
         {
           class: "vtc",
@@ -811,4 +813,4 @@
 
   return TrendChart;
 
-})));
+}));
