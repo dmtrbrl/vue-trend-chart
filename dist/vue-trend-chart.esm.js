@@ -1,4 +1,4 @@
-import { h } from 'vue';
+import { h, nextTick } from 'vue';
 
 function validatePadding (padding) {
   var arr = padding
@@ -630,7 +630,7 @@ var TrendChart = {
       var this$1$1 = this;
 
       this.setSize();
-      this.$nextTick(function () {
+      nextTick(function () {
         this$1$1.fitLabels();
       });
     },
@@ -682,7 +682,7 @@ var TrendChart = {
         // Reset labels rect overflow
         this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
         // Calculate new labels rect overflow
-        this.$nextTick(function () {
+        nextTick(function () {
           this$1$1.fitLabels();
         });
       },

@@ -632,7 +632,7 @@ var TrendChart = {
       var this$1$1 = this;
 
       this.setSize();
-      this.$nextTick(function () {
+      vue.nextTick(function () {
         this$1$1.fitLabels();
       });
     },
@@ -684,7 +684,7 @@ var TrendChart = {
         // Reset labels rect overflow
         this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
         // Calculate new labels rect overflow
-        this.$nextTick(function () {
+        vue.nextTick(function () {
           this$1$1.fitLabels();
         });
       },
