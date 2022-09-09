@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/dmtrbrl/vue-trend-chart/master/media/vtc-logo.png" width="230" alt="Vue Trend"><br/>
 
-<img src="https://img.shields.io/badge/vue-2.7.x%20&%203.x-brightgreen.svg" /><br/>
+<img src="https://img.shields.io/badge/vue-2.7.x%20&%203.x-green.svg" /><br/>
 
 <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
 
