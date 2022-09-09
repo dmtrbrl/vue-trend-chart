@@ -1,4 +1,4 @@
-import { h } from "vue";
+import { h, nextTick } from "vue";
 
 import validatePadding from "../helpers/validatePadding";
 import getPadding from "../helpers/getPadding";
@@ -154,7 +154,7 @@ export default {
     },
     init() {
       this.setSize();
-      this.$nextTick(() => {
+      nextTick(() => {
         this.fitLabels();
       });
     },
@@ -202,7 +202,7 @@ export default {
         // Reset labels rect overflow
         this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
         // Calculate new labels rect overflow
-        this.$nextTick(() => {
+        nextTick(() => {
           this.fitLabels();
         });
       },
