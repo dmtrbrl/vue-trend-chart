@@ -40,7 +40,7 @@
               class="demo__show-code"
             >Show Code</a>
           </div>
-          <bitcoin-price />
+          <BitcoinPrice />
         </div>
       </div>
       <div class="demo__example">
@@ -56,7 +56,7 @@
               class="demo__show-code"
             >Show Code</a>
           </div>
-          <frameworks-downloads />
+          <FrameworksDownloads />
         </div>
       </div>
       <div class="demo__example">
@@ -78,7 +78,7 @@
               class="demo__show-code"
             >Show Code</a>
           </div>
-          <random-chart />
+          <RandomChart />
         </div>
       </div>
       <div class="demo__example">
@@ -94,7 +94,7 @@
               class="demo__show-code"
             >Show Code</a>
           </div>
-          <vtc-downloads />
+          <VTCDownloads />
         </div>
       </div>
     </main>
@@ -119,7 +119,7 @@ export default {
     BitcoinPrice,
     FrameworksDownloads,
     RandomChart,
-    "vtc-downloads": VTCDownloads
+    VTCDownloads
   }
 };
 </script>

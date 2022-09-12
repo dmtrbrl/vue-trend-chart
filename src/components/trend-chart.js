@@ -9,37 +9,38 @@ import TrendChartCurve from "./trend-chart-curve";
 
 export default {
   name: "TrendChart",
+  emits: ["mouse-move"],
   components: { TrendChartGrid, TrendChartLabels, TrendChartCurve },
   props: {
     datasets: {
       required: true,
-      type: Array
+      type: Array,
     },
     grid: {
       default: null,
-      type: Object
+      type: Object,
     },
     labels: {
       default: null,
-      type: Object
+      type: Object,
     },
     max: {
-      type: Number
+      type: Number,
     },
     min: {
-      type: Number
+      type: Number,
     },
     padding: {
       default: "5",
       type: String,
       validator(val) {
         return validatePadding(val);
-      }
+      },
     },
     interactive: {
       default: false,
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -47,7 +48,7 @@ export default {
       height: null,
       labelsOverflowObject: { top: 0, right: 0, bottom: 0, left: 0 },
       activeLine: null,
-      activeLineParams: null
+      activeLineParams: null,
     };
   },
   computed: {
@@ -61,7 +62,7 @@ export default {
         minX: paddingObject.left + labelsOverflowObject.left,
         minY: paddingObject.top + labelsOverflowObject.top,
         maxX: width - paddingObject.right - labelsOverflowObject.right,
-        maxY: height - paddingObject.bottom - labelsOverflowObject.bottom
+        maxY: height - paddingObject.bottom - labelsOverflowObject.bottom,
       };
       return boundary;
     },
@@ -69,8 +70,8 @@ export default {
       let maxValue = -Infinity;
       let minValue = Infinity;
       let maxAmount = 0;
-      this.datasets.forEach(dataset => {
-        let dataArr = dataset.data.map(item =>
+      this.datasets.forEach((dataset) => {
+        let dataArr = dataset.data.map((item) =>
           typeof item === "number" ? item : item.value
         );
 
@@ -95,7 +96,7 @@ export default {
         y: boundary.minY,
         width: width > 0 ? width : 0,
         height: height > 0 ? height : 0,
-        opacity: 0
+        opacity: 0,
       };
     },
     chartAxesXCoords() {
@@ -106,7 +107,7 @@ export default {
         axes.push(step * i + this.boundary.minX);
       }
       return axes;
-    }
+    },
   },
   methods: {
     setSize() {
@@ -146,7 +147,7 @@ export default {
           top: top > 0 ? top : 0,
           right: right > 0 ? right : 0,
           bottom: bottom > 0 ? bottom : 0,
-          left: left > 0 ? left : 0
+          left: left > 0 ? left : 0,
         };
       } else {
         this.labelsOverflowObject = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -178,16 +179,16 @@ export default {
     },
     onWindowResize() {
       this.setSize();
-    }
+    },
   },
   watch: {
     activeLine(val) {
       const data = [];
       if (val) {
         this.activeLineParams = {
-          index: this.chartAxesXCoords.indexOf(this.activeLine)
+          index: this.chartAxesXCoords.indexOf(this.activeLine),
         };
-        this.datasets.forEach(dataset => {
+        this.datasets.forEach((dataset) => {
           data.push(dataset.data[this.activeLineParams.index]);
         });
       }
@@ -206,8 +207,8 @@ export default {
           this.fitLabels();
         });
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     this.init();
@@ -224,17 +225,15 @@ export default {
       children.push(
         h(TrendChartGrid, {
           class: "grid",
-          attrs: {
-            verticalLines: this.grid.verticalLines,
-            verticalLinesNumber:
-              this.grid.verticalLinesNumber || this.params.maxAmount,
-            horizontalLines: this.grid.horizontalLines,
-            horizontalLinesNumber:
-              this.grid.horizontalLinesNumber ||
-              (this.labels && this.labels.yLabels) ||
-              0,
-            boundary: this.boundary
-          }
+          verticalLines: this.grid.verticalLines,
+          verticalLinesNumber:
+            this.grid.verticalLinesNumber || this.params.maxAmount,
+          horizontalLines: this.grid.horizontalLines,
+          horizontalLinesNumber:
+            this.grid.horizontalLinesNumber ||
+            (this.labels && this.labels.yLabels) ||
+            0,
+          boundary: this.boundary,
         })
       );
     }
@@ -245,14 +244,12 @@ export default {
         h("line", {
           class: "active-line",
           ref: "active-line",
-          attrs: {
-            x1: this.activeLine || this.boundary.minX,
-            x2: this.activeLine || this.boundary.minX,
-            y1: this.boundary.minY,
-            y2: this.boundary.maxY,
-            stroke: "black",
-            visibility: this.activeLine ? "visible" : "hidden"
-          }
+          x1: this.activeLine || this.boundary.minX,
+          x2: this.activeLine || this.boundary.minX,
+          y1: this.boundary.minY,
+          y2: this.boundary.maxY,
+          stroke: "black",
+          visibility: this.activeLine ? "visible" : "hidden",
         })
       );
     }
@@ -263,29 +260,25 @@ export default {
         h(TrendChartLabels, {
           class: "labels",
           ref: "labels",
-          attrs: {
-            ...this.labels,
-            boundary: this.boundary,
-            minValue: this.params.minValue,
-            maxValue: this.params.maxValue
-          }
+          ...this.labels,
+          boundary: this.boundary,
+          minValue: this.params.minValue,
+          maxValue: this.params.maxValue,
         })
       );
     }
 
     // Curves
-    this.datasets.map(dataset => {
+    this.datasets.map((dataset) => {
       children.push(
         h(TrendChartCurve, {
           class: "curve",
-          attrs: {
-            ...dataset,
-            boundary: this.boundary,
-            minValue: this.params.minValue,
-            maxValue: this.params.maxValue,
-            maxAmount: this.params.maxAmount,
-            activeLineParams: this.activeLineParams
-          }
+          ...dataset,
+          boundary: this.boundary,
+          minValue: this.params.minValue,
+          maxValue: this.params.maxValue,
+          maxAmount: this.params.maxAmount,
+          activeLineParams: this.activeLineParams,
         })
       );
     });
@@ -295,13 +288,9 @@ export default {
       children.push(
         h("rect", {
           ref: "interactive-area",
-          attrs: {
-            ...this.chartOverlayParams
-          },
-          on: {
-            mousemove: e => this.mouseMove(e),
-            mouseout: () => this.mouseOut()
-          }
+          ...this.chartOverlayParams,
+          onmousemove: (e) => this.mouseMove(e),
+          onmouseout: () => this.mouseOut(),
         })
       );
     }
@@ -312,13 +301,11 @@ export default {
       {
         class: "vtc",
         ref: "chart",
-        attrs: {
-          xmlns: "http://www.w3.org/2000/svg",
-          width: "100%",
-          height: "100%"
-        }
+        xmlns: "http://www.w3.org/2000/svg",
+        width: "100%",
+        height: "100%",
       },
       children
     );
-  }
+  },
 };

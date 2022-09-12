@@ -37,7 +37,7 @@
   </div>
 </template>
 <script>
-import moment from "moment";
+import dayjs from "dayjs";
 export default {
   data() {
     return {
@@ -76,7 +76,7 @@ export default {
     },
     xLabels() {
       return this.downloads && this.downloads.length
-        ? this.downloads.map(d => moment(d.day).format(this.dateFormat))
+        ? this.downloads.map(d => dayjs(d.day).format(this.dateFormat))
         : [];
     }
   },
