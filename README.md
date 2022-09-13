@@ -7,9 +7,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/Vue%202-v0.15.3-green.svg" /> <img src="https://img.shields.io/badge/Vue%203-v^0.17.x-green.svg" />
 </div>
-
----
-
+<br/>
 <div align="center">
   <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
 </div>
@@ -23,10 +21,9 @@ npm i vue-trend-chart
 ## :rocket: Usage
 
 ```js
-import Vue from "vue";
 import TrendChart from "vue-trend-chart";
 
-Vue.use(TrendChart);
+app.use(TrendChart);
 ```
 
 _Example:_

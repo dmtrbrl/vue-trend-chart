@@ -35,7 +35,7 @@
               <em class="demo__example-description">Static line chart example</em>
             </div>
             <a
-              href="https://codepen.io/dimonline/pen/wNRzQY"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/bitcoin-price.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -51,7 +51,7 @@
               <em class="demo__example-description">Interactive trend curves example</em>
             </div>
             <a
-              href="https://codepen.io/dimonline/pen/bzOwXZ"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/framework.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -73,7 +73,7 @@
               </em>
             </div>
             <a
-              href="https://codepen.io/dimonline/pen/vbvyXa"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/random-chart.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -89,7 +89,7 @@
               <em class="demo__example-description">Data and labels update example</em>
             </div>
             <a
-              href="https://codepen.io/dimonline/pen/WNeMrWV"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/vtc-downloads.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
