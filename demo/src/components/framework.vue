@@ -24,6 +24,7 @@
   </section>
 </template>
 <script>
+import dayjs from "dayjs";
 export default {
   props: {
     data: {
@@ -72,7 +73,7 @@ export default {
         return;
       }
       this.currentInfo = {
-        label: params.data[0].day,
+        label: dayjs(params.data[0].day).format("DD MMM YYYY"),
         value: this.numberWithSpaces(params.data[0].value)
       };
     }

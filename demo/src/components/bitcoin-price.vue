@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import moment from "moment";
+import dayjs from "dayjs";
 export default {
   data() {
     return {
@@ -45,7 +45,7 @@ export default {
         const data = res.data.bpi;
         for (let key in data) {
           this.dataset.push(data[key]);
-          this.labels.xLabels.push(moment(key).format("MM/DD"));
+          this.labels.xLabels.push(dayjs(key).format("MM/DD"));
         }
       });
   }

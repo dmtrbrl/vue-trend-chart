@@ -5,24 +5,24 @@ export default {
   props: {
     boundary: {
       required: true,
-      type: Object
+      type: Object,
     },
     verticalLines: {
       default: false,
-      type: Boolean
+      type: Boolean,
     },
     verticalLinesNumber: {
       default: 0,
-      type: Number
+      type: Number,
     },
     horizontalLines: {
       default: false,
-      type: Boolean
+      type: Boolean,
     },
     horizontalLinesNumber: {
       default: 0,
-      type: Number
-    }
+      type: Number,
+    },
   },
   methods: {
     setVerticalLinesParams(n) {
@@ -39,7 +39,7 @@ export default {
         x2: x,
         y1,
         y2,
-        stroke: "rgba(0,0,0,0.1)"
+        stroke: "rgba(0,0,0,0.1)",
       };
     },
     setHorizontalLinesParams(n) {
@@ -56,9 +56,9 @@ export default {
         x2,
         y1: y,
         y2: y,
-        stroke: "rgba(0,0,0,0.1)"
+        stroke: "rgba(0,0,0,0.1)",
       };
-    }
+    },
   },
   render() {
     if (!this.verticalLines && !this.horizontalLines) return;
@@ -72,9 +72,7 @@ export default {
         lines.push(
           h("line", {
             class: "line",
-            attrs: {
-              ...this.setVerticalLinesParams(i)
-            }
+            ...this.setVerticalLinesParams(i),
           })
         );
       }
@@ -82,7 +80,7 @@ export default {
         h(
           "g",
           {
-            class: "vertical"
+            class: "vertical",
           },
           lines
         )
@@ -95,9 +93,7 @@ export default {
         lines.push(
           h("line", {
             class: "line",
-            attrs: {
-              ...this.setHorizontalLinesParams(i)
-            }
+            ...this.setHorizontalLinesParams(i),
           })
         );
       }
@@ -105,7 +101,7 @@ export default {
         h(
           "g",
           {
-            class: "horizontal"
+            class: "horizontal",
           },
           lines
         )
@@ -114,5 +110,5 @@ export default {
 
     // Render component
     return h("g", children);
-  }
+  },
 };

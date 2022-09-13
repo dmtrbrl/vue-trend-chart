@@ -8,46 +8,46 @@ export default {
   props: {
     boundary: {
       required: true,
-      type: Object
+      type: Object,
     },
     minValue: {
       required: true,
-      type: Number
+      type: Number,
     },
     maxValue: {
       required: true,
-      type: Number
+      type: Number,
     },
     maxAmount: {
       required: true,
-      type: Number
+      type: Number,
     },
     activeLineParams: {
-      type: Object
+      type: Object,
     },
     data: {
       required: true,
-      type: Array
+      type: Array,
     },
     className: {
-      type: String
+      type: String,
     },
     smooth: {
       default: false,
-      type: Boolean
+      type: Boolean,
     },
     stroke: {
       default: true,
-      type: Boolean
+      type: Boolean,
     },
     fill: {
       default: false,
-      type: Boolean
+      type: Boolean,
     },
     showPoints: {
       default: false,
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   computed: {
     points() {
@@ -61,7 +61,7 @@ export default {
     },
     paths() {
       return genPath(this.points, this.smooth, this.boundary);
-    }
+    },
   },
   render() {
     const children = [];
@@ -70,10 +70,8 @@ export default {
       children.push(
         h("path", {
           class: "fill",
-          attrs: {
-            d: this.paths.fillPath,
-            fill: "rgba(0,0,0,0.15)"
-          }
+          d: this.paths.fillPath,
+          fill: "rgba(0,0,0,0.15)",
         })
       );
     }
@@ -82,11 +80,9 @@ export default {
       children.push(
         h("path", {
           class: "stroke",
-          attrs: {
-            d: this.paths.linePath,
-            fill: "none",
-            stroke: "black"
-          }
+          d: this.paths.linePath,
+          fill: "none",
+          stroke: "black",
         })
       );
     }
@@ -96,22 +92,20 @@ export default {
         h(
           "g",
           {
-            class: "points"
+            class: "points",
           },
           this.points.map((point, i) =>
             h("circle", {
               class: {
                 point: true,
                 "is-active":
-                  this.activeLineParams && this.activeLineParams.index === i
+                  this.activeLineParams && this.activeLineParams.index === i,
               },
-              attrs: {
-                cx: point.x,
-                cy: point.y,
-                r: 2,
-                stroke: "#000000",
-                "stroke-width": 1
-              }
+              cx: point.x,
+              cy: point.y,
+              r: 2,
+              stroke: "#000000",
+              "stroke-width": 1,
             })
           )
         )
@@ -122,9 +116,9 @@ export default {
     return h(
       "g",
       {
-        class: this.className
+        class: this.className,
       },
       children
     );
-  }
+  },
 };

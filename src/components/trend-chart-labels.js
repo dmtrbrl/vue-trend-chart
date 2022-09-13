@@ -5,29 +5,29 @@ export default {
   props: {
     boundary: {
       required: true,
-      type: Object
+      type: Object,
     },
     minValue: {
-      type: Number
+      type: Number,
     },
     maxValue: {
-      type: Number
+      type: Number,
     },
     xLabels: {
-      type: Array
+      type: Array,
     },
     yLabels: {
-      type: Number
+      type: Number,
     },
     yLabelsTextFormatter: {
-      default: value => value,
-      type: Function
-    }
+      default: (value) => value,
+      type: Function,
+    },
   },
   data() {
     return {
       xLabelHeight: null,
-      yLabelHeight: null
+      yLabelHeight: null,
     };
   },
   methods: {
@@ -44,7 +44,7 @@ export default {
       const x = boundary.minX;
       const y = boundary.maxY - step * n;
       return { transform: `translate(${x}, ${y})` };
-    }
+    },
   },
   mounted() {
     if (this.xLabels && this.xLabels.length) {
@@ -74,29 +74,25 @@ export default {
           "g",
           {
             class: "x-labels",
-            ref: "xLabels"
+            ref: "xLabels",
           },
           this.xLabels.map((label, i) => {
             return h(
               "g",
               {
                 class: "label",
-                attrs: {
-                  ...this.setXLabelsParams(i)
-                }
+                ...this.setXLabelsParams(i),
               },
               [
                 h(
                   "text",
                   {
-                    attrs: {
-                      dy: this.xLabelHeight + 5,
-                      "text-anchor": "middle"
-                    }
+                    dy: this.xLabelHeight + 5,
+                    "text-anchor": "middle",
                   },
                   label
                 ),
-                h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", y2: 5 } })
+                h("line", { stroke: "rgba(0,0,0,0.1)", y2: 5 }),
               ]
             );
           })
@@ -113,26 +109,26 @@ export default {
             "g",
             {
               class: "label",
-              attrs: {
-                ...this.setYLabelsParams(i)
-              }
+              ...this.setYLabelsParams(i),
             },
             [
               h(
                 "text",
                 {
-                  attrs: {
-                    dx: -10,
-                    dy: this.yLabelHeight / 4,
-                    "text-anchor": "end"
-                  }
+                  dx: -10,
+                  dy: this.yLabelHeight / 4,
+                  "text-anchor": "end",
                 },
                 this.yLabelsTextFormatter(
                   this.minValue +
                     ((this.maxValue - this.minValue) / (this.yLabels - 1)) * i
                 )
               ),
-              h("line", { attrs: { stroke: "rgba(0,0,0,0.1)", x1: 0, x2: -5 } })
+              h("line", {
+                stroke: "rgba(0,0,0,0.1)",
+                x1: 0,
+                x2: -5,
+              }),
             ]
           )
         );
@@ -142,7 +138,7 @@ export default {
           "g",
           {
             class: "y-labels",
-            ref: "yLabels"
+            ref: "yLabels",
           },
           labels
         )
@@ -151,5 +147,5 @@ export default {
 
     // Render component
     return h("g", children);
-  }
+  },
 };

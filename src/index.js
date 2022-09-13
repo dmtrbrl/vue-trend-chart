@@ -1,11 +1,7 @@
 import TrendChart from "./components/trend-chart";
 
-TrendChart.install = function(Vue) {
-  Vue.component(TrendChart.name, TrendChart);
+export default {
+  install: (app, options) => {
+    app.component("TrendChart", TrendChart);
+  },
 };
-
-if (typeof window !== "undefined" && window.Vue) {
-  window.Vue.use(TrendChart);
-}
-
-export default TrendChart;
