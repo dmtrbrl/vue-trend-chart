@@ -1,8 +1,18 @@
-<img src="https://raw.githubusercontent.com/dmtrbrl/vue-trend-chart/master/media/vtc-logo.png" width="230" alt="Vue Trend"><br/>
+<div align="center">
+  <img src="https://raw.githubusercontent.com/dmtrbrl/vue-trend-chart/master/media/vtc-logo.png" width="230" alt="Vue Trend">
+</div>
 
-<img src="https://img.shields.io/badge/vue-2.7.x%20&%203.x-green.svg" /><br/>
+---
 
-<a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
+<div align="center">
+  <img src="https://img.shields.io/badge/Vue%202-v0.15.3-green.svg" /> <img src="https://img.shields.io/badge/Vue%203-v^0.17.x-green.svg" />
+</div>
+
+---
+
+<div align="center">
+  <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
+</div>
 
 ## :cd: Installation
 

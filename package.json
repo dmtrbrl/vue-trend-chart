@@ -1,7 +1,7 @@
 {
   "name": "vue-trend-chart",
   "productName": "Vue Trend Chart",
-  "version": "0.16.3",
+  "version": "0.17.0",
   "description": "Trend charts for Vue.js",
   "main": "dist/vue-trend-chart.umd.js",
   "module": "dist/vue-trend-chart.mjs",
@@ -21,8 +21,9 @@
   },
   "keywords": [
     "vue",
-    "trend",
+    "vue3",
     "chart",
+    "trend chart",
     "sparkline"
   ],
   "author": "dmtrbrl <dmytro.barylo@gmail.com> (https://github.com/dmtrbrl)",
