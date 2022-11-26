@@ -111,9 +111,11 @@ export default {
   },
   methods: {
     setSize() {
-      const params = this.$refs["chart"].getBoundingClientRect();
-      this.width = params.width;
-      this.height = params.height;
+      if (this.$refs["chart"]) {
+        const params = this.$refs["chart"].getBoundingClientRect();
+        this.width = params.width;
+        this.height = params.height;
+      }
     },
     fitLabels() {
       const chart = this.$refs["chart"];
