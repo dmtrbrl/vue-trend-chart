@@ -1,12 +1,22 @@
 <template>
   <section class="demo">
     <header class="demo__header">
-      <svg class="demo__logo" viewBox="0 0 454 130" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        class="demo__logo"
+        viewBox="0 0 454 130"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <title>Vue Trend Chart</title>
         <g fill="none" fill-rule="evenodd">
           <g stroke-width="10">
-            <path d="M.5 45h20c30 0 30 80 60 80s29.85-110 59.85-110h20.15" stroke="#39AF77" />
-            <path d="M.5 35h20c34 0 42 80 60 80 22 0 18-110 60-110h20" stroke="#2F4053" />
+            <path
+              d="M.5 45h20c30 0 30 80 60 80s29.85-110 59.85-110h20.15"
+              stroke="#39AF77"
+            />
+            <path
+              d="M.5 35h20c34 0 42 80 60 80 22 0 18-110 60-110h20"
+              stroke="#2F4053"
+            />
           </g>
           <path
             d="M154.45 82h-7.5c-.55 0-.85-.25-.95-.8l-5-34.05c-.1-.55.25-.9.8-.9h6.35c.55 0 .9.25.95.8l1.8 15.25c.4 3.35.85 7.8 1.05 10.7h.3c1.15-2.85 2.75-6.9 4.2-10.1l7.4-16c.2-.4.6-.65 1.05-.65h6.9c.65 0 .9.4.6 1.05l-16.95 34.05c-.2.45-.55.65-1 .65zm31.283-26h5.85c.6 0 .85.35.75.9l-4.05 22.85c-.1.45-.35.75-.75.9-3.1 1.25-6.9 1.95-10.05 1.95-7.45 0-10.85-4.75-9.6-11.8l2.5-14.05c.1-.5.4-.75.9-.75h5.8c.55 0 .85.35.75.9l-2.5 14.65c-.55 3.1.55 4.55 3.05 4.55 1.2 0 2.4-.25 3.1-.55l3.35-18.8c.05-.5.4-.75.9-.75zm8.084 8.9c1.2-6.55 6.4-9.6 12.45-9.6 6.4 0 10.95 3.4 9.6 10.75l-.85 4.85c-.1.5-.4.75-.9.75h-13.9l-.15.7c-.5 2.65.7 3.95 3.45 3.95 2.2 0 4.5-.8 6.5-2 .5-.35.9-.3 1.15.25l2.05 3.85c.2.5.15.95-.3 1.2-2.7 1.85-6.1 3.05-10.45 3.05-6.55 0-11.1-4-9.95-10.5l1.3-7.25zm14.6 1.75l.25-1.25c.35-2-.5-3.75-3.05-3.75-2.15 0-3.8 1.3-4.25 3.65l-.25 1.35h7.3zm19.216-20.4h25.1c.6 0 .9.35.8.95l-1 5.5c-.05.5-.35.8-.9.8h-8.65l-4.9 27.7c-.1.5-.4.8-.9.8h-6.25c-.55 0-.85-.4-.75-.95l4.9-27.55h-8.55c-.6 0-.85-.4-.8-.95l1-5.5c.1-.5.4-.8.9-.8zM252.517 82h-5.8c-.6 0-.9-.4-.8-.95l3.95-22.7c.1-.45.35-.75.75-.95 2.9-1.35 6.1-2.1 9.25-2.1 1.35 0 2.7.15 4.15.45.55.1.8.5.7 1l-.9 4.9c-.05.55-.45.8-1 .75-.85-.15-1.85-.25-2.9-.25-1.3 0-2.4.25-3.25.6l-3.25 18.45c-.1.5-.4.8-.9.8zM264 64.9c1.2-6.55 6.4-9.6 12.45-9.6 6.4 0 10.95 3.4 9.6 10.75l-.85 4.85c-.1.5-.4.75-.9.75h-13.9l-.15.7c-.5 2.65.7 3.95 3.45 3.95 2.2 0 4.5-.8 6.5-2 .5-.35.9-.3 1.15.25l2.05 3.85c.2.5.15.95-.3 1.2-2.7 1.85-6.1 3.05-10.45 3.05-6.55 0-11.1-4-9.95-10.5l1.3-7.25zm14.6 1.75l.25-1.25c.35-2-.5-3.75-3.05-3.75-2.15 0-3.8 1.3-4.25 3.65l-.25 1.35h7.3zM292.683 82h-5.8c-.6 0-.9-.4-.8-.95l4.1-22.85c.1-.4.3-.7.75-.9 3.15-1.2 6.9-2 10.15-2 7.55 0 10.95 4.8 9.7 11.9l-2.5 14c-.1.5-.4.8-.95.8h-5.75c-.55 0-.85-.4-.8-.95l2.5-14.6c.6-3.15-.5-4.6-3.15-4.6-1.2 0-2.45.25-3.2.6l-3.3 18.75c-.1.55-.4.8-.95.8zm40.084-1.2c-2.85 1.15-6.7 1.85-10 1.85-7.25 0-11.25-4.95-10.1-11.6l1.05-5.75c1.05-5.95 5.6-10 11.55-10 1.85 0 3.6.4 4.85 1.05l1.65-9.3c.1-.5.4-.8.9-.8h5.8c.6 0 .9.4.8.95l-5.75 32.7c-.05.45-.3.75-.75.9zm-12.5-9.2c-.6 3.15.5 4.4 3.2 4.4 1.2 0 2.5-.2 3.3-.55l2.25-12.9c-.8-.55-2.05-.85-3.3-.85-2.4 0-3.95 1.5-4.5 4.55l-.95 5.35zm50.616 7.85c-3.1 1.85-6.95 3.2-11.9 3.2-8.25 0-13.15-5.3-11.6-14.3l1.75-10.15c1.45-8.35 7.6-12.6 15.7-12.6 3.9 0 7.4 1.35 9.85 3.4.45.3.45.75.1 1.2l-3.65 4.3c-.3.4-.7.45-1.2.15-1.6-1.1-3.65-1.8-5.8-1.8-4 0-6.4 2.45-7 6.15l-1.75 10.1c-.65 4.05 1.15 6.25 5.05 6.25 2.3 0 4.95-.8 7.05-2.2.5-.3.9-.2 1.2.35l2.35 4.9c.25.55.2.85-.15 1.05zm13.134-23.1c1.35-.65 2.95-1.05 4.9-1.05 5.85 0 9.15 4.45 7.85 11.85l-2.5 14.05c-.05.5-.4.8-.9.8h-5.75c-.6 0-.9-.4-.8-.95l2.55-14.8c.55-2.9-.4-4.4-3.1-4.4-1.2 0-2.45.4-3.35.85l-3.25 18.5c-.1.5-.4.8-.95.8h-5.75c-.55 0-.85-.4-.8-.95l6.05-34c.05-.5.35-.8.9-.8h5.75c.55 0 .85.4.75.95l-1.6 9.15zM417.5 80.9c-2.85 1-6.55 1.75-10.4 1.75-7 0-10.55-4-9.55-9.45.85-4.85 4.95-7 11.35-7 1.5 0 3 .15 4.25.4l.1-.8c.45-2.45-.25-3.8-3.4-3.8-2.2 0-4.45.45-5.95 1.15-.55.25-.95.15-1.15-.4l-1.55-4.1c-.15-.45-.15-.8.15-1 2.4-1.45 6.15-2.35 10.2-2.35 6.8 0 10.3 4.5 8.95 12l-2.25 12.65c-.1.45-.3.8-.75.95zM405 73.6c-.35 1.9.85 2.8 3.05 2.8 1.15 0 2.55-.2 3.45-.4l.7-4.35c-.95-.2-2.1-.35-3.2-.35-2.45 0-3.75.8-4 2.3zm22.933 8.4h-5.8c-.6 0-.9-.4-.8-.95l3.95-22.7c.1-.45.35-.75.75-.95 2.9-1.35 6.1-2.1 9.25-2.1 1.35 0 2.7.15 4.15.45.55.1.8.5.7 1l-.9 4.9c-.05.55-.45.8-1 .75-.85-.15-1.85-.25-2.9-.25-1.3 0-2.4.25-3.25.6l-3.25 18.45c-.1.5-.4.8-.9.8zm24.284-19.05h-4.1l-1.7 9.65c-.4 2.25.4 3.45 2.45 3.45h1.35c.6-.05.95.2.8.85l-.8 4.65c-.1.5-.35.8-.85.85-.75.15-1.7.25-2.55.25-5.55 0-9.1-3.35-7.8-10.65l3.75-21.45c.1-.5.4-.8.95-.8h4.9c.6 0 .9.35.85.9l-.3 5.95h4c.6 0 .9.4.8.95l-.8 4.6c-.1.55-.4.8-.95.8z"
@@ -32,13 +42,16 @@
           <div class="demo__example-header">
             <div class="demo__example-intro">
               <strong class="demo__example-heading">BTC price</strong>
-              <em class="demo__example-description">Static line chart example</em>
+              <em class="demo__example-description"
+                >Static line chart example</em
+              >
             </div>
             <a
               href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/bitcoin-price.vue"
               target="_blank"
               class="demo__show-code"
-            >Show Code</a>
+              >Show Code</a
+            >
           </div>
           <BitcoinPrice />
         </div>
@@ -48,13 +61,16 @@
           <div class="demo__example-header">
             <div class="demo__example-intro">
               <strong class="demo__example-heading">Downloads from npm</strong>
-              <em class="demo__example-description">Interactive trend curves example</em>
+              <em class="demo__example-description"
+                >Interactive trend curves example</em
+              >
             </div>
             <a
               href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/framework.vue"
               target="_blank"
               class="demo__show-code"
-            >Show Code</a>
+              >Show Code</a
+            >
           </div>
           <FrameworksDownloads />
         </div>
@@ -66,17 +82,16 @@
               <strong class="demo__example-heading">Some Random Data</strong>
               <em class="demo__example-description">
                 Interactive multiline chart with tooltip (using
-                <a
-                  href="https://floating-ui.com"
-                  target="_blank"
-                >Floating UI</a>) example
+                <a href="https://floating-ui.com" target="_blank">Floating UI</a
+                >) example
               </em>
             </div>
             <a
               href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/random-chart.vue"
               target="_blank"
               class="demo__show-code"
-            >Show Code</a>
+              >Show Code</a
+            >
           </div>
           <RandomChart />
         </div>
@@ -85,14 +100,19 @@
         <div class="demo__example-container">
           <div class="demo__example-header">
             <div class="demo__example-intro">
-              <strong class="demo__example-heading">Vue Trend Chart downloads</strong>
-              <em class="demo__example-description">Data and labels update example</em>
+              <strong class="demo__example-heading"
+                >Vue Trend Chart downloads</strong
+              >
+              <em class="demo__example-description"
+                >Data and labels update example</em
+              >
             </div>
             <a
               href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/vtc-downloads.vue"
               target="_blank"
               class="demo__show-code"
-            >Show Code</a>
+              >Show Code</a
+            >
           </div>
           <VTCDownloads />
         </div>
@@ -100,7 +120,10 @@
     </main>
     <footer class="demo__footer">
       Released under the
-      <a href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/LICENSE">MIT</a> license.
+      <a href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/LICENSE"
+        >MIT</a
+      >
+      license.
       <a href="https://github.com/dmtrbrl/vue-trend-chart">View source</a>.
     </footer>
   </section>
@@ -222,5 +245,3 @@ body {
   right: 0;
 }
 </style>
-
-
