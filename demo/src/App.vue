@@ -281,21 +281,26 @@ const apiGroups = [
         >
       </div>
       <div class="api-groups">
-        <details
-          v-for="group in apiGroups"
+        <section
+          v-for="(group, index) in apiGroups"
           :key="group.title"
           class="api-group"
+          :aria-labelledby="`api-group-${index}`"
         >
-          <summary>{{ group.title }}<span aria-hidden="true">＋</span></summary>
+          <h3 :id="`api-group-${index}`">{{ group.title }}</h3>
           <dl>
-            <template v-for="[name, description] in group.entries" :key="name"
-              ><dt>
+            <div
+              v-for="[name, description] in group.entries"
+              :key="name"
+              class="api-entry"
+            >
+              <dt>
                 <code>{{ name }}</code>
               </dt>
-              <dd>{{ description }}</dd></template
-            >
+              <dd>{{ description }}</dd>
+            </div>
           </dl>
-        </details>
+        </section>
       </div>
       <p class="accessibility-note">
         For essential data, provide a text summary or table alongside the chart.

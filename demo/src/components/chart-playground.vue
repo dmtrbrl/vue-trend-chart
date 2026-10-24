@@ -260,12 +260,22 @@ const reset = () => {
             <details class="event-inspector">
               <summary>
                 <span class="mono">@mouse-move</span
-                ><span
+                ><span class="event-inspector-label"
                   >Inspect the event
-                  <span class="disclosure-chevron" aria-hidden="true"
-                    >⌄</span
-                  ></span
-                >
+                  <svg
+                    class="disclosure-chevron"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m3 4.5 3 3 3-3" /></svg
+                ></span>
               </summary>
               <pre>{{ payload }}</pre>
               <p>
