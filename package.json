@@ -1,19 +1,39 @@
 {
   "name": "vue-trend-chart",
   "productName": "Vue Trend Chart",
-  "version": "0.17.0",
+  "version": "1.0.0",
   "description": "Trend charts for Vue.js",
   "main": "dist/vue-trend-chart.umd.js",
   "module": "dist/vue-trend-chart.mjs",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/vue-trend-chart.umd.js",
+  "jsdelivr": "dist/vue-trend-chart.umd.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/vue-trend-chart.mjs",
+      "require": "./dist/vue-trend-chart.umd.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
-    "dev": "vite --config vite-demo.config.js",
-    "lib:build": "vite build --config vite-lib.config.js",
-    "lib:publish": "npm run lib:build && npm publish",
-    "demo:build": "vite build --config vite-demo.config.js",
-    "demo:publish": "npm run demo:build && gh-pages -d demo-dist"
+    "dev": "vite --config vite-demo.config.mts",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:browser": "vitest run --project browser",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lib:build": "vite build --config vite-lib.config.mts && vite build --config vite-lib.config.mts --mode umd && vue-tsc -p tsconfig.build.json",
+    "demo:build": "vite build --config vite-demo.config.mts",
+    "prepublishOnly": "npm run lib:build"
   },
   "repository": {
     "type": "git",
@@ -24,7 +44,8 @@
     "vue3",
     "chart",
     "trend chart",
-    "sparkline"
+    "sparkline",
+    "typescript"
   ],
   "author": "dmtrbrl <dmytro.barylo@gmail.com> (https://github.com/dmtrbrl)",
   "license": "MIT",
@@ -33,15 +54,23 @@
   },
   "homepage": "https://dmtrbrl.github.io/vue-trend-chart/",
   "peerDependencies": {
-    "axios": "^0.27.2",
-    "dayjs": "^1.11.5",
-    "popper.js": "^1.16.1",
-    "vue": "^3.2.39",
-    "vue-axios": "^3.4.1"
+    "vue": "^3.3.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.1.0",
-    "gh-pages": "^4.0.0",
-    "vite": "^3.1.0"
+    "@types/node": "^26.6.5",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vitest/browser-playwright": "^5.0.5",
+    "@vitest/coverage-istanbul": "^5.0.5",
+    "@vue/test-utils": "^2.5.1",
+    "@vue/tsconfig": "^0.9.1",
+    "happy-dom": "^21.0.4",
+    "playwright": "^1.64.1",
+    "prettier": "^3.9.10",
+    "sass-embedded": "^1.106.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5",
+    "vue": "^3.5.44",
+    "vue-tsc": "^3.3.13"
   }
 }

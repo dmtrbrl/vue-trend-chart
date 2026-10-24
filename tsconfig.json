@@ -1,0 +1,10 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"],
+    "paths": {
+      "vue-trend-chart": ["./src/index.ts"]
+    }
+  },
+  "include": ["src", "demo/src", "test", "*.config.mts"]
+}

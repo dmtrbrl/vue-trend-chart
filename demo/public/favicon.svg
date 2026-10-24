@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -20 177 160">
+  <defs>
+    <!-- Split one 36-unit stroke at its centerline into two equal 18-unit bands. -->
+    <clipPath id="brand-upper-band">
+      <path
+        d="M.5 35h20c34 0 42 80 60 80 22 0 18-110 60-110h20V-20H.5Z"
+        fill="#fff"
+      />
+    </clipPath>
+  </defs>
+  <g fill="none" stroke-width="36">
+    <path
+      d="M.5 35h20c34 0 42 80 60 80 22 0 18-110 60-110h20"
+      stroke="#39AF77"
+    />
+    <path
+      d="M.5 35h20c34 0 42 80 60 80 22 0 18-110 60-110h20"
+      stroke="#2F4053"
+      clip-path="url(#brand-upper-band)"
+    />
+  </g>
+</svg>

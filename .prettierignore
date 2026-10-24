@@ -1,0 +1,5 @@
+dist
+demo-dist
+package-lock.json
+coverage
+.vitest
