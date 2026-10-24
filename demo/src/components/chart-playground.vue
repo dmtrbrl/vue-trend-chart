@@ -23,6 +23,7 @@ const initial = {
   yLabels: true,
   horizontalLines: true,
   verticalLines: false,
+  gridSpacing: "auto",
   horizontalCount: 4,
   verticalCount: 7,
   yCount: 4,
@@ -86,9 +87,9 @@ const datasets = computed(() =>
 );
 const formatValue = (value: number) =>
   options.formatter === "currency"
-    ? `$${Math.round(value)}`
+    ? `$${Number(value.toFixed(2))}`
     : options.formatter === "percent"
-      ? `${Math.round(value)}%`
+      ? `${Number(value.toFixed(2))}%`
       : Math.round(value * 10) / 10;
 const labels = computed(() => ({
   xLabels: options.xLabels
@@ -102,8 +103,12 @@ const labels = computed(() => ({
 const grid = computed(() => ({
   horizontalLines: options.horizontalLines,
   verticalLines: options.verticalLines,
-  horizontalLinesNumber: options.horizontalCount,
-  verticalLinesNumber: options.verticalCount,
+  horizontalLinesNumber:
+    options.gridSpacing === "auto" && options.yLabels
+      ? undefined
+      : options.horizontalCount,
+  verticalLinesNumber:
+    options.gridSpacing === "auto" ? undefined : options.verticalCount,
 }));
 const bound = (value: string | number) =>
   value === "" || !Number.isFinite(Number(value)) ? undefined : Number(value);
@@ -146,9 +151,9 @@ const generatedCode = computed(() => {
     .join(",\n");
   const formatter =
     options.formatter === "currency"
-      ? '(value: number) => "$" + Math.round(value)'
+      ? '(value: number) => "$" + Number(value.toFixed(2))'
       : options.formatter === "percent"
-        ? '(value: number) => Math.round(value) + "%"'
+        ? '(value: number) => Number(value.toFixed(2)) + "%"'
         : "(value: number) => Math.round(value * 10) / 10";
   const bounds = `${options.min !== "" ? `\n    :min="${Number(options.min)}"` : ""}${options.max !== "" ? `\n    :max="${Number(options.max)}"` : ""}`;
   return `<script setup lang="ts">\nimport { TrendChart, type TrendChartDataset${options.interactive ? ", type TrendChartMouseMoveEvent" : ""} } from "vue-trend-chart";\n\nconst datasets: TrendChartDataset[] = [\n${data}\n];\nconst labels = {\n  xLabels: ${JSON.stringify(labels.value.xLabels)},\n  yLabels: ${labels.value.yLabels},\n  yLabelsTextFormatter: ${formatter},\n};\nconst grid = ${JSON.stringify(grid.value, null, 2)};${options.interactive ? "\nconst onMove = (event: TrendChartMouseMoveEvent | null) => {\n  // Use event.index and event.data to build your own tooltip.\n  console.log(event);\n};" : ""}\n<\/script>\n\n<template>\n  <TrendChart\n    class="my-chart"\n    aria-label="Weekly activity"\n    :datasets="datasets"\n    :labels="labels"\n    :grid="grid"\n    :padding="${options.padding}"${bounds}${options.interactive ? '\n    interactive\n    @mouse-move="onMove"' : ""}\n  />\n</template>\n\n<style>\n.my-chart { width: 100%; height: 300px; }\n.my-chart .series-primary { color: ${selectedColor.value}; }\n.my-chart .series-secondary { color: #b08a50; }\n.my-chart .stroke { stroke: currentColor; stroke-width: 2.5; }\n.my-chart .fill { fill: currentColor; fill-opacity: 0.12; }\n.my-chart .point { fill: white; stroke: currentColor; }\n.my-chart .point.is-active { r: 4; fill: currentColor; }\n.my-chart .labels { font: 12px system-ui; fill: #66766d; }\n.my-chart .active-line { stroke: #9aa99f; stroke-dasharray: 4; }\n</style>`;
@@ -256,7 +261,10 @@ const reset = () => {
               <summary>
                 <span class="mono">@mouse-move</span
                 ><span
-                  >Inspect the event <span aria-hidden="true">↗</span></span
+                  >Inspect the event
+                  <span class="disclosure-chevron" aria-hidden="true"
+                    >⌄</span
+                  ></span
                 >
               </summary>
               <pre>{{ payload }}</pre>
@@ -381,6 +389,13 @@ const reset = () => {
                 <option value="percent">Percentage · 50%</option>
               </select></label
             >
+            <label class="field-stack"
+              ><span>Grid spacing</span
+              ><select v-model="options.gridSpacing">
+                <option value="auto">Automatic</option>
+                <option value="custom">Custom counts</option>
+              </select></label
+            >
             <label class="toggle-row"
               ><span>Horizontal grid</span
               ><input
@@ -391,7 +406,7 @@ const reset = () => {
                 aria-hidden="true"
               ></span
             ></label>
-            <label class="field-row"
+            <label v-if="options.gridSpacing === 'custom'" class="field-row"
               ><span>Grid rows</span
               ><input
                 v-model.number="options.horizontalCount"
@@ -411,7 +426,7 @@ const reset = () => {
                 aria-hidden="true"
               ></span
             ></label>
-            <label class="field-row"
+            <label v-if="options.gridSpacing === 'custom'" class="field-row"
               ><span>Grid columns</span
               ><input
                 v-model.number="options.verticalCount"

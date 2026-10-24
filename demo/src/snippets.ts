@@ -26,7 +26,7 @@ const datasets: TrendChartDataset[] = [{
 </style>`;
 
 export const comparisonCode = `<script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import {
   TrendChart,
   type DataPoint,
@@ -34,6 +34,26 @@ import {
 } from "vue-trend-chart";
 
 const active = ref<TrendChartMouseMoveEvent | null>(null);
+const container = ref<HTMLElement | null>(null);
+const tooltipX = ref(0);
+watch(container, (element, _, onCleanup) => {
+  if (!element) return;
+  const update = () => {
+    const line = element.querySelector<SVGLineElement>(".active-line");
+    const bounds = element.getBoundingClientRect();
+    if (line && bounds.width) {
+      tooltipX.value = (line.getBoundingClientRect().left - bounds.left)
+        * element.clientWidth / bounds.width;
+    }
+  };
+  const observer = new MutationObserver(update);
+  observer.observe(element, {
+    subtree: true, childList: true,
+    attributes: true, attributeFilter: ["x1"],
+  });
+  update();
+  onCleanup(() => observer.disconnect());
+}, { flush: "post" });
 const days = ["Mon", "Tue", "Wed"];
 const datasets = [
   {
@@ -51,7 +71,7 @@ const valueOf = (point: DataPoint) =>
 </script>
 
 <template>
-  <div class="comparison">
+  <div ref="container" class="comparison">
     <TrendChart
       style="height: 200px"
       aria-label="Organic and referral traffic"
@@ -63,7 +83,7 @@ const valueOf = (point: DataPoint) =>
     <div
       v-if="active"
       class="tooltip"
-      :style="{ left: 'clamp(65px, ' + active.index / 2 * 100 + '%, calc(100% - 65px))' }"
+      :style="{ left: 'clamp(65px, ' + tooltipX + 'px, calc(100% - 65px))' }"
     >
       <strong>{{ days[active.index] }}</strong>
       <div>Organic: {{ valueOf(active.data[0]) }}</div>

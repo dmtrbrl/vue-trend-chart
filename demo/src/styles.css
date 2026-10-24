@@ -1,4 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=DM+Mono:wght@400;500&display=swap");
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("./assets/fonts/dm-sans-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/dm-mono-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./assets/fonts/dm-mono-latin-500-normal.woff2") format("woff2");
+}
 
 :root {
   font-family:
@@ -618,6 +638,12 @@ summary::-webkit-details-marker {
 }
 .event-inspector summary > span:first-child {
   color: #58715b;
+}
+.disclosure-chevron {
+  display: inline-block;
+}
+.event-inspector[open] .disclosure-chevron {
+  transform: rotate(180deg);
 }
 .event-inspector pre {
   margin: 0;

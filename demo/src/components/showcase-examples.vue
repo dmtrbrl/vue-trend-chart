@@ -6,6 +6,7 @@ import {
   type TrendChartMouseMoveEvent,
 } from "vue-trend-chart";
 import CodeBlock from "./code-block.vue";
+import { useChartTooltip } from "../use-chart-tooltip";
 import {
   comparisonCode,
   streamCode,
@@ -21,6 +22,8 @@ const organicVisible = ref(true);
 const referralVisible = ref(true);
 const inspectedDay = ref(6);
 const comparisonHovered = ref(false);
+const comparisonChart = ref<HTMLElement | null>(null);
+const comparisonX = useChartTooltip(comparisonChart);
 const comparisonData = computed(() => [
   ...(organicVisible.value
     ? [
@@ -150,7 +153,7 @@ const chartWidth = ref(100);
             <strong>{{ referral[inspectedDay] ?? "—" }}</strong></span
           >
         </div>
-        <div class="example-chart comparison-chart">
+        <div ref="comparisonChart" class="example-chart comparison-chart">
           <TrendChart
             class="styled-chart"
             aria-label="Sample organic and referral traffic by day"
@@ -164,7 +167,7 @@ const chartWidth = ref(100);
             v-if="comparisonHovered"
             class="comparison-tooltip"
             :style="{
-              left: `clamp(70px, ${(inspectedDay / 6) * 100}%, calc(100% - 70px))`,
+              left: `clamp(70px, ${comparisonX}px, calc(100% - 70px))`,
             }"
             aria-hidden="true"
           >
