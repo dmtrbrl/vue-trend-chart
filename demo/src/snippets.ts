@@ -191,8 +191,8 @@ import { TrendChart } from "vue-trend-chart";
 <template>
   <div class="chart-container">
     <TrendChart
-      aria-label="Quarterly progress, with April reserved for the next value"
-      :datasets="[{ data: [24, 58, 44], fill: true, smooth: true }]"
+      aria-label="Sample monthly progress from January through April"
+      :datasets="[{ data: [24, 58, 44, 72], fill: true, smooth: true }]"
       :labels="{ xLabels: ['Jan', 'Feb', 'Mar', 'Apr'], yLabels: 3 }"
       padding="8 12"
     />

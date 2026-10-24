@@ -137,7 +137,7 @@ const chartWidth = ref(100);
         <h2 id="examples-title">Examples</h2>
       </div>
     </div>
-    <div class="examples-grid">
+    <div class="examples-list">
       <article class="example-card">
         <div class="example-heading">
           <h3>Multiple series</h3>
@@ -410,10 +410,7 @@ const chartWidth = ref(100);
     <article class="responsive-example">
       <div class="responsive-copy">
         <h3>Responsive sizing</h3>
-        <p>
-          Width follows the container. Extra labels reserve space for future
-          data.
-        </p>
+        <p>Resize the container to see the chart adapt.</p>
         <label class="resize-control"
           >Container width <output>{{ chartWidth }}%</output
           ><input
@@ -423,23 +420,19 @@ const chartWidth = ref(100);
             min="50"
             max="100"
         /></label>
-        <details class="responsive-source">
-          <summary>View example code</summary>
-          <CodeBlock :code="responsiveCode" filename="ResponsiveChart.vue" />
-        </details>
       </div>
       <div class="resize-stage">
         <div class="resizable-chart" :style="{ width: `${chartWidth}%` }">
           <div class="resize-caption">
-            <span>Quarterly progress</span><span aria-hidden="true">↔</span>
+            <span>Monthly progress</span><span aria-hidden="true">↔</span>
           </div>
           <div class="responsive-chart">
             <TrendChart
               class="styled-chart"
-              aria-label="Quarterly progress with April reserved for future data"
+              aria-label="Sample monthly progress from January through April"
               :datasets="[
                 {
-                  data: [24, 58, 44],
+                  data: [24, 58, 44, 72],
                   fill: true,
                   smooth: true,
                   className: 'series-primary',
@@ -452,6 +445,10 @@ const chartWidth = ref(100);
           </div>
         </div>
       </div>
+      <details class="example-source">
+        <summary>View example code <span aria-hidden="true">＋</span></summary>
+        <CodeBlock :code="responsiveCode" filename="ResponsiveChart.vue" />
+      </details>
     </article>
   </section>
 </template>
