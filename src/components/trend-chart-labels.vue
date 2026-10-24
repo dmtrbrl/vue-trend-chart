@@ -1,103 +1,165 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-import getStep from "../helpers/getStep";
-import type { Boundary } from "../types";
+import roundToStep from "../helpers/roundToStep";
+import type { Boundary, Padding, YTick } from "../types";
 
 defineOptions({ name: "TrendChartLabels" });
 
-const props = withDefaults(
-  defineProps<{
-    boundary: Boundary;
-    minValue?: number;
-    maxValue?: number;
-    xLabels?: Array<string | number>;
-    yLabels?: number;
-    yLabelsTextFormatter?: (value: number) => string | number;
-  }>(),
-  {
-    minValue: 0,
-    maxValue: 0,
-    yLabelsTextFormatter: (value: number) => value,
-  },
-);
+const props = defineProps<{
+  boundary: Boundary;
+  // Positions of all x slots; label i is drawn at slot i
+  xCoords: number[];
+  yTicks: YTick[];
+  xLabels?: Array<string | number>;
+  yLabelsTextFormatter?: (value: number) => string | number;
+}>();
 
 const emit = defineEmits<{
-  render: [el: SVGGElement];
+  // How far labels reach beyond the boundary on each side
+  measure: [overflow: Padding];
 }>();
 
 const root = ref<SVGGElement | null>(null);
-const xLabelsEl = ref<SVGGElement | null>(null);
-const yLabelsEl = ref<SVGGElement | null>(null);
-const xLabelHeight = ref(0);
-const yLabelHeight = ref(0);
 
-const hasXLabels = computed(() => !!props.xLabels?.length);
-const hasYLabels = computed(() => !!props.yLabels && props.yLabels > 0);
+const xLabels = computed(() =>
+  (props.xLabels ?? []).slice(0, props.xCoords.length).map((text, i) => ({
+    text,
+    transform: `translate(${props.xCoords[i]}, ${props.boundary.maxY})`,
+  })),
+);
 
-const xLabelsParams = computed(() => {
-  const { boundary, xLabels = [] } = props;
-  const step = getStep(boundary.maxX - boundary.minX, xLabels.length);
-  return xLabels.map((label, i) => ({
-    text: label,
-    transform: `translate(${boundary.minX + step * i}, ${boundary.maxY})`,
+const yLabels = computed(() => {
+  const { yTicks, yLabelsTextFormatter } = props;
+  const step = yTicks.length > 1 ? yTicks[1].value - yTicks[0].value : 0;
+  const format = yLabelsTextFormatter ?? roundToStep(step);
+  return yTicks.map(({ y, value }) => ({
+    text: format(value),
+    transform: `translate(${props.boundary.minX}, ${y})`,
   }));
 });
 
-const yLabelsParams = computed(() => {
-  const { boundary, minValue, maxValue, yLabels = 0 } = props;
-  const step = getStep(boundary.maxY - boundary.minY, yLabels);
-  const valueStep = getStep(maxValue - minValue, yLabels);
-  return Array.from({ length: yLabels }, (_, i) => ({
-    text: props.yLabelsTextFormatter(minValue + valueStep * i),
-    transform: `translate(${boundary.minX}, ${boundary.maxY - step * i})`,
-  }));
+// Label sizes only depend on their text (and CSS), not on where they are
+const textKey = computed(() =>
+  [...xLabels.value, ...yLabels.value].map((l) => l.text).join("\u0000"),
+);
+
+const getBox = (el: Element) => {
+  try {
+    return (el as SVGGraphicsElement).getBBox();
+  } catch {
+    // Firefox throws for elements that aren't rendered
+    return null;
+  }
+};
+
+let measured: Padding = { top: 0, right: 0, bottom: 0, left: 0 };
+
+// Each label is measured in its own coordinates, relative to its anchor on
+// the boundary. The result never depends on the boundary itself, so fitting
+// the boundary to it can't feed back into the next measurement.
+const measure = () => {
+  const overflow: Padding = { top: 0, right: 0, bottom: 0, left: 0 };
+  const reach = (side: keyof Padding, value: number) => {
+    if (value > overflow[side]) overflow[side] = value;
+  };
+
+  const lastSlot = props.xCoords.length - 1;
+  root.value?.querySelectorAll(".x-labels .label").forEach((el, i) => {
+    const box = getBox(el);
+    if (!box) return;
+    reach("bottom", box.y + box.height);
+    if (i === 0) reach("left", -box.x);
+    if (i === lastSlot) reach("right", box.x + box.width);
+  });
+
+  const yEls = root.value?.querySelectorAll(".y-labels .label") ?? [];
+  yEls.forEach((el, i) => {
+    const box = getBox(el);
+    if (!box) return;
+    reach("left", -box.x);
+    if (i === 0) reach("bottom", box.y + box.height);
+    if (i === yEls.length - 1) reach("top", -box.y);
+  });
+
+  // Ignore sub-pixel noise
+  const changed = (Object.keys(overflow) as Array<keyof Padding>).some(
+    (side) => Math.abs(overflow[side] - measured[side]) > 0.5,
+  );
+  if (!changed) return;
+  measured = overflow;
+  emit("measure", overflow);
+};
+
+// Labels also change size without changing text: CSS updates, web fonts
+// loading late, zoom. Each label is observed on its own: its size doesn't
+// change when the boundary moves it, so refitting can't notify again.
+let resizeObserver: ResizeObserver | null = null;
+const observed = new Set<Element>();
+
+const observeLabels = () => {
+  if (!resizeObserver) return;
+  const labels = new Set(root.value?.querySelectorAll(".label") ?? []);
+  observed.forEach((el) => {
+    if (labels.has(el)) return;
+    resizeObserver!.unobserve(el);
+    observed.delete(el);
+  });
+  labels.forEach((el) => {
+    if (observed.has(el)) return;
+    resizeObserver!.observe(el);
+    observed.add(el);
+  });
+};
+
+watch(
+  textKey,
+  () => {
+    observeLabels();
+    measure();
+  },
+  { flush: "post" },
+);
+
+onMounted(() => {
+  if (typeof ResizeObserver === "undefined") return measure();
+  // Its first callback does the initial measurement
+  resizeObserver = new ResizeObserver(() => measure());
+  observeLabels();
 });
 
-// Label text height depends on the user's CSS, so measure the rendered text
-const measureLabels = () => {
-  const measure = (el: SVGGElement | null) =>
-    el?.querySelector("text")?.getBoundingClientRect().height ?? 0;
-  xLabelHeight.value = measure(xLabelsEl.value);
-  yLabelHeight.value = measure(yLabelsEl.value);
-};
-
-// Let the chart fit its boundary around the rendered labels
-const onRender = () => {
-  measureLabels();
-  if (root.value) emit("render", root.value);
-};
-
-onMounted(onRender);
-onUpdated(onRender);
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
+});
 </script>
 
 <template>
-  <g v-if="hasXLabels || hasYLabels" ref="root">
-    <g v-if="hasXLabels" ref="xLabelsEl" class="x-labels">
+  <g v-if="xLabels.length || yLabels.length" ref="root">
+    <g v-if="xLabels.length" class="x-labels">
       <g
-        v-for="(label, i) in xLabelsParams"
+        v-for="(label, i) in xLabels"
         :key="i"
         class="label"
         :transform="label.transform"
       >
-        <text :dy="xLabelHeight + 5" text-anchor="middle">{{
-          label.text
-        }}</text>
-        <line stroke="rgba(0,0,0,0.1)" y2="5" />
+        <text y="5" dy="1.2em" text-anchor="middle">{{ label.text }}</text>
+        <line stroke="rgba(0,0,0,0.1)" y2="5" shape-rendering="crispEdges" />
       </g>
     </g>
-    <g v-if="hasYLabels" ref="yLabelsEl" class="y-labels">
+    <g v-if="yLabels.length" class="y-labels">
       <g
-        v-for="(label, i) in yLabelsParams"
+        v-for="(label, i) in yLabels"
         :key="i"
         class="label"
         :transform="label.transform"
       >
-        <text dx="-10" :dy="yLabelHeight / 4" text-anchor="end">
-          {{ label.text }}
-        </text>
-        <line stroke="rgba(0,0,0,0.1)" x1="0" x2="-5" />
+        <text dx="-10" dy="0.32em" text-anchor="end">{{ label.text }}</text>
+        <line
+          stroke="rgba(0,0,0,0.1)"
+          x1="0"
+          x2="-5"
+          shape-rendering="crispEdges"
+        />
       </g>
     </g>
   </g>

@@ -1,26 +1,26 @@
-import type { Boundary, DataPoint, Point } from "../types";
-import getStep from "./getStep";
+import type { Boundary, DataPoint, Domain, Point } from "../types";
 import getValue from "./getValue";
+
+// Nudging the end points keeps a flat line's bounding box from having zero
+// height, which would hide gradient strokes/fills. Large enough to survive
+// the float32 precision browsers use for SVG geometry.
+const FLAT_NUDGE = 0.01;
 
 export default (
   data: DataPoint[],
-  boundary: Boundary,
-  max: number,
-  min: number,
-  maxAmount: number,
-): Point[] => {
-  // Small offsets keep flat lines from having a zero-height bounding box,
-  // which would break gradient fills/strokes
-  const minValue = min - 0.001;
-  const gridX = getStep(boundary.maxX - boundary.minX, maxAmount);
-  const gridY = (boundary.maxY - boundary.minY) / (max + 0.001 - minValue);
-
-  return data.map(getValue).map((value, index) => ({
-    x: index * gridX + boundary.minX,
-    y:
-      boundary.maxY -
-      (value - minValue) * gridY +
-      (index === maxAmount - 1 ? 0.00001 : 0) -
-      (index === 0 ? 0.00001 : 0),
-  }));
+  xCoords: number[],
+  domain: Domain,
+  { minY, maxY }: Boundary,
+): Array<Point | null> => {
+  const scale = (maxY - minY) / (domain.max - domain.min);
+  const last = data.length - 1;
+  return data.map((item, index) => {
+    const value = getValue(item);
+    if (!Number.isFinite(value)) return null;
+    const nudge = index === 0 ? -FLAT_NUDGE : index === last ? FLAT_NUDGE : 0;
+    return {
+      x: xCoords[index],
+      y: maxY - (value - domain.min) * scale + nudge,
+    };
+  });
 };

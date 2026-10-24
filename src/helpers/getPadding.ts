@@ -1,7 +1,7 @@
 import type { Padding } from "../types";
 import parsePadding from "./parsePadding";
 
-export default (padding: string): Padding => {
+export default (padding: string | number): Padding => {
   const arr = parsePadding(padding);
   switch (arr.length) {
     case 4:

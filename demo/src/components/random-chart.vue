@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import { nextTick, onBeforeUnmount, shallowRef, useTemplateRef } from "vue";
 import {
   autoUpdate,
   computePosition,
@@ -85,14 +85,20 @@ const labels = {
 
 const root = useTemplateRef<HTMLDivElement>("root");
 const tooltip = useTemplateRef<HTMLDivElement>("tooltip");
-const tooltipData = ref<TrendChartMouseMoveEvent | null>(null);
+const tooltipData = shallowRef<TrendChartMouseMoveEvent | null>(null);
 
-let chart: SVGSVGElement | null | undefined;
-let activeLine: SVGLineElement | null | undefined;
 let stopAutoUpdate: (() => void) | undefined;
 
+// Looked up on every update rather than once: the chart's elements are
+// replaced whenever it's re-created (v-if, a key change, hot reload)
+const getElements = () => {
+  const chart = root.value?.querySelector<SVGSVGElement>(".random-chart");
+  const activeLine = chart?.querySelector<SVGLineElement>(".active-line");
+  return { chart, activeLine, floating: tooltip.value };
+};
+
 const updatePosition = async () => {
-  const floating = tooltip.value;
+  const { chart, activeLine, floating } = getElements();
   if (!chart || !activeLine || !floating) return;
   const { x, y } = await computePosition(activeLine, floating, {
     placement: "right",
@@ -101,21 +107,22 @@ const updatePosition = async () => {
   Object.assign(floating.style, { left: `${x}px`, top: `${y}px` });
 };
 
-onMounted(() => {
-  chart = root.value?.querySelector<SVGSVGElement>(".random-chart");
-  activeLine = chart?.querySelector<SVGLineElement>(".active-line");
-  if (activeLine && tooltip.value)
-    stopAutoUpdate = autoUpdate(activeLine, tooltip.value, updatePosition);
-});
-
-onBeforeUnmount(() => stopAutoUpdate?.());
-
-// The active line moves via SVG attributes, which autoUpdate doesn't observe
+// Position the tooltip while it's shown. The active line moves via SVG
+// attributes, which autoUpdate doesn't observe, so restart it on each move.
 const onMouseMove = async (params: TrendChartMouseMoveEvent | null) => {
   tooltipData.value = params;
+  stopAutoUpdate?.();
+  stopAutoUpdate = undefined;
+  if (!params) return;
+  // Wait until the tooltip is shown and the active line has moved
   await nextTick();
-  updatePosition();
+  if (tooltipData.value !== params) return;
+  const { activeLine, floating } = getElements();
+  if (activeLine && floating)
+    stopAutoUpdate = autoUpdate(activeLine, floating, updatePosition);
 };
+
+onBeforeUnmount(() => stopAutoUpdate?.());
 </script>
 
 <style lang="scss">

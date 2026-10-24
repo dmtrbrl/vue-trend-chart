@@ -10,10 +10,11 @@ import {
 
 import validatePadding from "../helpers/validatePadding";
 import getPadding from "../helpers/getPadding";
-import getStep from "../helpers/getStep";
-import getValue from "../helpers/getValue";
+import getDomain from "../helpers/getDomain";
+import getEvenlySpaced from "../helpers/getEvenlySpaced";
+import toCount from "../helpers/toCount";
 import type {
-  ActiveLineParams,
+  Boundary,
   Padding,
   TrendChartDataset,
   TrendChartGridOptions,
@@ -41,15 +42,15 @@ const props = defineProps({
     type: Object as PropType<TrendChartLabelsOptions | null>,
   },
   max: {
-    type: Number,
+    type: Number as PropType<number | null>,
   },
   min: {
-    type: Number,
+    type: Number as PropType<number | null>,
   },
   padding: {
     default: "5",
-    type: String,
-    validator: (value: string) => validatePadding(value),
+    type: [String, Number],
+    validator: (value: string | number) => validatePadding(value),
   },
   interactive: {
     default: false,
@@ -64,38 +65,82 @@ const emit = defineEmits<{
 const noOverflow = (): Padding => ({ top: 0, right: 0, bottom: 0, left: 0 });
 
 const chart = ref<SVGSVGElement | null>(null);
-const width = ref(0);
-const height = ref(0);
+// The default size of an svg, used until measured (e.g. when rendered on the
+// server) so the chart never draws inverted geometry
+const width = ref(300);
+const height = ref(150);
 const labelsOverflow = ref<Padding>(noOverflow());
 const activeIndex = ref<number | null>(null);
 
 const paddingObject = computed(() => getPadding(props.padding || "0"));
 
-const boundary = computed(() => {
+const boundary = computed<Boundary>(() => {
   const padding = paddingObject.value;
   const overflow = labelsOverflow.value;
+  const minX = padding.left + overflow.left;
+  const minY = padding.top + overflow.top;
   return {
-    minX: padding.left + overflow.left,
-    minY: padding.top + overflow.top,
-    maxX: width.value - padding.right - overflow.right,
-    maxY: height.value - padding.bottom - overflow.bottom,
+    minX,
+    minY,
+    // Small charts collapse to a line instead of turning inside out
+    maxX: Math.max(minX, width.value - padding.right - overflow.right),
+    maxY: Math.max(minY, height.value - padding.bottom - overflow.bottom),
   };
 });
 
-const params = computed(() => {
-  let maxValue = -Infinity;
-  let minValue = Infinity;
-  let maxAmount = 0;
-  props.datasets.forEach((dataset) => {
-    const values = dataset.data.map(getValue);
-    if (!values.length) return;
-    maxValue = Math.max(maxValue, ...values);
-    minValue = Math.min(minValue, ...values);
-    maxAmount = Math.max(maxAmount, values.length);
-  });
-  if (props.max !== undefined && props.max > maxValue) maxValue = props.max;
-  if (props.min !== undefined && props.min < minValue) minValue = props.min;
-  return { maxValue, minValue, maxAmount };
+const domain = computed(() => getDomain(props.datasets, props.min, props.max));
+
+const maxAmount = computed(() =>
+  props.datasets.reduce((max, { data }) => Math.max(max, data.length), 0),
+);
+
+const xLabelsCount = computed(() => props.labels?.xLabels?.length ?? 0);
+
+// Evenly spaced x positions. Point i and x label i share slot i; labels can
+// reserve slots for data that isn't there yet.
+const slotXs = computed(() => {
+  const { minX, maxX } = boundary.value;
+  return getEvenlySpaced(
+    minX,
+    maxX,
+    Math.max(maxAmount.value, xLabelsCount.value),
+  );
+});
+
+const yTicks = computed(() => {
+  const { minY, maxY } = boundary.value;
+  const count = toCount(props.labels?.yLabels);
+  const ys = getEvenlySpaced(maxY, minY, count);
+  const values = getEvenlySpaced(domain.value.min, domain.value.max, count);
+  return ys.map((y, i) => ({ y, value: values[i] }));
+});
+
+const gridXs = computed(() => {
+  const { verticalLines, verticalLinesNumber } = props.grid ?? {};
+  if (!verticalLines) return [];
+  if (verticalLinesNumber != null) {
+    const { minX, maxX } = boundary.value;
+    return getEvenlySpaced(minX, maxX, toCount(verticalLinesNumber));
+  }
+  return xLabelsCount.value
+    ? slotXs.value.slice(0, xLabelsCount.value)
+    : slotXs.value;
+});
+
+const gridYs = computed(() => {
+  const { horizontalLines, horizontalLinesNumber } = props.grid ?? {};
+  if (!horizontalLines) return [];
+  if (horizontalLinesNumber == null) return yTicks.value.map(({ y }) => y);
+  const { minY, maxY } = boundary.value;
+  return getEvenlySpaced(maxY, minY, toCount(horizontalLinesNumber));
+});
+
+const curveProps = (dataset: TrendChartDataset) => ({
+  ...dataset,
+  boundary: boundary.value,
+  domain: domain.value,
+  xCoords: slotXs.value,
+  activeIndex: activeEvent.value?.index ?? null,
 });
 
 const chartOverlayParams = computed(() => {
@@ -103,115 +148,131 @@ const chartOverlayParams = computed(() => {
   return {
     x: minX,
     y: minY,
-    width: Math.max(maxX - minX, 0),
-    height: Math.max(maxY - minY, 0),
+    width: maxX - minX,
+    height: maxY - minY,
     opacity: 0,
   };
 });
 
-const chartAxesXCoords = computed(() => {
-  const { minX, maxX } = boundary.value;
-  const { maxAmount } = params.value;
-  const step = getStep(maxX - minX, maxAmount);
-  return Array.from({ length: maxAmount }, (_, i) => step * i + minX);
-});
-
-const activeLineParams = computed<ActiveLineParams | null>(() =>
-  activeIndex.value === null ? null : { index: activeIndex.value },
-);
-
-const activeLineX = computed(() =>
-  activeIndex.value === null
-    ? null
-    : (chartAxesXCoords.value[activeIndex.value] ?? null),
-);
-
 const hasLabels = computed(
   () =>
     !!props.labels &&
-    (!!props.labels.xLabels?.length || (props.labels.yLabels ?? 0) > 0),
+    (!!xLabelsCount.value || toCount(props.labels.yLabels) > 0),
 );
 
-const setSize = () => {
-  if (!chart.value) return;
-  const rect = chart.value.getBoundingClientRect();
-  width.value = rect.width;
-  height.value = rect.height;
+const onLabelsMeasure = (overflow: Padding) => {
+  labelsOverflow.value = overflow;
 };
-
-// Grow the boundary so that labels drawn outside of it stay inside the svg.
-// Called after every labels render. How far labels stick out of the boundary
-// doesn't depend on the overflow itself, so repeated calls converge.
-const fitLabels = (labelsEl: SVGGElement) => {
-  if (!chart.value) return;
-  const chartRect = chart.value.getBoundingClientRect();
-  const labelsRect = labelsEl.getBoundingClientRect();
-  const { minX, minY, maxX, maxY } = boundary.value;
-  const prev = labelsOverflow.value;
-  // Labels hidden with CSS have an empty rect that doesn't follow the boundary
-  const isRendered = labelsRect.width > 0 || labelsRect.height > 0;
-  const next = isRendered
-    ? {
-        top: Math.max(chartRect.top + minY - labelsRect.top, 0),
-        right: Math.max(labelsRect.right - chartRect.left - maxX, 0),
-        bottom: Math.max(labelsRect.bottom - chartRect.top - maxY, 0),
-        left: Math.max(chartRect.left + minX - labelsRect.left, 0),
-      }
-    : noOverflow();
-  // Ignore sub-pixel noise to avoid render loops
-  const changed = (Object.keys(next) as Array<keyof Padding>).some(
-    (side) => Math.abs(next[side] - prev[side]) > 0.5,
-  );
-  if (changed) labelsOverflow.value = next;
-};
-
-const getNearestIndex = (x: number) =>
-  chartAxesXCoords.value.reduce<number | null>(
-    (nearest, coord, i, coords) =>
-      nearest === null || Math.abs(coord - x) < Math.abs(coords[nearest] - x)
-        ? i
-        : nearest,
-    null,
-  );
-
-const onMouseMove = (e: MouseEvent) => {
-  if (!chart.value) return;
-  const rect = chart.value.getBoundingClientRect();
-  activeIndex.value = getNearestIndex(e.clientX - rect.left);
-};
-
-const onMouseOut = () => {
-  activeIndex.value = null;
-};
-
-watch(activeIndex, (index) => {
-  emit(
-    "mouse-move",
-    index === null
-      ? null
-      : { index, data: props.datasets.map((dataset) => dataset.data[index]) },
-  );
-});
 
 watch(hasLabels, (value) => {
   if (!value) labelsOverflow.value = noOverflow();
 });
 
+// Size comes from the svg's own content box: unlike getBoundingClientRect it
+// isn't affected by transforms, zoom, borders or padding
+const setSize = (newWidth: number, newHeight: number) => {
+  // Hidden charts keep their last size
+  if (!newWidth || !newHeight) return;
+  width.value = newWidth;
+  height.value = newHeight;
+};
+
+const measureSize = () => {
+  if (!chart.value) return;
+  const style = getComputedStyle(chart.value);
+  const px = (value: string) => Number.parseFloat(value) || 0;
+  setSize(
+    chart.value.clientWidth - px(style.paddingLeft) - px(style.paddingRight),
+    chart.value.clientHeight - px(style.paddingTop) - px(style.paddingBottom),
+  );
+};
+
+// Maps a pointer position to chart coordinates. Uses the svg's on-screen box
+// rather than getScreenCTM(), which ignores CSS zoom in Firefox.
+const toChartX = (e: PointerEvent) => {
+  const svg = chart.value;
+  if (!svg) return null;
+  const rect = svg.getBoundingClientRect();
+  const style = getComputedStyle(svg);
+  const px = (value: string) => Number.parseFloat(value) || 0;
+  const borderLeft = px(style.borderLeftWidth);
+  // Scale from transforms and zoom: on-screen width vs. own CSS width
+  const ownWidth =
+    (svg.clientWidth || 0) + borderLeft + px(style.borderRightWidth);
+  const scale = ownWidth ? rect.width / ownWidth : 1;
+  return (e.clientX - rect.left) / scale - borderLeft - px(style.paddingLeft);
+};
+
+const getNearestIndex = (x: number) =>
+  slotXs.value
+    .slice(0, maxAmount.value)
+    .reduce<number | null>(
+      (nearest, coord, i, coords) =>
+        nearest === null || Math.abs(coord - x) < Math.abs(coords[nearest] - x)
+          ? i
+          : nearest,
+      null,
+    );
+
+const onPointerMove = (e: PointerEvent) => {
+  const x = toChartX(e);
+  if (x !== null) activeIndex.value = getNearestIndex(x);
+};
+
+const onPointerLeave = () => {
+  activeIndex.value = null;
+};
+
+watch(
+  () => props.interactive,
+  (interactive) => {
+    if (!interactive) activeIndex.value = null;
+  },
+);
+
+// What `mouse-move` reports; recomputed when the hovered data changes too
+const activeEvent = computed<TrendChartMouseMoveEvent | null>(() => {
+  const index = activeIndex.value;
+  if (index === null || index >= maxAmount.value) return null;
+  return { index, data: props.datasets.map((dataset) => dataset.data[index]) };
+});
+
+const isSameEvent = (
+  a: TrendChartMouseMoveEvent | null,
+  b: TrendChartMouseMoveEvent | null | undefined,
+) =>
+  a === b ||
+  (!!a &&
+    !!b &&
+    a.index === b.index &&
+    a.data.length === b.data.length &&
+    a.data.every((item, i) => item === b.data[i]));
+
+watch(activeEvent, (event, prev) => {
+  if (!isSameEvent(event, prev)) emit("mouse-move", event);
+});
+
+const activeLineX = computed(() =>
+  activeEvent.value ? slotXs.value[activeEvent.value.index] : null,
+);
+
 let resizeObserver: ResizeObserver | null = null;
 
 onMounted(() => {
-  setSize();
   if (typeof ResizeObserver !== "undefined" && chart.value) {
-    resizeObserver = new ResizeObserver(setSize);
+    resizeObserver = new ResizeObserver(([entry]) =>
+      setSize(entry.contentRect.width, entry.contentRect.height),
+    );
     resizeObserver.observe(chart.value);
   } else {
-    window.addEventListener("resize", setSize);
+    measureSize();
+    window.addEventListener("resize", measureSize);
   }
 });
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
-  window.removeEventListener("resize", setSize);
+  window.removeEventListener("resize", measureSize);
 });
 </script>
 
@@ -219,6 +280,7 @@ onBeforeUnmount(() => {
   <svg
     ref="chart"
     class="vtc"
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     width="100%"
     height="100%"
@@ -226,12 +288,8 @@ onBeforeUnmount(() => {
     <TrendChartGrid
       v-if="grid"
       class="grid"
-      :vertical-lines="grid.verticalLines"
-      :vertical-lines-number="grid.verticalLinesNumber || params.maxAmount"
-      :horizontal-lines="grid.horizontalLines"
-      :horizontal-lines-number="
-        grid.horizontalLinesNumber || labels?.yLabels || 0
-      "
+      :x-coords="gridXs"
+      :y-coords="gridYs"
       :boundary="boundary"
     />
     <line
@@ -242,33 +300,33 @@ onBeforeUnmount(() => {
       :y1="boundary.minY"
       :y2="boundary.maxY"
       stroke="black"
+      shape-rendering="crispEdges"
       :visibility="activeLineX === null ? 'hidden' : 'visible'"
     />
     <TrendChartLabels
       v-if="labels"
       class="labels"
-      v-bind="labels"
+      :x-labels="labels.xLabels"
+      :y-labels-text-formatter="labels.yLabelsTextFormatter"
+      :x-coords="slotXs"
+      :y-ticks="yTicks"
       :boundary="boundary"
-      :min-value="params.minValue"
-      :max-value="params.maxValue"
-      @render="fitLabels"
+      @measure="onLabelsMeasure"
     />
     <TrendChartCurve
       v-for="(dataset, i) in datasets"
       :key="i"
       class="curve"
-      v-bind="dataset"
-      :boundary="boundary"
-      :min-value="params.minValue"
-      :max-value="params.maxValue"
-      :max-amount="params.maxAmount"
-      :active-line-params="activeLineParams"
+      v-bind="curveProps(dataset)"
     />
     <rect
       v-if="interactive"
       v-bind="chartOverlayParams"
-      @mousemove="onMouseMove"
-      @mouseout="onMouseOut"
+      style="touch-action: pan-y"
+      @pointermove="onPointerMove"
+      @pointerdown="onPointerMove"
+      @pointerleave="onPointerLeave"
+      @pointercancel="onPointerLeave"
     />
   </svg>
 </template>

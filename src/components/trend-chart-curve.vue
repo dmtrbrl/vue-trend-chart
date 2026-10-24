@@ -3,17 +3,16 @@ import { computed } from "vue";
 
 import genPoints from "../helpers/genPoints";
 import genPath from "../helpers/genPath";
-import type { ActiveLineParams, Boundary, DataPoint } from "../types";
+import type { Boundary, DataPoint, Domain } from "../types";
 
 defineOptions({ name: "TrendChartCurve" });
 
 const props = withDefaults(
   defineProps<{
     boundary: Boundary;
-    minValue: number;
-    maxValue: number;
-    maxAmount: number;
-    activeLineParams?: ActiveLineParams | null;
+    domain: Domain;
+    xCoords: number[];
+    activeIndex?: number | null;
     data: DataPoint[];
     className?: string;
     smooth?: boolean;
@@ -22,7 +21,7 @@ const props = withDefaults(
     showPoints?: boolean;
   }>(),
   {
-    activeLineParams: null,
+    activeIndex: null,
     smooth: false,
     stroke: true,
     fill: false,
@@ -31,13 +30,7 @@ const props = withDefaults(
 );
 
 const points = computed(() =>
-  genPoints(
-    props.data,
-    props.boundary,
-    props.maxValue,
-    props.minValue,
-    props.maxAmount,
-  ),
+  genPoints(props.data, props.xCoords, props.domain, props.boundary),
 );
 
 const paths = computed(() =>
@@ -61,17 +54,18 @@ const paths = computed(() =>
       stroke="black"
     />
     <g v-if="showPoints" class="points">
-      <circle
-        v-for="(point, i) in points"
-        :key="i"
-        class="point"
-        :class="{ 'is-active': activeLineParams?.index === i }"
-        :cx="point.x"
-        :cy="point.y"
-        r="2"
-        stroke="#000000"
-        stroke-width="1"
-      />
+      <template v-for="(point, i) in points" :key="i">
+        <circle
+          v-if="point"
+          class="point"
+          :class="{ 'is-active': activeIndex === i }"
+          :cx="point.x"
+          :cy="point.y"
+          r="2"
+          stroke="#000000"
+          stroke-width="1"
+        />
+      </template>
     </g>
   </g>
 </template>

@@ -1,6 +1,8 @@
-// Objects can carry extra fields for use in `mouse-move` handlers. The `any`
-// index signature lets user-defined interfaces be assigned (`unknown` doesn't).
-export type DataPoint = number | { value: number; [key: string]: any };
+// `null` values are drawn as gaps. Objects can carry extra fields for use in
+// `mouse-move` handlers. The `any` index signature lets user-defined
+// interfaces be assigned (`unknown` doesn't).
+export type DataPoint =
+  number | null | { value: number | null; [key: string]: any };
 
 export interface TrendChartDataset {
   data: DataPoint[];
@@ -30,10 +32,6 @@ export interface TrendChartMouseMoveEvent {
   data: Array<DataPoint | undefined>;
 }
 
-export interface ActiveLineParams {
-  index: number;
-}
-
 export interface Boundary {
   minX: number;
   minY: number;
@@ -46,6 +44,16 @@ export interface Padding {
   right: number;
   bottom: number;
   left: number;
+}
+
+export interface Domain {
+  min: number;
+  max: number;
+}
+
+export interface YTick {
+  y: number;
+  value: number;
 }
 
 export interface Point {
