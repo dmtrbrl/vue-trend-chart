@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     coverage: {
-      provider: "v8",
+      provider: "istanbul",
       include: ["src/**"],
       exclude: ["src/umd.ts"],
     },

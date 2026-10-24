@@ -5,11 +5,13 @@
 ---
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Vue%202-v0.15.3-green.svg" /> <img src="https://img.shields.io/badge/Vue%203-v^0.17.x-green.svg" />
+  <a href="https://www.npmjs.com/package/vue-trend-chart"><img src="https://img.shields.io/npm/v/vue-trend-chart.svg" alt="npm version" /></a>
+  <a href="https://github.com/dmtrbrl/vue-trend-chart/actions/workflows/ci.yml"><img src="https://github.com/dmtrbrl/vue-trend-chart/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/Vue%203-v1.x-green.svg" alt="Vue 3: v1.x" /> <img src="https://img.shields.io/badge/Vue%202-v0.15.3-green.svg" alt="Vue 2: v0.15.3" />
 </div>
 <br/>
 <div align="center">
-  <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a>
+  <a href="https://dmtrbrl.github.io/vue-trend-chart/">Live Demo</a> · <a href="CHANGELOG.md">Changelog</a>
 </div>
 
 ## :cd: Installation
@@ -329,12 +331,15 @@ npm run test:unit  # fast unit tests (happy-dom)
 npm run test:browser  # layout-dependent tests in headless Chromium, Firefox and WebKit
 npm run test:coverage
 npm run typecheck  # type-check library, demo and tests
+npm run format     # format with Prettier (CI runs format:check)
 npm run lib:build  # build dist/ (ESM, UMD and type definitions)
 ```
 
+Releases are published to npm from CI: see [RELEASING.md](RELEASING.md).
+
 ## :two_hearts: Contributing
 
-Pull requests are welcome!
+Pull requests are welcome! CI checks formatting, types, both builds and the tests; run `npm run format` before committing. For user-facing changes, add a line under `## [Unreleased]` in [CHANGELOG.md](CHANGELOG.md).
 
 ## :lock: License
 

@@ -1,7 +1,7 @@
 {
   "name": "vue-trend-chart",
   "productName": "Vue Trend Chart",
-  "version": "0.17.0",
+  "version": "1.0.0",
   "description": "Trend charts for Vue.js",
   "main": "dist/vue-trend-chart.umd.js",
   "module": "dist/vue-trend-chart.mjs",
@@ -30,10 +30,10 @@
     "test:watch": "vitest",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lib:build": "vite build --config vite-lib.config.mts && vite build --config vite-lib.config.mts --mode umd && vue-tsc -p tsconfig.build.json",
-    "lib:publish": "npm run typecheck && npm test && npm run lib:build && npm publish",
     "demo:build": "vite build --config vite-demo.config.mts",
-    "demo:publish": "npm run demo:build && gh-pages -d demo-dist"
+    "prepublishOnly": "npm run lib:build"
   },
   "repository": {
     "type": "git",
@@ -61,11 +61,10 @@
     "@types/node": "^26.6.5",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vitest/browser-playwright": "^5.0.5",
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-istanbul": "^5.0.5",
     "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.9.1",
     "dayjs": "^1.11.23",
-    "gh-pages": "^6.3.0",
     "happy-dom": "^21.0.4",
     "playwright": "^1.64.1",
     "prettier": "^3.9.10",

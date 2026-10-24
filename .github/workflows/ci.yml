@@ -1,26 +1,139 @@
+# Checks every push and pull request: formatting, types, the library and demo builds, and the
+# packed tarball in a clean project with the oldest and newest Vue the README promises. The
+# tests run in Chromium, Firefox and WebKit against the locked, oldest and newest Vue; the
+# weekly run catches a new Vue release breaking the chart. On main, once all of that passes, a
+# new version in package.json is published to npm and released on GitHub (see RELEASING.md).
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Both maintained LTS lines
-        node: [22, 24]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run format:check
       - run: npm run typecheck
-      - run: npm run test:coverage
       - run: npm run lib:build
       - run: npm run demo:build
+      - name: Install the packed tarball in a clean project and use it like a consumer
+        run: |
+          npm pack --pack-destination "$RUNNER_TEMP"
+          for vue in 3.3.0 latest; do
+            consumer="$RUNNER_TEMP/consumer-$vue"
+            mkdir "$consumer"
+            cp scripts/check-package.mjs "$consumer/"
+            (
+              cd "$consumer"
+              npm init -y > /dev/null
+              npm install "$RUNNER_TEMP"/vue-trend-chart-*.tgz "vue@$vue" typescript@latest
+              node check-package.mjs
+            )
+          done
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        peers: [locked, minimum, latest]
+    name: test (${{ matrix.peers }} peers)
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # newer @vue/test-utils (2.4.11, 2.5) call app.onUnmount, which Vue 3.3 lacks
+      - if: matrix.peers == 'minimum'
+        run: npm install --no-save --legacy-peer-deps vue@3.3.0 @vue/test-utils@2.4.6
+      - if: matrix.peers == 'latest'
+        run: npm install --no-save --legacy-peer-deps vue@latest
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - if: matrix.peers == 'locked'
+        run: npm run test:coverage
+      - if: matrix.peers != 'locked'
+        run: npm test
+
+  # Publishes the version in package.json if npm doesn't have it yet, then tags it and makes a
+  # GitHub release from its CHANGELOG section. Each step checks what's missing, so a re-run
+  # picks up where a failed one stopped. npm trusts this workflow (trusted publishing), so no
+  # token is stored anywhere.
+  publish:
+    needs: [check, test]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    environment: npm
+    concurrency:
+      group: publish
+      cancel-in-progress: false
+    permissions:
+      contents: write # the tag and release
+      id-token: write # trusted publishing, and the provenance it attaches
+    steps:
+      - uses: actions/checkout@v7
+      - name: Find what's left to do
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          name=$(node -p "require('./package.json').name")
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          publish=$([ -z "$(npm view "$name@$version" version 2>/dev/null)" ] && echo true || true)
+          release=$(gh release view "v$version" > /dev/null 2>&1 || echo true)
+          if [ -z "$publish$release" ]; then
+            echo "$version is already published and released."
+            exit 0
+          fi
+          # the release notes come from the changelog; better to stop before publishing than after
+          awk -v heading="## [$version]" '
+            index($0, "## [") == 1 { if (found) exit; found = index($0, heading) == 1; next }
+            found
+          ' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            echo "::error file=CHANGELOG.md::No notes for $version. Add a '## [$version]' section."
+            exit 1
+          fi
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "release=$release" >> "$GITHUB_OUTPUT"
+          case "$version" in *-*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;; esac
+
+      - if: steps.plan.outputs.publish
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      # trusted publishing needs npm 11.5.1 or newer
+      - if: steps.plan.outputs.publish
+        run: npm install -g npm@latest
+      - if: steps.plan.outputs.publish
+        run: npm ci
+      # prepublishOnly builds the package; a prerelease goes out under `next`, not `latest`
+      - if: steps.plan.outputs.publish
+        run: npm publish --tag ${{ steps.plan.outputs.prerelease && 'next' || 'latest' }}
+
+      - name: Tag and release on GitHub
+        if: steps.plan.outputs.release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.plan.outputs.version }}
+        run: >
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION"
+          --notes-file "$RUNNER_TEMP/notes.md" ${{ steps.plan.outputs.prerelease && '--prerelease' || '' }}
