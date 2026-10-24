@@ -360,7 +360,7 @@ const chartWidth = ref(100);
           <h3>Data edge cases</h3>
           <p>Missing, flat, single-point, and empty datasets.</p>
         </div>
-        <div class="case-switch" aria-label="Data edge case">
+        <div class="case-switch" role="group" aria-label="Data edge case">
           <button
             v-for="(item, key) in edgeCases"
             :key="key"

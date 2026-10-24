@@ -210,7 +210,7 @@ h1 {
   padding-bottom: 8px;
 }
 .hero-description > p {
-  color: #67796d;
+  color: #64756a;
   font-size: 16px;
   line-height: 1.8;
   max-width: 390px;
@@ -376,7 +376,7 @@ h1 {
 }
 .feature-symbol {
   font-size: 13px;
-  color: #608366;
+  color: #58795e;
 }
 .feature-symbol.mono {
   font-size: 12px;
@@ -437,7 +437,7 @@ h2 {
   font-size: 13px;
   padding: 7px 15px;
   border-radius: 4px;
-  color: #63735d;
+  color: #61705b;
 }
 .view-switch button[aria-pressed="true"] {
   color: var(--ink);
@@ -1231,7 +1231,7 @@ h3 {
 }
 .data-literal {
   font-size: 11px;
-  color: #5e7c51;
+  color: #5a774e;
   padding: 9px 10px;
   background: #f4f7f0;
   border: 1px solid #e8ecdf;
@@ -1264,7 +1264,7 @@ h3 {
   display: grid;
   grid-template-columns: 1fr auto;
   font-size: 12px;
-  color: #66805a;
+  color: #5c7351;
   margin-top: 23px;
 }
 .resize-control output {
@@ -1371,7 +1371,7 @@ h3 {
 }
 .start-steps code {
   font-size: 12px;
-  color: #638057;
+  color: #5d7852;
 }
 .compatibility-note {
   margin-top: 17px;
@@ -1466,7 +1466,7 @@ h3 {
   gap: 26px;
   margin-left: auto;
   font-size: 12px;
-  color: #6e8262;
+  color: #647659;
 }
 
 @media (min-width: 1500px) {

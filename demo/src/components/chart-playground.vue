@@ -174,7 +174,7 @@ const reset = () => {
     </div>
     <div class="playground-shell">
       <div class="playground-toolbar">
-        <div class="view-switch" aria-label="Playground view">
+        <div class="view-switch" role="group" aria-label="Playground view">
           <button
             type="button"
             :aria-pressed="view === 'preview'"
@@ -268,7 +268,7 @@ const reset = () => {
           <CodeBlock v-else :code="generatedCode" filename="MyChart.vue" />
         </div>
         <aside class="playground-controls" aria-label="Chart settings">
-          <div class="control-tabs" aria-label="Settings group">
+          <div class="control-tabs" role="group" aria-label="Settings group">
             <button
               v-for="tab in ['style', 'axes', 'behavior']"
               :key="tab"

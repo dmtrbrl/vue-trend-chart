@@ -29,7 +29,7 @@ onBeforeUnmount(() => clearTimeout(timer));
       <button
         class="code-copy"
         type="button"
-        :aria-label="`Copy ${filename}`"
+        :aria-label="`Copy code: ${filename}`"
         @click="copy"
       >
         {{ feedback === "Copied!" ? "✓ Copied" : "Copy code" }}
