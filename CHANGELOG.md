@@ -6,6 +6,13 @@ All notable changes to this package. The format follows
 
 ## [Unreleased]
 
+## [1.0.1]
+
+### Changed
+
+- README: the new logo, and notes on sizing the chart, styling it from `<style scoped>` and
+  showing values that stand alone.
+
 ## [1.0.0]
 
 The library is rewritten in TypeScript and the way charts are drawn was audited and fixed.
@@ -73,6 +80,7 @@ see **Changed**.
 Changes before 1.0.0 weren't recorded in a changelog. See the
 [commit history](https://github.com/dmtrbrl/vue-trend-chart/commits/main).
 
-[Unreleased]: https://github.com/dmtrbrl/vue-trend-chart/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/dmtrbrl/vue-trend-chart/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/dmtrbrl/vue-trend-chart/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/dmtrbrl/vue-trend-chart/compare/v0.17.0...v1.0.0
 [0.17.0]: https://github.com/dmtrbrl/vue-trend-chart/releases/tag/v0.17.0
