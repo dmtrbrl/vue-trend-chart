@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@floating-ui/dom": "^1.8.0",
-    "@types/node": "^24.19.2",
+    "@types/node": "^26.6.5",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.9.1",
