@@ -4,6 +4,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  shallowRef,
   watch,
   type PropType,
 } from "vue";
@@ -13,8 +14,10 @@ import getPadding from "../helpers/getPadding";
 import getDomain from "../helpers/getDomain";
 import getEvenlySpaced from "../helpers/getEvenlySpaced";
 import toCount from "../helpers/toCount";
+import fitLabels from "../helpers/fitLabels";
 import type {
   Boundary,
+  LabelBox,
   Padding,
   TrendChartDataset,
   TrendChartGridOptions,
@@ -62,14 +65,15 @@ const emit = defineEmits<{
   "mouse-move": [event: TrendChartMouseMoveEvent | null];
 }>();
 
-const noOverflow = (): Padding => ({ top: 0, right: 0, bottom: 0, left: 0 });
-
 const chart = ref<SVGSVGElement | null>(null);
 // The default size of an svg, used until measured (e.g. when rendered on the
 // server) so the chart never draws inverted geometry
 const width = ref(300);
 const height = ref(150);
-const labelsOverflow = ref<Padding>(noOverflow());
+const labelBoxes = shallowRef<{ x: LabelBox[]; y: LabelBox[] }>({
+  x: [],
+  y: [],
+});
 const activeIndex = ref<number | null>(null);
 
 const paddingObject = computed(() => getPadding(props.padding || "0"));
@@ -96,15 +100,14 @@ const maxAmount = computed(() =>
 
 const xLabelsCount = computed(() => props.labels?.xLabels?.length ?? 0);
 
-// Evenly spaced x positions. Point i and x label i share slot i; labels can
-// reserve slots for data that isn't there yet.
+// Point i and x label i share slot i; labels can reserve slots for data
+// that isn't there yet
+const slotCount = computed(() => Math.max(maxAmount.value, xLabelsCount.value));
+
+// Evenly spaced x positions of the slots
 const slotXs = computed(() => {
   const { minX, maxX } = boundary.value;
-  return getEvenlySpaced(
-    minX,
-    maxX,
-    Math.max(maxAmount.value, xLabelsCount.value),
-  );
+  return getEvenlySpaced(minX, maxX, slotCount.value);
 });
 
 const yTicks = computed(() => {
@@ -160,12 +163,44 @@ const hasLabels = computed(
     (!!xLabelsCount.value || toCount(props.labels.yLabels) > 0),
 );
 
-const onLabelsMeasure = (overflow: Padding) => {
-  labelsOverflow.value = overflow;
+const onLabelsMeasure = (boxes: { x: LabelBox[]; y: LabelBox[] }) => {
+  labelBoxes.value = boxes;
 };
 
-watch(hasLabels, (value) => {
-  if (!value) labelsOverflow.value = noOverflow();
+// Room to leave around the plot so every label fits inside the svg
+const labelsOverflow = computed<Padding>(() => {
+  if (!hasLabels.value) return { top: 0, right: 0, bottom: 0, left: 0 };
+  const { x, y } = labelBoxes.value;
+  const padding = paddingObject.value;
+  const fraction = (i: number, count: number) =>
+    count > 1 ? i / (count - 1) : 0;
+  // X labels sit at their slot along the bottom; y labels along the left,
+  // from the bottom up
+  const horizontal = [
+    ...x.map((box, i) => ({
+      at: fraction(i, slotCount.value),
+      before: -box.x,
+      after: box.x + box.width,
+    })),
+    ...y.map((box) => ({ at: 0, before: -box.x, after: box.x + box.width })),
+  ];
+  const vertical = [
+    ...x.map((box) => ({ at: 1, before: -box.y, after: box.y + box.height })),
+    ...y.map((box, i) => ({
+      at: 1 - fraction(i, y.length),
+      before: -box.y,
+      after: box.y + box.height,
+    })),
+  ];
+  const { start: left, end: right } = fitLabels(
+    horizontal,
+    width.value - padding.left - padding.right,
+  );
+  const { start: top, end: bottom } = fitLabels(
+    vertical,
+    height.value - padding.top - padding.bottom,
+  );
+  return { top, right, bottom, left };
 });
 
 // Size comes from the svg's own content box: unlike getBoundingClientRect it

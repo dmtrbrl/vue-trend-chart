@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 import roundToStep from "../helpers/roundToStep";
-import type { Boundary, Padding, YTick } from "../types";
+import type { Boundary, LabelBox, YTick } from "../types";
 
 defineOptions({ name: "TrendChartLabels" });
 
@@ -16,8 +16,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  // How far labels reach beyond the boundary on each side
-  measure: [overflow: Padding];
+  // Each label's box around its anchor; the chart makes room for them
+  measure: [boxes: { x: LabelBox[]; y: LabelBox[] }];
 }>();
 
 const root = ref<SVGGElement | null>(null);
@@ -53,42 +53,33 @@ const getBox = (el: Element) => {
   }
 };
 
-let measured: Padding = { top: 0, right: 0, bottom: 0, left: 0 };
+let measured = "";
 
-// Each label is measured in its own coordinates, relative to its anchor on
-// the boundary. The result never depends on the boundary itself, so fitting
-// the boundary to it can't feed back into the next measurement.
+// Each label is measured in its own coordinates, around its anchor. Unlike
+// its position, that doesn't depend on the boundary, so fitting the
+// boundary to it can't feed back into the next measurement.
 const measure = () => {
-  const overflow: Padding = { top: 0, right: 0, bottom: 0, left: 0 };
-  const reach = (side: keyof Padding, value: number) => {
-    if (value > overflow[side]) overflow[side] = value;
+  const boxesOf = (selector: string) =>
+    [...(root.value?.querySelectorAll(selector) ?? [])].map((el) => {
+      const { x, y, width, height } = getBox(el) ?? {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      };
+      return { x, y, width, height };
+    });
+  const boxes = {
+    x: boxesOf(".x-labels .label"),
+    y: boxesOf(".y-labels .label"),
   };
-
-  const lastSlot = props.xCoords.length - 1;
-  root.value?.querySelectorAll(".x-labels .label").forEach((el, i) => {
-    const box = getBox(el);
-    if (!box) return;
-    reach("bottom", box.y + box.height);
-    if (i === 0) reach("left", -box.x);
-    if (i === lastSlot) reach("right", box.x + box.width);
-  });
-
-  const yEls = root.value?.querySelectorAll(".y-labels .label") ?? [];
-  yEls.forEach((el, i) => {
-    const box = getBox(el);
-    if (!box) return;
-    reach("left", -box.x);
-    if (i === 0) reach("bottom", box.y + box.height);
-    if (i === yEls.length - 1) reach("top", -box.y);
-  });
-
-  // Ignore sub-pixel noise
-  const changed = (Object.keys(overflow) as Array<keyof Padding>).some(
-    (side) => Math.abs(overflow[side] - measured[side]) > 0.5,
+  // Only report changes, ignoring sub-pixel noise
+  const key = JSON.stringify(boxes, (_, value) =>
+    typeof value === "number" ? Math.round(value * 2) / 2 : value,
   );
-  if (!changed) return;
-  measured = overflow;
-  emit("measure", overflow);
+  if (key === measured) return;
+  measured = key;
+  emit("measure", boxes);
 };
 
 // Labels also change size without changing text: CSS updates, web fonts

@@ -115,6 +115,19 @@ describe("label fitting", () => {
     expect(chart.bottom - labels.bottom).toBeGreaterThanOrEqual(3);
   });
 
+  it("fits a wide x label that isn't at the last data point", async () => {
+    // 3 labels for 4 points: the last label sits at 2/3 of the width
+    const { svg, errors } = await mountChart(
+      {
+        datasets: [{ data: [1, 2, 3, 4] }],
+        labels: { xLabels: ["a", "b", "a much, much longer third label"] },
+      },
+      { inner: "width: 200px; height: 100px" },
+    );
+    expect(errors).toEqual([]);
+    expectInside(rectOf(svg.querySelector(".labels")!), rectOf(svg));
+  });
+
   it("fits labels that appear after mount", async () => {
     const { svg, props } = await mountChart({ datasets: [] });
     Object.assign(props, labelsData);
@@ -245,6 +258,15 @@ describe("sizing", () => {
     await settle();
     const lines = chart.svg.querySelectorAll(".grid .vertical .line");
     expect(Number(lines[lines.length - 1].getAttribute("x1"))).toBe(395);
+  });
+
+  it("keeps a flat line between gaps visible for gradient strokes", async () => {
+    const { svg } = await mountChart(
+      { datasets: [{ data: [null, 5, 5, null] }] },
+      { inner: "width: 400px; height: 1000px" },
+    );
+    const stroke = svg.querySelector<SVGPathElement>(".stroke")!;
+    expect(stroke.getBBox().height).toBeGreaterThan(0);
   });
 
   it("keeps flat lines visible for gradient strokes on tall charts", async () => {

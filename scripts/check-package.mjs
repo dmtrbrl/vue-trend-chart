@@ -33,7 +33,9 @@ assert.equal(plugin.TrendChart.name, "TrendChart");
 writeFileSync(
   "types-check.ts",
   `import VueTrendChart, { TrendChart, type TrendChartDataset } from "vue-trend-chart";
-const datasets: TrendChartDataset[] = [{ data: [1, null, { value: 2 }], fill: true }];
+const datasets: TrendChartDataset[] = [
+  { data: [1, null, undefined, "3", { value: 2 }, { value: "4", day: "Mon" }], fill: true },
+];
 // @ts-expect-error data must be an array
 const invalid: TrendChartDataset = { data: 5 };
 export { VueTrendChart, TrendChart, datasets, invalid };

@@ -142,7 +142,7 @@ describe("datasets", () => {
           showPoints: true,
         },
         { data: [1, 2], showPoints: true },
-      ] as unknown as TrendChartDataset[],
+      ],
       labels: { yLabels: 3 },
     });
     expect(wrapper.html()).not.toMatch(/NaN|Infinity/);
@@ -154,9 +154,7 @@ describe("datasets", () => {
 
   it("closes the fill under each segment separately", async () => {
     const wrapper = await mountChart({
-      datasets: [
-        { data: [1, 2, null, 3, 4], fill: true },
-      ] as unknown as TrendChartDataset[],
+      datasets: [{ data: [1, 2, null, 3, 4], fill: true }],
       padding: "0",
     });
     const fill = wrapper.find("path.fill").attributes("d")!;
@@ -169,7 +167,7 @@ describe("datasets", () => {
     });
     const strings = await mountChart({
       datasets: [{ data: ["1", "2", { value: "3" }], showPoints: true }],
-    } as never);
+    });
     expect(pointsOf(strings)).toEqual(pointsOf(numbers));
   });
 
@@ -505,7 +503,7 @@ describe("padding and label fitting", () => {
     });
   });
 
-  it("ignores x labels that are not at the right edge", async () => {
+  it("only makes room for labels that reach past the plot", async () => {
     stubLabelBoxes({ x: { x: -10, y: 0, width: 20, height: 20 } });
     const wrapper = await mountChart({
       datasets: [{ data: [1, 2, 3, 4] }],
@@ -518,6 +516,20 @@ describe("padding and label fitting", () => {
       maxX: 295,
       maxY: 125,
     });
+  });
+
+  it("makes room for a wide label inside the plot", async () => {
+    stubLabelBoxes({ x: { x: -75, y: 0, width: 150, height: 20 } });
+    const wrapper = await mountChart({
+      datasets: [{ data: [1, 2, 3, 4] }],
+      labels: { xLabels: ["a", "b", "c"] },
+      interactive: true,
+    });
+    const { minX, maxX } = boundaryOf(wrapper);
+    // Label 3 sits at slot 3 of 4, two thirds along the plot
+    const lastLabelRight = minX + ((maxX - minX) * 2) / 3 + 75;
+    expect(lastLabelRight).toBeLessThanOrEqual(WIDTH - 5 + 0.5);
+    expect(minX).toBeCloseTo(80, 0);
   });
 
   it("gives the space back when labels are removed", async () => {

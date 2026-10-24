@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import genPath from "../../src/helpers/genPath";
+import fitLabels from "../../src/helpers/fitLabels";
 import genPoints from "../../src/helpers/genPoints";
 import getDomain from "../../src/helpers/getDomain";
 import getEvenlySpaced from "../../src/helpers/getEvenlySpaced";
@@ -175,6 +176,16 @@ describe("genPoints", () => {
     ).toBeNull();
   });
 
+  it("nudges the first and last drawn points, not the array ends", () => {
+    const points = genPoints(
+      [null, 5, 5, null],
+      [0, 1, 2, 3],
+      domain,
+      boundary,
+    );
+    expect(points[1]!.y).toBeLessThan(points[2]!.y);
+  });
+
   it("keeps flat lines non-degenerate in float32", () => {
     const points = genPoints(
       [5, 5, 5],
@@ -187,6 +198,56 @@ describe("genPoints", () => {
     );
     // Browsers store SVG geometry as float32
     expect(Math.fround(points[0]!.y)).not.toBe(Math.fround(points[2]!.y));
+  });
+});
+
+describe("fitLabels", () => {
+  it("leaves no room when labels fit inside the plot", () => {
+    expect(fitLabels([{ at: 0.5, before: 20, after: 20 }], 100)).toEqual({
+      start: 0,
+      end: 0,
+    });
+  });
+
+  it("makes room for labels at the edges", () => {
+    expect(
+      fitLabels(
+        [
+          { at: 0, before: 30, after: 5 },
+          { at: 1, before: 5, after: 10 },
+        ],
+        100,
+      ),
+    ).toEqual({ start: 30, end: 10 });
+  });
+
+  it("makes room for a wide label inside the plot", () => {
+    // Anchored at 2/3 of the plot, reaching 75 past it: the plot must end at
+    // least 75 after the anchor once it has shrunk
+    const { start, end } = fitLabels(
+      [{ at: 2 / 3, before: 75, after: 75 }],
+      190,
+    );
+    const plot = 190 - start - end;
+    expect(start + (2 / 3) * plot + 75).toBeLessThanOrEqual(190 + 0.5);
+    expect(start + (2 / 3) * plot - 75).toBeGreaterThanOrEqual(-0.5);
+    expect(end).toBeCloseTo(17.5, 0);
+  });
+
+  it("gives labels too big for the axis all of it, without running away", () => {
+    const { start, end } = fitLabels(
+      [{ at: 0.5, before: 100, after: 100 }],
+      150,
+    );
+    expect(start + end).toBeCloseTo(150);
+    expect(start).toBeCloseTo(end);
+  });
+
+  it("ignores labels that reach inwards", () => {
+    expect(fitLabels([{ at: 0, before: -10, after: -5 }], 100)).toEqual({
+      start: 0,
+      end: 0,
+    });
   });
 });
 
