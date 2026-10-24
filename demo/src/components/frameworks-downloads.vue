@@ -1,52 +1,52 @@
 <template>
   <div class="frameworks">
-    <framework v-for="(dataset,i) in datasets" :key="i" :data="dataset.data" :slug="dataset.slug"/>
+    <framework
+      v-for="(dataset, i) in datasets"
+      :key="i"
+      :data="dataset.data"
+      :slug="dataset.slug"
+    />
   </div>
 </template>
 
-<script>
-import Framework from "./framework.vue";
-export default {
-  components: { Framework },
-  data() {
-    return {
-      frameworks: ["vue", "react", "angular", "hapi", "express", "koa"],
-      data: null
-    };
-  },
-  computed: {
-    datasets() {
-      if (!this.data) return null;
-      return this.frameworks
-        .filter(f => this.data[f])
-        .map(f => {
-          return {
-            slug: f,
-            data: this.data[f].downloads.map(d => {
-              return { value: d.downloads, day: d.day };
-            })
-          };
-        });
-    }
-  },
-  methods: {
-    fetchData() {
-      this.$http
-        .get(
-          `https://api.npmjs.org/downloads/range/last-week/${this.frameworks.join(
-            ","
-          )}`
-        )
-        .then(res => {
-          this.data = res.data;
-        })
-        .catch(error => console.log(error));
-    }
-  },
-  mounted() {
-    this.fetchData();
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
+
+import fetchJson from "../fetch-json";
+import Framework, { type DownloadsPoint } from "./framework.vue";
+
+type NpmDownloads = Record<
+  string,
+  { downloads: Array<{ downloads: number; day: string }> } | null
+>;
+
+const frameworks = ["vue", "react", "angular", "hapi", "express", "koa"];
+
+const data = ref<NpmDownloads | null>(null);
+
+const datasets = computed(() => {
+  if (!data.value) return [];
+  const downloads = data.value;
+  return frameworks
+    .filter((f) => downloads[f])
+    .map((f) => ({
+      slug: f,
+      data: downloads[f]!.downloads.map<DownloadsPoint>((d) => ({
+        value: d.downloads,
+        day: d.day,
+      })),
+    }));
+});
+
+onMounted(async () => {
+  try {
+    data.value = await fetchJson<NpmDownloads>(
+      `https://api.npmjs.org/downloads/range/last-week/${frameworks.join(",")}`,
+    );
+  } catch (error) {
+    console.error(error);
   }
-};
+});
 </script>
 
 <style lang="scss">
@@ -220,5 +220,3 @@ export default {
   }
 }
 </style>
-
-

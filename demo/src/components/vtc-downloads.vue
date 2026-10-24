@@ -4,11 +4,9 @@
       <div class="vtc-downloads-control">
         <strong>Select date range:</strong>
         <select v-model="selectedDateRange">
-          <option
-            v-for="(range, i) in dateRanges"
-            :key="i"
-            :value="range"
-          >{{ range.from }} - {{ range.to }}</option>
+          <option v-for="(range, i) in dateRanges" :key="i" :value="range">
+            {{ range.from }} - {{ range.to }}
+          </option>
         </select>
       </div>
       <div class="vtc-downloads-control">
@@ -21,93 +19,70 @@
     </div>
     <trend-chart
       v-if="dataset"
-      :datasets="[{data: dataset}]"
+      :datasets="[{ data: dataset }]"
       :labels="{
         xLabels: xLabels,
-        yLabels: 3
+        yLabels: 3,
       }"
       :min="0"
       :grid="{
         verticalLines: true,
         verticalLinesNumber: 1,
         horizontalLines: true,
-        horizontalLinesNumber: 1
+        horizontalLinesNumber: 1,
       }"
     />
   </div>
 </template>
-<script>
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
 import dayjs from "dayjs";
-export default {
-  data() {
-    return {
-      downloads: null,
-      dateRanges: [
-        {
-          from: "2019-08-26",
-          to: "2019-08-31"
-        },
-        {
-          from: "2019-08-19",
-          to: "2019-08-25"
-        },
-        {
-          from: "2019-08-12",
-          to: "2019-08-18"
-        },
-        {
-          from: "2019-08-05",
-          to: "2019-08-11"
-        },
-        {
-          from: "2019-08-01",
-          to: "2019-08-04"
-        }
-      ],
-      selectedDateRange: null,
-      dateFormat: "MM/DD"
-    };
-  },
-  computed: {
-    dataset() {
-      return this.downloads && this.downloads.length
-        ? this.downloads.map(d => d.downloads)
-        : null;
-    },
-    xLabels() {
-      return this.downloads && this.downloads.length
-        ? this.downloads.map(d => dayjs(d.day).format(this.dateFormat))
-        : [];
+
+import fetchJson from "../fetch-json";
+
+interface DateRange {
+  from: string;
+  to: string;
+}
+
+interface NpmDownloads {
+  downloads: Array<{ downloads: number; day: string }>;
+}
+
+// Last five full weeks (Monday to Sunday)
+const currentWeekStart = dayjs().subtract((dayjs().day() + 6) % 7, "day");
+const dateRanges: DateRange[] = Array.from({ length: 5 }, (_, i) => {
+  const from = currentWeekStart.subtract(i + 1, "week");
+  return {
+    from: from.format("YYYY-MM-DD"),
+    to: from.add(6, "day").format("YYYY-MM-DD"),
+  };
+});
+
+const downloads = ref<NpmDownloads["downloads"]>([]);
+const selectedDateRange = ref(dateRanges[0]);
+const dateFormat = ref("MM/DD");
+
+const dataset = computed(() =>
+  downloads.value.length ? downloads.value.map((d) => d.downloads) : null,
+);
+const xLabels = computed(() =>
+  downloads.value.map((d) => dayjs(d.day).format(dateFormat.value)),
+);
+
+watch(
+  selectedDateRange,
+  async ({ from, to }) => {
+    try {
+      ({ downloads: downloads.value } = await fetchJson<NpmDownloads>(
+        `https://api.npmjs.org/downloads/range/${from}:${to}/vue-trend-chart`,
+      ));
+    } catch (error) {
+      console.error(error);
     }
   },
-  methods: {
-    onRangeChange() {
-      this.fetchData();
-    },
-    fetchData() {
-      this.$http
-        .get(
-          `https://api.npmjs.org/downloads/range/${this.selectedDateRange.from}:${this.selectedDateRange.to}/vue-trend-chart`
-        )
-        .then(res => {
-          const { downloads } = res.data;
-          this.downloads = downloads;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-  },
-  watch: {
-    selectedDateRange() {
-      this.fetchData();
-    }
-  },
-  mounted() {
-    this.selectedDateRange = this.dateRanges[0];
-    this.fetchData();
-  }
-};
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
@@ -144,5 +119,3 @@ export default {
   }
 }
 </style>
-
-

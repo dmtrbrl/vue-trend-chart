@@ -1,6 +1,10 @@
 <template>
   <div class="bitcoin-price">
-    <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+    <svg
+      style="width: 0; height: 0; position: absolute"
+      aria-hidden="true"
+      focusable="false"
+    >
       <defs>
         <linearGradient id="btcFill" x1="1" x2="1" y1="0" y2="1">
           <stop offset="0%" stop-color="#f69119"></stop>
@@ -10,46 +14,60 @@
     </svg>
     <trend-chart
       v-if="dataset.length"
-      :datasets="[{data: dataset, fill: true, className: 'curve-btc'}]"
+      :datasets="[{ data: dataset, fill: true, className: 'curve-btc' }]"
       :labels="labels"
       :min="0"
       :grid="grid"
     />
   </div>
 </template>
-<script>
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
 import dayjs from "dayjs";
-export default {
-  data() {
-    return {
-      dataset: [],
-      labels: {
-        xLabels: [],
-        yLabels: 5,
-        yLabelsTextFormatter: val => "$" + Math.round(val * 100) / 100
-      },
-      grid: {
-        verticalLines: true,
-        verticalLinesNumber: 1,
-        horizontalLines: true,
-        horizontalLinesNumber: 1
-      }
-    };
-  },
-  mounted() {
-    this.$http
-      .get(
-        "https://api.coindesk.com/v1/bpi/historical/close.json?start=2019-01-01&end=2019-01-31"
-      )
-      .then(res => {
-        const data = res.data.bpi;
-        for (let key in data) {
-          this.dataset.push(data[key]);
-          this.labels.xLabels.push(dayjs(key).format("MM/DD"));
-        }
-      });
-  }
+import type {
+  TrendChartGridOptions,
+  TrendChartLabelsOptions,
+} from "vue-trend-chart";
+
+import fetchJson from "../fetch-json";
+
+interface MarketChart {
+  prices: Array<[timestamp: number, price: number]>;
+}
+
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+const dataset = ref<number[]>([]);
+const xLabels = ref<string[]>([]);
+const labels = computed<TrendChartLabelsOptions>(() => ({
+  xLabels: xLabels.value,
+  yLabels: 5,
+  yLabelsTextFormatter: (val) => usd.format(val),
+}));
+const grid: TrendChartGridOptions = {
+  verticalLines: true,
+  verticalLinesNumber: 1,
+  horizontalLines: true,
+  horizontalLinesNumber: 1,
 };
+
+onMounted(async () => {
+  try {
+    const { prices } = await fetchJson<MarketChart>(
+      "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily",
+    );
+    dataset.value = prices.map(([, price]) => price);
+    xLabels.value = prices.map(([timestamp]) =>
+      dayjs(timestamp).format("MM/DD"),
+    );
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <style lang="scss">
@@ -98,5 +116,3 @@ export default {
   }
 }
 </style>
-
-

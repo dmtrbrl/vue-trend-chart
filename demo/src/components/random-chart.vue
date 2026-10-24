@@ -1,5 +1,5 @@
 <template>
-  <div class="random">
+  <div ref="root" class="random">
     <trend-chart
       :datasets="datasets"
       :grid="grid"
@@ -11,83 +11,110 @@
       class="random-chart"
       v-if="datasets.length"
     ></trend-chart>
-    <div id="pop" role="tooltip" ref="tooltip" class="tooltip" :class="{'is-active': tooltipData}">
+    <div
+      id="pop"
+      role="tooltip"
+      ref="tooltip"
+      class="tooltip"
+      :class="{ 'is-active': tooltipData }"
+    >
       <div class="tooltip-container" v-if="tooltipData">
-        <strong>{{labels.xLabels[tooltipData.index]}}</strong>
+        <strong>{{ labels.xLabels[tooltipData.index] }}</strong>
         <div class="tooltip-data">
-          <div class="tooltip-data-item tooltip-data-item--1">{{tooltipData.data[0]}}</div>
-          <div class="tooltip-data-item tooltip-data-item--2">{{tooltipData.data[1]}}</div>
-          <div class="tooltip-data-item tooltip-data-item--3">{{tooltipData.data[2]}}</div>
+          <div class="tooltip-data-item tooltip-data-item--1">
+            {{ tooltipData.data[0] }}
+          </div>
+          <div class="tooltip-data-item tooltip-data-item--2">
+            {{ tooltipData.data[1] }}
+          </div>
+          <div class="tooltip-data-item tooltip-data-item--3">
+            {{ tooltipData.data[2] }}
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import Popper from "popper.js";
-export default {
-  data() {
-    return {
-      datasets: [
-        {
-          data: [70, 100, 400, 180, 100, 300, 500],
-          smooth: true,
-          showPoints: true,
-          fill: true,
-          className: "curve1"
-        },
-        {
-          data: [150, 300, 350, 100, 350, 100, 15],
-          smooth: true,
-          showPoints: true,
-          className: "curve2"
-        },
-        {
-          data: [50, 150, 200, 50, 120, 250, 200],
-          smooth: true,
-          showPoints: true,
-          className: "curve3"
-        }
-      ],
-      grid: {
-        verticalLines: true,
-        horizontalLines: true
-      },
-      labels: {
-        xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        yLabels: 5,
-        yLabelsTextFormatter: val => Math.round(val * 100) / 100
-      },
-      tooltipData: null,
-      popper: null,
-      popperIsActive: false
-    };
+<script setup lang="ts">
+import { nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import {
+  autoUpdate,
+  computePosition,
+  flip,
+  offset,
+  shift,
+} from "@floating-ui/dom";
+import type {
+  TrendChartDataset,
+  TrendChartGridOptions,
+  TrendChartLabelsOptions,
+  TrendChartMouseMoveEvent,
+} from "vue-trend-chart";
+
+const datasets: TrendChartDataset[] = [
+  {
+    data: [70, 100, 400, 180, 100, 300, 500],
+    smooth: true,
+    showPoints: true,
+    fill: true,
+    className: "curve1",
   },
-  methods: {
-    initPopper() {
-      const chart = document.querySelector(".random-chart");
-      const ref = chart.querySelector(".active-line");
-      const tooltip = this.$refs.tooltip;
-      this.popper = new Popper(ref, tooltip, {
-        placement: "right",
-        modifiers: {
-          offset: { offset: "0,10" },
-          preventOverflow: {
-            boundariesElement: chart
-          }
-        }
-      });
-    },
-    onMouseMove(params) {
-      this.popperIsActive = !!params;
-      this.popper.scheduleUpdate();
-      this.tooltipData = params || null;
-    }
+  {
+    data: [150, 300, 350, 100, 350, 100, 15],
+    smooth: true,
+    showPoints: true,
+    className: "curve2",
   },
-  mounted() {
-    this.initPopper();
-  }
+  {
+    data: [50, 150, 200, 50, 120, 250, 200],
+    smooth: true,
+    showPoints: true,
+    className: "curve3",
+  },
+];
+const grid: TrendChartGridOptions = {
+  verticalLines: true,
+  horizontalLines: true,
+};
+const labels = {
+  xLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  yLabels: 5,
+  yLabelsTextFormatter: (val) => Math.round(val * 100) / 100,
+} satisfies TrendChartLabelsOptions;
+
+const root = useTemplateRef<HTMLDivElement>("root");
+const tooltip = useTemplateRef<HTMLDivElement>("tooltip");
+const tooltipData = ref<TrendChartMouseMoveEvent | null>(null);
+
+let chart: SVGSVGElement | null | undefined;
+let activeLine: SVGLineElement | null | undefined;
+let stopAutoUpdate: (() => void) | undefined;
+
+const updatePosition = async () => {
+  const floating = tooltip.value;
+  if (!chart || !activeLine || !floating) return;
+  const { x, y } = await computePosition(activeLine, floating, {
+    placement: "right",
+    middleware: [offset(10), flip(), shift({ boundary: chart })],
+  });
+  Object.assign(floating.style, { left: `${x}px`, top: `${y}px` });
+};
+
+onMounted(() => {
+  chart = root.value?.querySelector<SVGSVGElement>(".random-chart");
+  activeLine = chart?.querySelector<SVGLineElement>(".active-line");
+  if (activeLine && tooltip.value)
+    stopAutoUpdate = autoUpdate(activeLine, tooltip.value, updatePosition);
+});
+
+onBeforeUnmount(() => stopAutoUpdate?.());
+
+// The active line moves via SVG attributes, which autoUpdate doesn't observe
+const onMouseMove = async (params: TrendChartMouseMoveEvent | null) => {
+  tooltipData.value = params;
+  await nextTick();
+  updatePosition();
 };
 </script>
 
@@ -150,6 +177,9 @@ export default {
   }
 
   .tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
     &:not(.is-active) {
       display: none;
     }
@@ -186,4 +216,3 @@ export default {
   }
 }
 </style>
-

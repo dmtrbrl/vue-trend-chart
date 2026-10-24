@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/dmtrbrl/vue-trend-chart/master/media/vtc-logo.png" width="230" alt="Vue Trend">
+  <img src="https://raw.githubusercontent.com/dmtrbrl/vue-trend-chart/main/media/vtc-logo.png" width="230" alt="Vue Trend">
 </div>
 
 ---
@@ -18,12 +18,26 @@
 npm i vue-trend-chart
 ```
 
+Requires Vue `^3.3`. Type definitions are included.
+
 ## :rocket: Usage
 
-```js
-import TrendChart from "vue-trend-chart";
+Register the component globally with the plugin:
 
-app.use(TrendChart);
+```js
+import VueTrendChart from "vue-trend-chart";
+
+app.use(VueTrendChart);
+```
+
+Or import it where you need it:
+
+```vue
+<script setup lang="ts">
+import { TrendChart, type TrendChartDataset } from "vue-trend-chart";
+
+const datasets: TrendChartDataset[] = [{ data: [10, 50, 20], smooth: true }];
+</script>
 ```
 
 _Example:_
@@ -105,7 +119,7 @@ _Allows to set onmousemove interaction. Set to `true` to enable._
 ### **`mouse-move`**
 
 _Callback function for **onmouseover** interaction.  
-Receives an **object** `{index: Number, data: Array}` parameter based on current active line.  
+Receives an **object** `{index: Number, data: Array}` parameter based on current active line, or `null` when the pointer leaves the chart.  
 This function has no effect if `interactive` isn't set to `true`._
 
 ## :chart_with_upwards_trend: Dataset Props
@@ -256,11 +270,30 @@ _Here is an example of a tree structure with available class names:_
 </svg>
 ```
 
+## :label: TypeScript
+
+The package exports types for its props and events:
+
+```ts
+import type {
+  DataPoint,
+  TrendChartDataset,
+  TrendChartGridOptions,
+  TrendChartLabelsOptions,
+  TrendChartMouseMoveEvent,
+} from "vue-trend-chart";
+```
+
 ## :hammer: Development
+
+Requires Node.js `^20.19` or `>=22.12`.
 
 ```shell
 npm install
-npm run dev
+npm run dev        # demo with hot reload
+npm test           # unit tests
+npm run typecheck  # type-check library, demo and tests
+npm run lib:build  # build dist/ (ESM, UMD and type definitions)
 ```
 
 ## :two_hearts: Contributing

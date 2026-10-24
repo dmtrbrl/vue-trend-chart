@@ -35,7 +35,7 @@
               <em class="demo__example-description">Static line chart example</em>
             </div>
             <a
-              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/bitcoin-price.vue"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/bitcoin-price.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -51,7 +51,7 @@
               <em class="demo__example-description">Interactive trend curves example</em>
             </div>
             <a
-              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/framework.vue"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/framework.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -67,13 +67,13 @@
               <em class="demo__example-description">
                 Interactive multiline chart with tooltip (using
                 <a
-                  href="https://popper.js.org"
+                  href="https://floating-ui.com"
                   target="_blank"
-                >popper.js</a>) example
+                >Floating UI</a>) example
               </em>
             </div>
             <a
-              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/random-chart.vue"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/random-chart.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -85,11 +85,11 @@
         <div class="demo__example-container">
           <div class="demo__example-header">
             <div class="demo__example-intro">
-              <strong class="demo__example-heading">Vue Trend Chart downloads (August 2019)</strong>
+              <strong class="demo__example-heading">Vue Trend Chart downloads</strong>
               <em class="demo__example-description">Data and labels update example</em>
             </div>
             <a
-              href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/demo/src/components/vtc-downloads.vue"
+              href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/demo/src/components/vtc-downloads.vue"
               target="_blank"
               class="demo__show-code"
             >Show Code</a>
@@ -100,28 +100,18 @@
     </main>
     <footer class="demo__footer">
       Released under the
-      <a href="https://github.com/dmtrbrl/vue-trend-chart/blob/master/LICENSE">MIT</a> license.
+      <a href="https://github.com/dmtrbrl/vue-trend-chart/blob/main/LICENSE">MIT</a> license.
       <a href="https://github.com/dmtrbrl/vue-trend-chart">View source</a>.
     </footer>
   </section>
 </template>
 
-<script>
+<script setup lang="ts">
 import GithubCorner from "./components/github-corner.vue";
 import BitcoinPrice from "./components/bitcoin-price.vue";
 import FrameworksDownloads from "./components/frameworks-downloads.vue";
 import RandomChart from "./components/random-chart.vue";
 import VTCDownloads from "./components/vtc-downloads.vue";
-export default {
-  name: "home",
-  components: {
-    GithubCorner,
-    BitcoinPrice,
-    FrameworksDownloads,
-    RandomChart,
-    VTCDownloads
-  }
-};
 </script>
 
 <style lang="scss">
